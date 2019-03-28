@@ -1,7 +1,8 @@
 import numpy as np
 
+
 def partition(v, partition_size=5):
-    '''
+    """
 
     params:
         v:
@@ -14,7 +15,7 @@ def partition(v, partition_size=5):
     spaced points - the space for each segment is determined
     by the length of the segment and the supplied partition size.
 
-    '''
+    """
     src = np.arange(len(v) - 1)
     dst = src + 1
 
@@ -36,8 +37,9 @@ def partition(v, partition_size=5):
 
     return np.vstack((filled, v[-1]))
 
+
 def partition_segment(p1, p2, n_samples, endpoint=True):
-    '''
+    """
     For two points in n-space, return an np.ndarray of equidistant partition
     points along the segment determined by p1 & p2.
 
@@ -55,16 +57,19 @@ def partition_segment(p1, p2, n_samples, endpoint=True):
         partition_size:
             size of partition. should be >= 2.
 
-    '''
+    """
     if not isinstance(n_samples, int):
-        raise TypeError('partition_size should be an int.')
+        raise TypeError("partition_size should be an int.")
     elif n_samples < 2:
-        raise ValueError('partition_size should be bigger than 1.')
+        raise ValueError("partition_size should be bigger than 1.")
 
-    return (p2 - p1) * np.linspace(0, 1, num=n_samples, endpoint=endpoint)[:, np.newaxis] + p1
+    return (p2 - p1) * np.linspace(0, 1, num=n_samples, endpoint=endpoint)[
+        :, np.newaxis
+    ] + p1
+
 
 def partition_segment_old(p1, p2, partition_size=5):
-    '''
+    """
     Deprecated. Please use partition_segment.
 
     For two points in n-space, return an np.ndarray of partition points at equal widths
@@ -80,12 +85,12 @@ def partition_segment_old(p1, p2, partition_size=5):
 
         partition_size:
             size of partition. should be > 1.
-    '''
+    """
 
     if not isinstance(partition_size, int):
-        raise TypeError('partition_size should be an int.')
+        raise TypeError("partition_size should be an int.")
     elif partition_size < 2:
-        raise ValueError('partition_size should be bigger than 1.')
+        raise ValueError("partition_size should be bigger than 1.")
 
     dist = np.linalg.norm(p1 - p2)
 

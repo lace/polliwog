@@ -1,5 +1,5 @@
 def round_to(value, nearest):
-    '''
+    """
     Round a number to the nearest specified increment.
 
     e.g.:
@@ -21,9 +21,10 @@ def round_to(value, nearest):
         >>> round(value / nearest) / (1.0 / nearest)
         3.9
 
-    '''
+    """
     reciprocal = 1.0 / nearest
     return round(value / nearest) / reciprocal
+
 
 def rounded_list(iterable, precision=0):
     return [(None if x is None else round(x, precision)) for x in iterable]

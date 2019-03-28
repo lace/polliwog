@@ -1,7 +1,8 @@
 import numpy as np
 
+
 def inflection_points(points, axis, span):
-    '''
+    """
     Find the list of vertices that preceed inflection points in a curve. The curve is differentiated
     with respect to the coordinate system defined by axis and span.
 
@@ -10,7 +11,7 @@ def inflection_points(points, axis, span):
 
     returns: a list of points in space corresponding to the vertices that
     immediately preceed inflection points in the curve
-    '''
+    """
 
     coords_on_span = points.dot(span)
     dx = np.gradient(coords_on_span)
@@ -23,11 +24,14 @@ def inflection_points(points, axis, span):
     # Compare the product of all neighboring pairs of points in the second derivative
     # If a pair of points has a negative product, then the second derivative changes sign
     # at one of those points, signalling an inflection point
-    is_inflection_point = [finite_difference_2[i] * finite_difference_2[i + 1] <= 0 for i in range(len(finite_difference_2) - 1)]
+    is_inflection_point = [
+        finite_difference_2[i] * finite_difference_2[i + 1] <= 0
+        for i in range(len(finite_difference_2) - 1)
+    ]
 
     inflection_point_indices = [i for i, b in enumerate(is_inflection_point) if b]
 
-    if len(inflection_point_indices) == 0: # pylint: disable=len-as-condition
+    if len(inflection_point_indices) == 0:  # pylint: disable=len-as-condition
         return []
 
     return points[inflection_point_indices]

@@ -1,7 +1,8 @@
 import numpy as np
 
+
 def translation(points, translation_factor=None):
-    '''
+    """
     Args:
 
         - points:
@@ -16,7 +17,7 @@ def translation(points, translation_factor=None):
         - translation_factor:
                 the translation_factor. this is useful when translation_factor
                 is initially None, and the caller wants to apply the inverse
-    '''
+    """
     if translation_factor is None:
         translation_factor = -np.mean(points, axis=0)
 

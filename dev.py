@@ -8,7 +8,7 @@ from executor import execute
 def python_source_files():
     import glob
 
-    include_paths = glob.glob("*.py") + glob.glob("polliwog/**/*.py") #+ ["doc/"]
+    include_paths = glob.glob("*.py") + glob.glob("polliwog/**/*.py")  # + ["doc/"]
 
     # TODO: Use flake8; argh.
     exclude_paths = ["polliwog/__init__.py", "polliwog/transform/__init__.py"]
