@@ -1,4 +1,3 @@
-import importlib
 from setuptools import setup, find_packages
 
 # Set version_info[__version__], while avoiding importing numpy, in case numpy
