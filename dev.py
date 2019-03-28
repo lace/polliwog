@@ -48,10 +48,12 @@ def coverage_report():
     execute("open htmlcov/index.html")
 
 
-# @cli.command()
-# def test_both():
-#     execute("python2 -m pytest")
-#     execute("python3 -m pytest")
+@cli.command()
+def test_both():
+    # execute("python2 -m pytest")
+    # execute("python3 -m pytest")
+    execute("python2 -m nose2")
+    execute("python3 -m nose2")
 
 
 @cli.command()
