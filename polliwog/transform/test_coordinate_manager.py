@@ -92,6 +92,7 @@ class TestCoordinateManager(unittest.TestCase):
 
     def test_coordinate_manager_forward_on_mesh(self):
         import sys
+
         if sys.version_info >= (3, 3):
             from unittest.mock import MagicMock
         else:

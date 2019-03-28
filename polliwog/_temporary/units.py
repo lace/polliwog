@@ -225,10 +225,7 @@ class Units(object):
         factor = self.factor(
             from_units, to_units
         )  # FIXME pylint: disable=redefined-outer-name
-        return [
-            factor * x
-            for x in a_list
-        ]
+        return [factor * x for x in a_list]
 
     def convert_to_default(self, value, from_units, defaults):
         """
