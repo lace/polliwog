@@ -65,8 +65,6 @@ Other modules:
 
 - [polliwog.tri.barycentric](polliwog/tri/barycentric.py) provides a function for
   projecting a point to a triangle using barycentric coordinates.
-- [polliwog.convexify](polliwog/convex_hull/convexify.py) provides a function for
-  producing a convex hull from a mostly-planar curve.
 - [polliwog.segment](polliwog/segment/segment.py) provides functions for working with
   line segments in n-space.
 
