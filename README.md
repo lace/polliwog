@@ -35,9 +35,9 @@ The [most commonly used of these](__init__.py) are directly imported into
 
 - [polliwog.Box](polliwog/primitives/box.py) represents an axis-aligned
   cuboid.
-- [blmath.Plane](polliwog/primitives/plane.py) represents a 2-D plane in
+- [polliwog.Plane](polliwog/primitives/plane.py) represents a 2-D plane in
   3-space (not a hyperplane).
-- [blmath.Polyline](polliwog/primitives/polyline.py) represents an
+- [polliwog.Polyline](polliwog/primitives/polyline.py) represents an
   unconstrained polygonal chain in 3-space.
 
 `polliwog.transform` includes code for 3D transforms.
