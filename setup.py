@@ -1,5 +1,10 @@
-import importlib
 from setuptools import setup, find_packages
+
+# Set version_info[__version__], while avoiding importing numpy, in case numpy
+# and vg are being installed concurrently.
+# https://packaging.python.org/guides/single-sourcing-package-version/
+version_info = {}
+exec(open("polliwog/package_version.py").read(), version_info)
 
 with open("README.md") as f:
     readme = f.read()
@@ -9,7 +14,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="polliwog",
-    version=importlib.import_module("polliwog").__version__,
+    version=version_info["__version__"],
     description="Computation library for 2D and 3D geometry",
     long_description=readme,
     long_description_content_type="text/markdown",
