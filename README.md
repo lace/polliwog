@@ -69,13 +69,13 @@ Other modules:
   line segments in n-space.
 
 
-# Installation
+## Installation
 
 ```sh
 pip install numpy polliwog
 ```
 
-# Usage
+## Usage
 
 ```py
 import numpy as np
@@ -85,8 +85,7 @@ from polliwog import Polyline
 ```
 
 
-Contribute
-----------
+## Contribute
 
 - Issue Tracker: https://github.com/lace/polliwog/issues
 - Source Code: https://github.com/lace/polliwog
@@ -94,14 +93,12 @@ Contribute
 Pull requests welcome!
 
 
-Support
--------
+## Support
 
 If you are having issues, please let us know.
 
 
-Acknowledgements
-----------------
+## Acknowledgements
 
 This collection was developed at Body Labs and includes a combination of code
 developed at Body Labs, from legacy code and significant new portions by
@@ -119,7 +116,6 @@ extracted.
 [vg]: https://github.com/lace/vg
 
 
-License
--------
+## License
 
 The project is licensed under the two-clause BSD license.
