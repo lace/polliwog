@@ -91,7 +91,12 @@ class TestCoordinateManager(unittest.TestCase):
         np.testing.assert_array_almost_equal(source_v, cube_v)
 
     def test_coordinate_manager_forward_on_mesh(self):
-        from mock import MagicMock
+        import sys
+
+        if sys.version_info >= (3, 3):
+            from unittest.mock import MagicMock
+        else:
+            from mock import MagicMock
 
         cube_v = create_cube_verts([1.0, 0.0, 0.0], 4.0)
         cube_floor_point = np.array([3.0, 0.0, 2.0])  # as lace.mesh.floor_point

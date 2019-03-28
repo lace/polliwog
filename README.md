@@ -89,7 +89,7 @@ Contribute
 ----------
 
 - Issue Tracker: https://github.com/lace/polliwog/issues
-- Source Code: https://github.com/lace/
+- Source Code: https://github.com/lace/polliwog
 
 Pull requests welcome!
 

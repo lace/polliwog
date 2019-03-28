@@ -50,12 +50,15 @@ jobs:
             . venv/bin/activate
             pip freeze
 
-      # - run:
-      #     name: Run tests
-      #     when: always
-      #     command: |
-      #       . venv/bin/activate
-      #       ./dev.py coverage
+      - run:
+          name: Run tests
+          when: always
+          # command: |
+          #   . venv/bin/activate
+          #   ./dev.py coverage
+          command: |
+            . venv/bin/activate
+            nose2
 
       # - run:
       #     name: Send results to coveralls.io
