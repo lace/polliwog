@@ -2,8 +2,8 @@ import math
 from collections import namedtuple
 import unittest
 import numpy as np
-from blmath.geometry import Plane
-from blmath.numerics import vx
+import vg
+from .plane import Plane
 
 
 class DistanceToPlaneTests(unittest.TestCase):

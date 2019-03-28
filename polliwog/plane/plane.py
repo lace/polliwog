@@ -1,5 +1,5 @@
 import numpy as np
-from blmath.numerics import vx
+import vg
 
 class Plane(object):
     '''

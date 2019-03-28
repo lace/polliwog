@@ -1,5 +1,5 @@
 import numpy as np
-from blmath.numerics import vx
+import vg
 from blmath.util.decorators import setter_property
 
 class Polyline(object):
@@ -256,7 +256,7 @@ class Polyline(object):
         #
         # In case a vert of the intersecting edge lies on the plane, use a
         # vector to identify which direction it's facing.
-        if vx.sproj(intersecting_segment_vector, onto=plane.normal) > 0:
+        if vg.sproj(intersecting_segment_vector, onto=plane.normal) > 0:
             new_v = np.vstack(
                 [intersection_point, self.v[intersecting_edge[1] :]]
             )

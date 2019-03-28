@@ -1,5 +1,5 @@
 import numpy as np
-from blmath.numerics import vx
+import vg
 
 def convert_33_to_44(matrix):
     '''
@@ -85,7 +85,7 @@ class CompositeTransform(object):
         '''
         matrix = self.matrix_for(from_range=from_range, reverse=reverse)
 
-        return vx.unpad(np.dot(matrix, vx.pad_with_ones(points).T).T)
+        return vg.unpad(np.dot(matrix, vg.pad_with_ones(points).T).T)
 
     def matrix_for(self, from_range=None, reverse=False):
         '''
