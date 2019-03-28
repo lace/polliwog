@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from line_intersect import line_intersect, line_intersect3
+from .line_intersect import line_intersect, line_intersect3
 
 
 class TestLineIntersect(unittest.TestCase):
