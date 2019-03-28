@@ -1,5 +1,5 @@
 def as_numeric_array(a, shape=None, allow_none=False, empty_as_none=False, dtype=None):
-    '''
+    """
     Coerce a array-like input to a numpy ndarray, and validate it.
 
     a: An array-like input.
@@ -17,7 +17,7 @@ def as_numeric_array(a, shape=None, allow_none=False, empty_as_none=False, dtype
     dtype: Coerces to a specific numpy data type, such as np.float64
       or np.uint64. See np.dtype.
 
-    '''
+    """
     import numpy as np
     from .predicates import isnumericarray
 
@@ -32,7 +32,12 @@ def as_numeric_array(a, shape=None, allow_none=False, empty_as_none=False, dtype
     if allow_none and empty_as_none:
         if a.shape == (0,):
             import warnings
-            warnings.warn("To clear this value, set it to None instead of []", DeprecationWarning, stacklevel=2)
+
+            warnings.warn(
+                "To clear this value, set it to None instead of []",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             return as_numeric_array(None, shape, allow_none, dtype)
     if shape is not None:
         if len(shape) != len(a.shape):
@@ -42,5 +47,7 @@ def as_numeric_array(a, shape=None, allow_none=False, empty_as_none=False, dtype
         elif all([exp == -1 or exp == dim for exp, dim in zip(shape, a.T.shape)]):
             a = a.T
         else:
-            raise ValueError("Dimension mismatch: expected %s, got %s" % (shape, a.shape))
+            raise ValueError(
+                "Dimension mismatch: expected %s, got %s" % (shape, a.shape)
+            )
     return a

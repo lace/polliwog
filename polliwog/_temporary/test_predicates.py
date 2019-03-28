@@ -25,10 +25,12 @@ class TestPredicates(unittest.TestCase):
             self.assertTrue(isnumeric(val))
             self.assertTrue(isnumericarray(val))
             self.assertFalse(isnumericscalar(val))
+
         def assertNumericScalar(val):
             self.assertTrue(isnumeric(val))
             self.assertFalse(isnumericarray(val))
             self.assertTrue(isnumericscalar(val))
+
         def assertNonNumeric(val):
             self.assertFalse(isnumeric(val))
             self.assertFalse(isnumericarray(val))
@@ -36,7 +38,7 @@ class TestPredicates(unittest.TestCase):
 
         assertNumericScalar(5)
         assertNumericScalar(123.456)
-        assertNumericScalar(decimal.Decimal('123.456'))
+        assertNumericScalar(decimal.Decimal("123.456"))
 
         assertNumericArray([1, 2, 3])
         assertNumericArray(np.array([1, 2, 3]))
@@ -46,16 +48,16 @@ class TestPredicates(unittest.TestCase):
         assertNumericArray(np.array([np.array([1]), np.array([2])]))
 
         assertNonNumeric(True)
-        assertNonNumeric('123.345')
+        assertNonNumeric("123.345")
         assertNonNumeric(np.nan)
         assertNonNumeric(np.inf)
-        assertNonNumeric(np.array(['1']))
-        assertNonNumeric(np.array(['foo', 'bar', 'baz']))
-        assertNonNumeric([1, '2', 3])
-        assertNonNumeric(1+1j)
-        assertNonNumeric(np.array([1+1j]))
-        assertNonNumeric(1+0j)
-        assertNonNumeric(np.array([1+0j]))
+        assertNonNumeric(np.array(["1"]))
+        assertNonNumeric(np.array(["foo", "bar", "baz"]))
+        assertNonNumeric([1, "2", 3])
+        assertNonNumeric(1 + 1j)
+        assertNonNumeric(np.array([1 + 1j]))
+        assertNonNumeric(1 + 0j)
+        assertNonNumeric(np.array([1 + 0j]))
         assertNonNumeric([True, False, True])
         assertNonNumeric(np.array([True, False, True]))
 

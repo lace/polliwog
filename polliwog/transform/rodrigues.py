@@ -1,10 +1,15 @@
 import numpy as np
 
+
 def rodrigues(r, calculate_jacobian=False):
     r = np.array(r, dtype=np.double)
     eps = np.finfo(np.double).eps
 
-    if np.all(r.shape == (3, 1)) or np.all(r.shape == (1, 3)) or np.all(r.shape == (3,)):
+    if (
+        np.all(r.shape == (3, 1))
+        or np.all(r.shape == (1, 3))
+        or np.all(r.shape == (3,))
+    ):
         r = r.flatten()
         theta = np.linalg.norm(r)
         if theta < eps:
@@ -17,36 +22,42 @@ def rodrigues(r, calculate_jacobian=False):
         else:
             c = np.cos(theta)
             s = np.sin(theta)
-            c1 = 1. - c
+            c1 = 1.0 - c
             itheta = 1.0 if theta == 0.0 else 1.0 / theta
             r *= itheta
             I = np.eye(3)
             rrt = np.array([r * r[0], r * r[1], r * r[2]])
-            _r_x_ = np.array([
-                [0, -r[2], r[1]],
-                [r[2], 0, -r[0]],
-                [-r[1], r[0], 0],
-            ])
-            r_out = c*I + c1*rrt + s*_r_x_
+            _r_x_ = np.array([[0, -r[2], r[1]], [r[2], 0, -r[0]], [-r[1], r[0], 0]])
+            r_out = c * I + c1 * rrt + s * _r_x_
             if calculate_jacobian:
-                drrt = np.array([
-                    [r[0]+r[0], r[1], r[2], r[1], 0, 0, r[2], 0, 0],
-                    [0, r[0], 0, r[0], r[1]+r[1], r[2], 0, r[2], 0],
-                    [0, 0, r[0], 0, 0, r[1], r[0], r[1], r[2]+r[2]],
-                ])
-                d_r_x_ = np.array([
-                    [0, 0, 0, 0, 0, -1, 0, 1, 0],
-                    [0, 0, 1, 0, 0, 0, -1, 0, 0],
-                    [0, -1, 0, 1, 0, 0, 0, 0, 0],
-                ])
+                drrt = np.array(
+                    [
+                        [r[0] + r[0], r[1], r[2], r[1], 0, 0, r[2], 0, 0],
+                        [0, r[0], 0, r[0], r[1] + r[1], r[2], 0, r[2], 0],
+                        [0, 0, r[0], 0, 0, r[1], r[0], r[1], r[2] + r[2]],
+                    ]
+                )
+                d_r_x_ = np.array(
+                    [
+                        [0, 0, 0, 0, 0, -1, 0, 1, 0],
+                        [0, 0, 1, 0, 0, 0, -1, 0, 0],
+                        [0, -1, 0, 1, 0, 0, 0, 0, 0],
+                    ]
+                )
                 I = np.array([I.flatten(), I.flatten(), I.flatten()])
                 ri = np.array([[r[0]], [r[1]], [r[2]]])
-                a0 = -s*ri
-                a1 = (s - 2*c1*itheta)*ri
-                a2 = np.ones((3, 1))*c1*itheta
-                a3 = (c - s*itheta)*ri
-                a4 = np.ones((3, 1))*s*itheta
-                jac = a0*I + a1*rrt.flatten() + a2*drrt + a3*_r_x_.flatten() + a4*d_r_x_
+                a0 = -s * ri
+                a1 = (s - 2 * c1 * itheta) * ri
+                a2 = np.ones((3, 1)) * c1 * itheta
+                a3 = (c - s * itheta) * ri
+                a4 = np.ones((3, 1)) * s * itheta
+                jac = (
+                    a0 * I
+                    + a1 * rrt.flatten()
+                    + a2 * drrt
+                    + a3 * _r_x_.flatten()
+                    + a4 * d_r_x_
+                )
     elif np.all(r.shape == (3, 3)):
         u, _, v = np.linalg.svd(r)
         r = np.dot(u, v)
@@ -65,7 +76,11 @@ def rodrigues(r, calculate_jacobian=False):
                     ry = -ry
                 if r[0, 2] < 0:
                     rz = -rz
-                if np.abs(rx) < np.abs(ry) and np.abs(rx) < np.abs(rz) and ((r[1, 2] > 0) != (ry*rz > 0)):
+                if (
+                    np.abs(rx) < np.abs(ry)
+                    and np.abs(rx) < np.abs(rz)
+                    and ((r[1, 2] > 0) != (ry * rz > 0))
+                ):
                     rz = -rz
 
                 r_out = np.array([[rx, ry, rz]]).T
@@ -79,28 +94,34 @@ def rodrigues(r, calculate_jacobian=False):
         else:
             vth = 1.0 / (2.0 * s)
             if calculate_jacobian:
-                dtheta_dtr = -1./s
-                dvth_dtheta = -vth*c/s
-                d1 = 0.5*dvth_dtheta*dtheta_dtr
-                d2 = 0.5*dtheta_dtr
-                dvardR = np.array([
-                    [0, 0, 0, 0, 0, 1, 0, -1, 0],
-                    [0, 0, -1, 0, 0, 0, 1, 0, 0],
-                    [0, 1, 0, -1, 0, 0, 0, 0, 0],
-                    [d1, 0, 0, 0, d1, 0, 0, 0, d1],
-                    [d2, 0, 0, 0, d2, 0, 0, 0, d2],
-                ])
-                dvar2dvar = np.array([
-                    [vth, 0, 0, rx, 0],
-                    [0, vth, 0, ry, 0],
-                    [0, 0, vth, rz, 0],
-                    [0, 0, 0, 0, 1],
-                ])
-                domegadvar2 = np.array([
-                    [theta, 0, 0, rx*vth],
-                    [0, theta, 0, ry*vth],
-                    [0, 0, theta, rz*vth],
-                ])
+                dtheta_dtr = -1.0 / s
+                dvth_dtheta = -vth * c / s
+                d1 = 0.5 * dvth_dtheta * dtheta_dtr
+                d2 = 0.5 * dtheta_dtr
+                dvardR = np.array(
+                    [
+                        [0, 0, 0, 0, 0, 1, 0, -1, 0],
+                        [0, 0, -1, 0, 0, 0, 1, 0, 0],
+                        [0, 1, 0, -1, 0, 0, 0, 0, 0],
+                        [d1, 0, 0, 0, d1, 0, 0, 0, d1],
+                        [d2, 0, 0, 0, d2, 0, 0, 0, d2],
+                    ]
+                )
+                dvar2dvar = np.array(
+                    [
+                        [vth, 0, 0, rx, 0],
+                        [0, vth, 0, ry, 0],
+                        [0, 0, vth, rz, 0],
+                        [0, 0, 0, 0, 1],
+                    ]
+                )
+                domegadvar2 = np.array(
+                    [
+                        [theta, 0, 0, rx * vth],
+                        [0, theta, 0, ry * vth],
+                        [0, 0, theta, rz * vth],
+                    ]
+                )
                 jac = np.dot(np.dot(domegadvar2, dvar2dvar), dvardR)
                 for ii in range(3):
                     jac[ii] = jac[ii].reshape((3, 3)).T.flatten()
@@ -114,8 +135,13 @@ def rodrigues(r, calculate_jacobian=False):
     else:
         return r_out
 
+
 def as_rotation_matrix(r):
-    if np.all(r.shape == (3, 1)) or np.all(r.shape == (1, 3)) or np.all(r.shape == (3,)):
+    if (
+        np.all(r.shape == (3, 1))
+        or np.all(r.shape == (1, 3))
+        or np.all(r.shape == (3,))
+    ):
         return rodrigues(r)
     elif np.all(r.shape == (3, 3)):
         return rodrigues(rodrigues(r))

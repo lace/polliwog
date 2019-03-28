@@ -2,8 +2,9 @@ import numpy as np
 import vg
 from .._temporary.decorators import setter_property
 
+
 class Polyline(object):
-    '''
+    """
     Represent the geometry of a polygonal chain in 3-space. The
     chain may be open or closed, and there are no constraints on the
     geometry. For example, the chain may be simple or
@@ -16,17 +17,18 @@ class Polyline(object):
     allows arbitrary edges and enables visualization. To convert to
     a Lines object, use the as_lines() method.
 
-    '''
+    """
+
     def __init__(self, v, closed=False):
-        '''
+        """
         v: An array-like thing containing points in 3-space.
         closed: True indicates a closed chain, which has an extra
           segment connecting the last point back to the first
           point.
 
-        '''
+        """
         # Avoid invoking _update_edges before setting closed and v.
-        self.__dict__['closed'] = closed
+        self.__dict__["closed"] = closed
         self.v = v
 
     def __repr__(self):
@@ -42,30 +44,31 @@ class Polyline(object):
         return len(self.v)
 
     def copy(self):
-        '''
+        """
         Return a copy of this polyline.
 
-        '''
+        """
         v = None if self.v is None else np.copy(self.v)
         return self.__class__(v, closed=self.closed)
 
     def as_lines(self, vc=None):
-        '''
+        """
         Return a Lines instance with our vertices and edges.
 
-        '''
+        """
         from lace.lines import Lines
+
         return Lines(v=self.v, e=self.e, vc=vc)
 
     def to_dict(self, decimals=3):
         return {
-            'vertices': [np.around(v, decimals=decimals).tolist() for v in self.v],
-            'edges': self.e,
+            "vertices": [np.around(v, decimals=decimals).tolist() for v in self.v],
+            "edges": self.e,
         }
 
     def _update_edges(self):
         if self.v is None:
-            self.__dict__['e'] = None
+            self.__dict__["e"] = None
             return
 
         num_vertices = self.v.shape[0]
@@ -78,50 +81,55 @@ class Polyline(object):
 
         edges.flags.writeable = False
 
-        self.__dict__['e'] = edges
+        self.__dict__["e"] = edges
 
     @setter_property
-    def v(self, val):  # setter_property incorrectly triggers method-hidden. pylint: disable=method-hidden
-        '''
+    def v(
+        self, val
+    ):  # setter_property incorrectly triggers method-hidden. pylint: disable=method-hidden
+        """
         Update the vertices to a new array-like thing containing points
         in 3D space. Set to None for an empty polyline.
 
-        '''
+        """
         from .._temporary.coercion import as_numeric_array
-        self.__dict__['v'] = as_numeric_array(val, dtype=np.float64, shape=(-1, 3), allow_none=True)
+
+        self.__dict__["v"] = as_numeric_array(
+            val, dtype=np.float64, shape=(-1, 3), allow_none=True
+        )
         self._update_edges()
 
     @setter_property
     def closed(self, val):
-        '''
+        """
         Update whether the polyline is closed or open.
 
-        '''
-        self.__dict__['closed'] = val
+        """
+        self.__dict__["closed"] = val
         self._update_edges()
 
     @property
     def e(self):
-        '''
+        """
         Return a np.array of edges. Derived automatically from self.v
         and self.closed whenever those values are set.
 
-        '''
-        return self.__dict__['e']
+        """
+        return self.__dict__["e"]
 
     @property
     def segments(self):
-        '''
+        """
         Coordinate pairs for each segment.
-        '''
+        """
         return self.v[self.e]
 
     @property
     def segment_lengths(self):
-        '''
+        """
         The length of each of the segments.
 
-        '''
+        """
         if self.e is None:
             return np.empty((0,))
 
@@ -129,54 +137,51 @@ class Polyline(object):
 
     @property
     def total_length(self):
-        '''
+        """
         The total length of all the segments.
 
-        '''
+        """
         return np.sum(self.segment_lengths)
 
     @property
     def segment_vectors(self):
-        '''
+        """
         Vectors spanning each segment.
-        '''
+        """
         segments = self.segments
         return segments[:, 1] - segments[:, 0]
 
     def flip(self):
-        '''
+        """
         Flip the polyline from end to end.
-        '''
+        """
         self.v = np.flipud(self.v)
 
     def reindexed(self, index, ret_edge_mapping=False):
-        '''
+        """
         Return a new Polyline which reindexes the callee polyline, which much
         be closed, so the vertex with the given index becomes vertex 0.
 
         ret_edge_mapping: if True, return an array that maps from old edge
             indices to new.
-        '''
+        """
         if not self.closed:
             raise ValueError("Can't reindex an open polyline")
 
         result = Polyline(
-            v=np.append(self.v[index:], self.v[0:index], axis=0),
-            closed=True
+            v=np.append(self.v[index:], self.v[0:index], axis=0), closed=True
         )
 
         if ret_edge_mapping:
             edge_mapping = np.append(
-                np.arange(index, len(self.v)),
-                np.arange(0, index),
-                axis=0
+                np.arange(index, len(self.v)), np.arange(0, index), axis=0
             )
             return result, edge_mapping
         else:
             return result
 
     def partition_by_length(self, max_length, ret_indices=False):
-        '''
+        """
         Subdivide each line segment longer than max_length with
         equal-length segments, such that none of the new segments
         are longer than max_length.
@@ -184,7 +189,7 @@ class Polyline(object):
         ret_indices: If True, return the indices of the original vertices.
           Otherwise return self for chaining.
 
-        '''
+        """
         from ..segment.segment import partition_segment
 
         lengths = self.segment_lengths
@@ -203,7 +208,14 @@ class Polyline(object):
             if num_segments <= 1:
                 new_v = np.vstack((new_v, start_point.reshape(-1, 3)))
             else:
-                new_v = np.vstack((new_v, partition_segment(start_point, end_point, np.int(num_segments), endpoint=False)))
+                new_v = np.vstack(
+                    (
+                        new_v,
+                        partition_segment(
+                            start_point, end_point, np.int(num_segments), endpoint=False
+                        ),
+                    )
+                )
 
         if not self.closed:
             indices_of_orig_vertices.append(len(new_v))
@@ -214,19 +226,19 @@ class Polyline(object):
         return np.array(indices_of_orig_vertices) if ret_indices else self
 
     def apex(self, axis):
-        '''
+        """
         Find the most extreme point in the direction of the axis provided.
 
         axis: A vector, which is an 3x1 np.array.
 
-        '''
+        """
         return vg.apex(self.v, axis)
 
     def intersect_plane(self, plane, ret_edge_indices=False):
-        '''
+        """
         Returns the points of intersection between the plane and any of the
         edges of `polyline`, which should be an instance of Polyline.
-        '''
+        """
         # Identify edges with endpoints that are not on the same side of the plane
         sgn_dists = plane.signed_distance(self.v)
         which_es = np.abs(np.sign(sgn_dists)[self.e].sum(axis=1)) != 2
@@ -235,7 +247,9 @@ class Polyline(object):
         # Normalize the rows of endpoint_distances
         t = endpoint_distances / endpoint_distances.sum(axis=1)[:, np.newaxis]
         # Take a weighted average of the endpoints to obtain the points of intersection
-        intersection_points = ((1. - t[:, :, np.newaxis]) * self.segments[which_es]).sum(axis=1)
+        intersection_points = (
+            (1.0 - t[:, :, np.newaxis]) * self.segments[which_es]
+        ).sum(axis=1)
         if ret_edge_indices:
             return intersection_points, which_es.nonzero()[0]
         else:
@@ -254,19 +268,15 @@ class Polyline(object):
         # In case a vert of the intersecting edge lies on the plane, use a
         # vector to identify which direction it's facing.
         if vg.sproj(intersecting_segment_vector, onto=plane.normal) > 0:
-            new_v = np.vstack(
-                [intersection_point, self.v[intersecting_edge[1] :]]
-            )
+            new_v = np.vstack([intersection_point, self.v[intersecting_edge[1] :]])
         else:
-            new_v = np.vstack(
-                [self.v[: intersecting_edge[0] + 1], intersection_point]
-            )
+            new_v = np.vstack([self.v[: intersecting_edge[0] + 1], intersection_point])
         return Polyline(v=new_v, closed=False)
 
     def _cut_by_plane_closed(self, plane):
-        '''
+        """
         Precondition: there are exactly two points of intersection.
-        '''
+        """
         # Reindex the polyline so it starts with a contiguous subchain that
         # lies in front of or on the plane.
         v_sign = plane.sign(self.v)
@@ -290,9 +300,7 @@ class Polyline(object):
         if v_sign[0] == 0:
             synthesized_start_point = None
         else:
-            synthesized_start_point = plane.line_segment_xsection(
-                *working.segments[-1]
-            )
+            synthesized_start_point = plane.line_segment_xsection(*working.segments[-1])
 
         # Repeat for the endpoint of the part we want to keep.
         points_on_or_in_front, = np.where(v_sign >= 0)
@@ -304,7 +312,7 @@ class Polyline(object):
                 *working.segments[end_index]
             )
 
-        points_to_keep = working.v[0:end_index + 1]
+        points_to_keep = working.v[0 : end_index + 1]
 
         def to_array(maybe_point):
             if maybe_point is None:
@@ -313,12 +321,15 @@ class Polyline(object):
                 return np.array([maybe_point])
 
         return Polyline(
-            v=np.concatenate([
-                to_array(synthesized_start_point),
-                points_to_keep,
-                to_array(synthesized_end_point),
-            ]),
-            closed=False)
+            v=np.concatenate(
+                [
+                    to_array(synthesized_start_point),
+                    points_to_keep,
+                    to_array(synthesized_end_point),
+                ]
+            ),
+            closed=False,
+        )
 
     def cut_by_plane(self, plane):
         """

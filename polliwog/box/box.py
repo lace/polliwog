@@ -1,29 +1,32 @@
 import numpy as np
 
+
 class Box(object):
-    '''
+    """
     An axis-aligned cuboid.
 
-    '''
+    """
+
     def __init__(self, origin, shape):
-        '''
+        """
         origin: The x, y, z coordinate of the origin.
         shape: A sequence containing the width (dx), height (dy), and
           depth (dz).
 
-        '''
+        """
         from .._temporary.coercion import as_numeric_array
+
         self.origin = as_numeric_array(origin, shape=(3,))
         self.shape = as_numeric_array(shape, shape=(3,))
         if any(np.less(self.shape, 0)):
-            raise ValueError('Shape should be zero or positive')
+            raise ValueError("Shape should be zero or positive")
 
     @property
     def ranges(self):
-        '''
+        """
         Return ranges for each coordinate axis as a 3x2 numpy array.
 
-        '''
+        """
         ranges = np.array([self.origin, self.origin + self.shape]).T
         # ranges is almost, but not quite what we want, since it might
         # include mins which are greater than maxes, and vice versa.
@@ -83,7 +86,7 @@ class Box(object):
 
     @property
     def floor_point(self):
-        return self.origin + [0.5, 0., 0.5] * self.shape
+        return self.origin + [0.5, 0.0, 0.5] * self.shape
 
     @property
     def volume(self):
@@ -91,5 +94,7 @@ class Box(object):
 
     @property
     def surface_area(self):
-        l, h, w = self.shape # self.shape is a np.ndarray, which is a sequence. pylint: disable=unpacking-non-sequence
+        l, h, w = (
+            self.shape
+        )  # self.shape is a np.ndarray, which is a sequence. pylint: disable=unpacking-non-sequence
         return 2 * (w * l + h * l + h * w)

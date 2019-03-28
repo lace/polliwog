@@ -78,12 +78,12 @@ jobs:
             . venv/bin/activate
             ./dev.py lint
 
-      # - run:
-      #     name: Check code format
-      #     when: always
-      #     command: |
-      #       . venv/bin/activate
-      #       ./dev.py black-check
+      - run:
+          name: Check code format
+          when: always
+          command: |
+            . venv/bin/activate
+            ./dev.py black-check
 
 workflows:
   version: 2

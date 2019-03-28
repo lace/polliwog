@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def barycentric_coordinates_of_projection(p, q, u, v):
     """ Given a point, gives projected coords of that point to a triangle
     in barycentric coordinates.
@@ -23,7 +24,7 @@ def barycentric_coordinates_of_projection(p, q, u, v):
     v = v.T
 
     n = np.cross(u, v, axis=0)
-    s = np.sum(n*n, axis=0)
+    s = np.sum(n * n, axis=0)
 
     # If the triangle edges are collinear, cross-product is zero,
     # which makes "s" 0, which gives us divide by zero. So we

@@ -33,26 +33,32 @@ def find_rigid_transform(a, b, visualize=False):
     R = v.dot(u.T)
 
     if scipy.linalg.det(R) < 0:
-        if np.any(s == 0): # This is only valid in the noiseless case; see the paper
+        if np.any(s == 0):  # This is only valid in the noiseless case; see the paper
             v[:, 2] = -v[:, 2]
             R = v.dot(u.T)
         else:
-            raise ValueError("find_rigid_transform found a reflection that it cannot recover from. Try RANSAC or something...")
+            raise ValueError(
+                "find_rigid_transform found a reflection that it cannot recover from. Try RANSAC or something..."
+            )
 
     T = col(b_mean - R.dot(a_mean))
 
     if visualize != False:
         from lace.mesh import Mesh
         from lace.meshviewer import MeshViewer
+
         mv = MeshViewer() if visualize is True else visualize
         a_T = R.dot(a) + T
-        mv.set_dynamic_meshes([
-            Mesh(v=a.T, f=[]).set_vertex_colors('red'),
-            Mesh(v=b.T, f=[]).set_vertex_colors('green'),
-            Mesh(v=a_T.T, f=[]).set_vertex_colors('orange'),
-        ])
+        mv.set_dynamic_meshes(
+            [
+                Mesh(v=a.T, f=[]).set_vertex_colors("red"),
+                Mesh(v=b.T, f=[]).set_vertex_colors("green"),
+                Mesh(v=a_T.T, f=[]).set_vertex_colors("orange"),
+            ]
+        )
 
     return R, T
+
 
 def find_rigid_rotation(a, b, allow_scaling=False):
     """

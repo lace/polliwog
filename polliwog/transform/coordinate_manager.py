@@ -1,5 +1,5 @@
 class CoordinateManager(object):
-    '''
+    """
     Here's the idea:
 
         coordinate_manager = CoordinateManager()
@@ -13,42 +13,49 @@ class CoordinateManager(object):
         coordinate_manager.source = cube
         centered_mesh = coordinate_manager.centered_at_origin
 
-    '''
+    """
 
     def __init__(self):
         from .composite import CompositeTransform
-        self.__dict__.update({
-            # A map from tag names to indices into the transform stack.
-            'tags_to_indices': {},
 
-            # Our currently set points, and the tag at which they belong.
-            'points_tag': None,
-            'points': None,
-
-            # Our worthy collaborator.
-            '_transform': CompositeTransform(),
-        })
+        self.__dict__.update(
+            {
+                # A map from tag names to indices into the transform stack.
+                "tags_to_indices": {},
+                # Our currently set points, and the tag at which they belong.
+                "points_tag": None,
+                "points": None,
+                # Our worthy collaborator.
+                "_transform": CompositeTransform(),
+            }
+        )
 
     def append_transform4(self, *args, **kwargs):
         self._transform.append_transform4(*args, **kwargs)
+
     def append_transform3(self, *args, **kwargs):
         self._transform.append_transform3(*args, **kwargs)
+
     def scale(self, *args, **kwargs):
         self._transform.scale(*args, **kwargs)
+
     def convert_units(self, *args, **kwargs):
         self._transform.convert_units(*args, **kwargs)
+
     def translate(self, *args, **kwargs):
         self._transform.translate(*args, **kwargs)
+
     def reorient(self, *args, **kwargs):
         self._transform.reorient(*args, **kwargs)
+
     def rotate(self, *args, **kwargs):
         self._transform.rotate(*args, **kwargs)
 
     def tag_as(self, name):
-        '''
+        """
         Give a name to the current state.
 
-        '''
+        """
         # The indices of CompositeTransform are 0-based, which means the first
         # transform is transform 0.
         #
@@ -63,7 +70,7 @@ class CoordinateManager(object):
     def do_transform(self, points_or_mesh, from_tag, to_tag):
         from copy import copy
 
-        if hasattr(points_or_mesh, 'v'):
+        if hasattr(points_or_mesh, "v"):
             points = points_or_mesh.v
             # Can't run the transform if there are no vertices.
             if points is None:
@@ -86,10 +93,14 @@ class CoordinateManager(object):
             from_range = to_index, from_index
             result_points = self._transform(points, from_range=from_range, reverse=True)
 
-        if hasattr(points_or_mesh, 'v'):
+        if hasattr(points_or_mesh, "v"):
             # for lace or those object with copy method, invoke its own copy method
             # otherwise just shallow copy
-            result_mesh = points_or_mesh.copy() if hasattr(points_or_mesh, 'copy') else copy(points_or_mesh)
+            result_mesh = (
+                points_or_mesh.copy()
+                if hasattr(points_or_mesh, "copy")
+                else copy(points_or_mesh)
+            )
             result_mesh.v = result_points
 
             return result_mesh
@@ -97,22 +108,20 @@ class CoordinateManager(object):
             return result_points
 
     def __setattr__(self, name, value):
-        '''
+        """
         value: Either an nx3 array of points or an instance of Mesh.
 
-        '''
+        """
         if name not in self.tags_to_indices:
             raise AttributeError("No such tag: %s" % name)
 
-        self.__dict__['points_tag'] = name
-        self.__dict__['points_or_mesh'] = value
+        self.__dict__["points_tag"] = name
+        self.__dict__["points_or_mesh"] = value
 
     def __getattr__(self, name):
         if self.points_tag is None:
-            raise ValueError('Must set a value before trying to read one')
+            raise ValueError("Must set a value before trying to read one")
 
         return self.do_transform(
-            points_or_mesh=self.points_or_mesh,
-            from_tag=self.points_tag,
-            to_tag=name
+            points_or_mesh=self.points_or_mesh, from_tag=self.points_tag, to_tag=name
         )

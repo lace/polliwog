@@ -1,6 +1,7 @@
 import numpy as np
 import vg
 
+
 def surface_normal(points, normalize=True):
     """
     Compute the surface normal of a triangle.

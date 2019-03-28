@@ -2,62 +2,62 @@ import unittest
 import numpy as np
 from line_intersect import line_intersect, line_intersect3
 
+
 class TestLineIntersect(unittest.TestCase):
     def test_line_intersect(self):
-        p0, q0 = np.array([[0., 3.], [4., 11.]])
-        p1, q1 = np.array([[-2., 8.], [6., 4.]])
+        p0, q0 = np.array([[0.0, 3.0], [4.0, 11.0]])
+        p1, q1 = np.array([[-2.0, 8.0], [6.0, 4.0]])
         result = line_intersect(p0, q0, p1, q1)
         np.testing.assert_array_equal(result, [1.6, 6.2])
 
     def test_line_intersect_duplicate_point(self):
-        p0, q0 = np.array([[0., 3.], [5., 5.]])
-        p1, q1 = np.array([[5., 5.], [6., 4.]])
+        p0, q0 = np.array([[0.0, 3.0], [5.0, 5.0]])
+        p1, q1 = np.array([[5.0, 5.0], [6.0, 4.0]])
         result = line_intersect(p0, q0, p1, q1)
-        np.testing.assert_array_equal(result, [5., 5.])
+        np.testing.assert_array_equal(result, [5.0, 5.0])
 
 
 class TestLineIntersect3D(unittest.TestCase):
-
     def test_line_intersect3_with_colinear_lines(self):
-        p0, q0 = np.array([[0., 1., 2.], [0., 10., 20.]])
-        p1, q1 = np.array([[0., 2., 4.], [0., 4., 8.]])
+        p0, q0 = np.array([[0.0, 1.0, 2.0], [0.0, 10.0, 20.0]])
+        p1, q1 = np.array([[0.0, 2.0, 4.0], [0.0, 4.0, 8.0]])
         result = line_intersect3(p0, q0, p1, q1)
         self.assertIsNone(result)
 
     def test_line_intersect3_with_parallel_lines(self):
-        p0, q0 = np.array([[0., 1., 2.], [0., 10., 20.]])
-        p1, q1 = np.array([[1., 2., 3.], [1., 11., 21.]])
+        p0, q0 = np.array([[0.0, 1.0, 2.0], [0.0, 10.0, 20.0]])
+        p1, q1 = np.array([[1.0, 2.0, 3.0], [1.0, 11.0, 21.0]])
         result = line_intersect3(p0, q0, p1, q1)
         self.assertIsNone(result)
 
     def test_line_intersect3_with_degenerate_input_p(self):
-        p0, q0 = np.array([[0., 1., 2.], [0., 10., 20.]])
-        p1, q1 = np.array([[0., 1., 2.], [1., 11., 21.]])
+        p0, q0 = np.array([[0.0, 1.0, 2.0], [0.0, 10.0, 20.0]])
+        p1, q1 = np.array([[0.0, 1.0, 2.0], [1.0, 11.0, 21.0]])
         result = line_intersect3(p0, q0, p1, q1)
-        np.testing.assert_array_equal(result, [0., 1., 2.])
+        np.testing.assert_array_equal(result, [0.0, 1.0, 2.0])
 
     def test_line_intersect3_with_degenerate_input_q(self):
-        p0, q0 = np.array([[0., 1., 2.], [0., 10., 20.]])
-        p1, q1 = np.array([[1., 2., 3.], [0., 10., 20.]])
+        p0, q0 = np.array([[0.0, 1.0, 2.0], [0.0, 10.0, 20.0]])
+        p1, q1 = np.array([[1.0, 2.0, 3.0], [0.0, 10.0, 20.0]])
         result = line_intersect3(p0, q0, p1, q1)
-        np.testing.assert_array_equal(result, [0., 10., 20.])
+        np.testing.assert_array_equal(result, [0.0, 10.0, 20.0])
 
     def test_line_intersect3_example_1(self):
         # This example tests the codirectional cross product case
-        p0, q0 = np.array([[5., 5., 4.], [10., 10., 6.]])
-        p1, q1 = np.array([[5., 5., 5.], [10., 10., 3.]])
+        p0, q0 = np.array([[5.0, 5.0, 4.0], [10.0, 10.0, 6.0]])
+        p1, q1 = np.array([[5.0, 5.0, 5.0], [10.0, 10.0, 3.0]])
         result = line_intersect3(p0, q0, p1, q1)
-        np.testing.assert_array_equal(result, [25./4, 25./4, 9./2])
+        np.testing.assert_array_equal(result, [25.0 / 4, 25.0 / 4, 9.0 / 2])
 
     def test_line_intersect3_example_2(self):
         # This example tests the opposite direction cross product case
-        p0, q0 = np.array([[5., 5., 4.], [10., 10., -6.]])
-        p1, q1 = np.array([[5., 5., 5.], [10., 10., -3.]])
+        p0, q0 = np.array([[5.0, 5.0, 4.0], [10.0, 10.0, -6.0]])
+        p1, q1 = np.array([[5.0, 5.0, 5.0], [10.0, 10.0, -3.0]])
         result = line_intersect3(p0, q0, p1, q1)
         np.testing.assert_array_equal(result, [2.5, 2.5, 9])
 
     def test_line_intersect3_example_3(self):
-        p0, q0 = np.array([[6., 8., 4.], [12., 15., 4.]])
-        p1, q1 = np.array([[6., 8., 2.], [12., 15., 6.]])
+        p0, q0 = np.array([[6.0, 8.0, 4.0], [12.0, 15.0, 4.0]])
+        p1, q1 = np.array([[6.0, 8.0, 2.0], [12.0, 15.0, 6.0]])
         result = line_intersect3(p0, q0, p1, q1)
-        np.testing.assert_array_equal(result, [9., 23./2, 4.])
+        np.testing.assert_array_equal(result, [9.0, 23.0 / 2, 4.0])
