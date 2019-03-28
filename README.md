@@ -4,7 +4,7 @@
 [![python versions](https://img.shields.io/pypi/pyversions/polliwog.svg?style=flat-square)][pypi]
 [![license](https://img.shields.io/pypi/l/vg.svg?style=flat-square)][pypi]
 [![coverage](https://img.shields.io/coveralls/lace/polliwog.svg?style=flat-square)][coverage]
-[![build](https://img.shields.io/circleci/project/github/lace/polliwog/master.svg?style=flat-square)][circle]
+[![build](https://img.shields.io/circleci/project/github/lace/polliwog/master.svg?style=flat-square)][build]
 [![docs build](https://img.shields.io/readthedocs/polliwog.svg?style=flat-square)][docs build]
 [![code style](https://img.shields.io/badge/code%20style-black-black.svg?style=flat-square)][black]
 
