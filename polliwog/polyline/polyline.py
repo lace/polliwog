@@ -243,7 +243,6 @@ class Polyline(object):
 
     def _cut_by_plane_open(self, plane, intersection_point, intersecting_edge_index):
         intersecting_edge = self.e[intersecting_edge_index]
-        verts_of_intersecting_edge = self.v[intersecting_edge]
         intersecting_segment_vector = self.segment_vectors[intersecting_edge_index]
         # Do we want the edges before or after the intersecting edge? Determine that
         # by checking whether the intersecting edge crosses from back to front or
@@ -333,7 +332,6 @@ class Polyline(object):
         intersection_points, edge_indices = self.intersect_plane(
             plane, ret_edge_indices=True
         )
-        orig_edge_indices = edge_indices
         num_edge_indices = len(edge_indices)
         if num_edge_indices == 0:
             raise ValueError("Plane does not intersect polyline")
