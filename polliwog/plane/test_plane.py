@@ -155,7 +155,7 @@ class TestCanonicalPoint(unittest.TestCase):
 class TestProjectPoint(unittest.TestCase):
 
     def test_project_point(self):
-        plane = Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vx.basis.y)
+        plane = Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y)
 
         point = np.array([10, 20, -5])
 

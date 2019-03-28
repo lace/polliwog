@@ -11,10 +11,10 @@ class Plane(object):
     '''
 
     def __init__(self, point_on_plane, unit_normal):
-        if vx.almost_zero(unit_normal):
+        if vg.almost_zero(unit_normal):
             raise ValueError('unit_normal should not be the zero vector')
 
-        unit_normal = vx.normalize(unit_normal)
+        unit_normal = vg.normalize(unit_normal)
 
         self._r0 = np.asarray(point_on_plane)
         self._n = np.asarray(unit_normal)

@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.spatial import ConvexHull  # First thought this warning was caused by a pythonpath problem, but it seems more likely that the warning is caused by scipy import hackery. pylint: disable=no-name-in-module
-from blmath.geometry import Polyline
-from blmath.geometry.transform.rotation import estimate_normal, rotate_to_xz_plane
-from blmath.geometry.transform.translation import translation
+from ..polyline.polyline import Polyline
+from ..transform.rotation import estimate_normal, rotate_to_xz_plane
+from ..transform.translation import translation
 
 def convexify_planar_curve(polyline, flatten=False, want_vertices=False, normal=None):
     '''

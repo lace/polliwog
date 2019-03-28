@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
-from blmath.geometry import Polyline
-from blmath.geometry.convexify import convexify_planar_curve
+from ..polyline.polyline import Polyline
+from .convexify import convexify_planar_curve
 
 class TestConvexify(unittest.TestCase):
 
