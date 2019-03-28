@@ -29,7 +29,7 @@ class Plane(object):
         normal extends towards you.
 
         '''
-        from blmath.numerics import as_numeric_array
+        from .._temporary.coercion import as_numeric_array
 
         p1 = as_numeric_array(p1, shape=(3,))
         p2 = as_numeric_array(p2, shape=(3,))
@@ -57,7 +57,7 @@ class Plane(object):
         as its normal vector.
 
         '''
-        from blmath.numerics import as_numeric_array
+        from .._temporary.coercion import as_numeric_array
 
         p1 = as_numeric_array(p1, shape=(3,))
         p2 = as_numeric_array(p2, shape=(3,))

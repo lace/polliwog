@@ -25,6 +25,12 @@ The goals of this project are:
 [docs build]: https://polliwog.readthedocs.io/en/latest/
 [black]: https://black.readthedocs.io/en/stable/
 
+## TODO
+
+- [ ] Replace `_temporary.units` with `pint` in `polliwog/transform/composite.py`.
+- [ ] Replace `_temporary.as_numeric_array` with coercion function in vg.
+- [ ] Replace `_temporary.matlab.col` with direct usage.
+- [ ] Replace `_temporary.setter_property` with ??.
 
 ## Features
 

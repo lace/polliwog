@@ -183,7 +183,7 @@ class CompositeTransform(object):
         - composite.scale(.01)
 
         '''
-        from blmath import units
+        from .._temporary import units
         factor = units.factor(
             from_units=from_units,
             to_units=to_units,
@@ -225,7 +225,7 @@ class CompositeTransform(object):
         Reorient using up and look.
 
         '''
-        from blmath.geometry.transform import rotation_from_up_and_look
+        from .rotation import rotation_from_up_and_look
         forward3 = rotation_from_up_and_look(up, look)
         # The inverse of a rotation matrix is its transpose.
         return self.append_transform3(forward3, forward3.T)

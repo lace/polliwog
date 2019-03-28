@@ -1,6 +1,6 @@
 import numpy as np
 import vg
-from blmath.util.decorators import setter_property
+from .._temporary.decorators import setter_property
 
 class Polyline(object):
     '''
@@ -87,7 +87,7 @@ class Polyline(object):
         in 3D space. Set to None for an empty polyline.
 
         '''
-        from blmath.numerics import as_numeric_array
+        from .._temporary.coercion import as_numeric_array
         self.__dict__['v'] = as_numeric_array(val, dtype=np.float64, shape=(-1, 3), allow_none=True)
         self._update_edges()
 
