@@ -239,7 +239,7 @@ class Plane(object):
         Returns one polyline that may connect supposedly disconnected components.
         Returns an empty Polyline if there's no intersection.
         '''
-        from blmath.geometry import Polyline
+        from ..polyline.polyline import Polyline
 
         components = self.mesh_xsections(m, neighborhood)
         if len(components) == 0:
@@ -268,7 +268,7 @@ class Plane(object):
 
         Returns a list of Polylines.
         '''
-        from blmath.geometry import Polyline
+        from ..polyline.polyline import Polyline
 
         # 1: Select those faces that intersect the plane, fs
         fs = self.mesh_intersecting_faces(m)

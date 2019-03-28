@@ -234,7 +234,7 @@ class CompositeTransform(object):
         '''
         Rotate by either an explicit matrix or a rodrigues vector
         '''
-        from blmath.geometry.transform.rodrigues import as_rotation_matrix
+        from .rodrigues import as_rotation_matrix
         rot = np.asarray(rot)
         rot = as_rotation_matrix(rot)
         # The inverse of a rotation matrix is its transpose.

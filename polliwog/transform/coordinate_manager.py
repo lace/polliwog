@@ -16,7 +16,7 @@ class CoordinateManager(object):
     '''
 
     def __init__(self):
-        from blmath.geometry.transform.composite import CompositeTransform
+        from .composite import CompositeTransform
         self.__dict__.update({
             # A map from tag names to indices into the transform stack.
             'tags_to_indices': {},

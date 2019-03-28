@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from blmath.geometry.transform.translation import translation
+from .translation import translation
 
 class TranslationsTest(unittest.TestCase):
 

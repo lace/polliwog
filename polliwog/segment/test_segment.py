@@ -4,7 +4,7 @@ import numpy as np
 class PartitionSegmentOldTests(unittest.TestCase):
 
     def setUp(self):
-        from blmath.geometry.segment import partition_segment_old
+        from .segment import partition_segment_old
         self.partition_segment_old = partition_segment_old
 
     def test_raises_exception_for_invalid_partition_size_type(self):
@@ -104,7 +104,7 @@ class PartitionSegmentOldTests(unittest.TestCase):
 class PartitionSegmentTests(unittest.TestCase):
 
     def setUp(self):
-        from blmath.geometry.segment import partition_segment
+        from .segment import partition_segment
         self.partition_segment = partition_segment
 
     def test_raises_exception_for_invalid_partition_size_type(self):
@@ -184,7 +184,7 @@ class PartitionSegmentTests(unittest.TestCase):
 class AddPointsTests(unittest.TestCase):
 
     def setUp(self):
-        from blmath.geometry.segment import partition
+        from .segment import partition
         self.partition = partition
 
     def test_adds_points_for_equal_length_line_segments(self):

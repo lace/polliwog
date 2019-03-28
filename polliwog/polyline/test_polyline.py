@@ -1,7 +1,8 @@
 import unittest
 import numpy as np
 import vg
-from blmath.geometry import Polyline, Plane
+from ..plane.plane import Plane
+from .polyline import Polyline
 
 class TestPolyline(unittest.TestCase):
 

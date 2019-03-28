@@ -12,8 +12,6 @@ class Polyline(object):
     Mutable by setting polyline.v or polyline.closed or calling
     a method like polyline.partition_by_length().
 
-    This replaces the functions in blmath.geometry.segment.
-
     Note this class is distinct from lace.lines.Lines, which
     allows arbitrary edges and enables visualization. To convert to
     a Lines object, use the as_lines() method.
@@ -187,7 +185,7 @@ class Polyline(object):
           Otherwise return self for chaining.
 
         '''
-        from blmath.geometry.segment import partition_segment
+        from ..segment.segment import partition_segment
 
         lengths = self.segment_lengths
         num_segments_needed = np.ceil(lengths / max_length)
@@ -222,8 +220,7 @@ class Polyline(object):
         axis: A vector, which is an 3x1 np.array.
 
         '''
-        from blmath.geometry.apex import apex
-        return apex(self.v, axis)
+        return vg.apex(self.v, axis)
 
     def intersect_plane(self, plane, ret_edge_indices=False):
         '''
