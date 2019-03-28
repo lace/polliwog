@@ -99,6 +99,8 @@ class CompositeTransform(object):
           forward or reverse matrices are used.
 
         '''
+        from functools import reduce
+
         if from_range is not None:
             start, stop = from_range  # from_range is defined as None, a non-sequence, but when it's not None, it's always a sequence. pylint: disable=unpacking-non-sequence
             selected_transforms = self.transforms[start:stop]
