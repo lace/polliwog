@@ -30,7 +30,10 @@ def init():
 @cli.command()
 def test():
     # execute("pytest")
-    execute("nose2-2.7")
+    try:
+        execute("nose2-2.7")
+    except:
+        execute("nose2")
 
 
 @cli.command()
