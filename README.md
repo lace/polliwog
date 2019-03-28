@@ -75,7 +75,7 @@ Other modules:
 pip install numpy polliwog
 ```
 
-#Usage
+# Usage
 
 ```py
 import numpy as np
