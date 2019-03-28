@@ -22,7 +22,7 @@ def rotate_to_xz_plane(points, normal=None):
 
     '''
     import cv2
-    from blmath.geometry.transform.translation import translation
+    from .translation import translation
 
     if points is None or not len(points): # pylint: disable=len-as-condition
         raise ValueError('Some points are required')

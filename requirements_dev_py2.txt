@@ -1,0 +1,4 @@
+-r requirements.txt
+-r requirements_dev_common.txt
+
+mock==2.0.0

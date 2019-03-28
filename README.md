@@ -25,6 +25,12 @@ The goals of this project are:
 [docs build]: https://polliwog.readthedocs.io/en/latest/
 [black]: https://black.readthedocs.io/en/stable/
 
+## TODO
+
+- [ ] Replace `_temporary.units` with `pint` in `polliwog/transform/composite.py`.
+- [ ] Replace `_temporary.as_numeric_array` with coercion function in vg.
+- [ ] Replace `_temporary.matlab.col` with direct usage.
+- [ ] Replace `_temporary.setter_property` with ??.
 
 ## Features
 
@@ -59,8 +65,6 @@ Other modules:
 
 - [polliwog.tri.barycentric](polliwog/tri/barycentric.py) provides a function for
   projecting a point to a triangle using barycentric coordinates.
-- [polliwog.convexify](polliwog/convex_hull/convexify.py) provides a function for
-  producing a convex hull from a mostly-planar curve.
 - [polliwog.segment](polliwog/segment/segment.py) provides functions for working with
   line segments in n-space.
 

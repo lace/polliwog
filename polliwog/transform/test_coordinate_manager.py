@@ -1,14 +1,13 @@
 # pylint: disable=invalid-unary-operand-type
 import unittest
 import numpy as np
-from blmath.geometry.transform.test_composite import create_cube_verts
+from .test_composite import create_cube_verts
+from .coordinate_manager import CoordinateManager
 
 
 class TestCoordinateManager(unittest.TestCase):
 
     def test_coordinate_manager_forward(self):
-        from blmath.geometry.transform.coordinate_manager import CoordinateManager
-
         cube_v = create_cube_verts([1., 0., 0.], 4.)
         cube_floor_point = np.array([3., 0., 2.]) # as lace.mesh.floor_point
 
@@ -66,8 +65,6 @@ class TestCoordinateManager(unittest.TestCase):
         np.testing.assert_array_almost_equal(source_v_2, cube_v)
 
     def test_coordinate_manager_forward_with_attrs(self):
-        from blmath.geometry.transform.coordinate_manager import CoordinateManager
-
         cube_v = create_cube_verts([1., 0., 0.], 4.)
         cube_floor_point = np.array([3., 0., 2.]) # as lace.mesh.floor_point
 
@@ -98,8 +95,6 @@ class TestCoordinateManager(unittest.TestCase):
 
     def test_coordinate_manager_forward_on_mesh(self):
         from mock import MagicMock
-        from blmath.geometry.transform.coordinate_manager import CoordinateManager
-
         cube_v = create_cube_verts([1., 0., 0.], 4.)
         cube_floor_point = np.array([3., 0., 2.]) # as lace.mesh.floor_point
 

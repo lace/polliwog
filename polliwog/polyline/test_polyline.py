@@ -1,7 +1,8 @@
 import unittest
 import numpy as np
-from blmath.numerics import vx
-from blmath.geometry import Polyline, Plane
+import vg
+from ..plane.plane import Plane
+from .polyline import Polyline
 
 class TestPolyline(unittest.TestCase):
 
@@ -314,7 +315,7 @@ class TestPolyline(unittest.TestCase):
             [0., 7.5, 0.],
         ]), closed=False)
         actual = original.cut_by_plane(
-            Plane(point_on_plane=np.array([0., 7.5, 0.]), unit_normal=vx.basis.y))
+            Plane(point_on_plane=np.array([0., 7.5, 0.]), unit_normal=vg.basis.y))
 
         np.testing.assert_array_almost_equal(actual.v, expected.v)
         self.assertFalse(actual.closed)
@@ -328,7 +329,7 @@ class TestPolyline(unittest.TestCase):
             [1., 7.5, 0.],
         ]), closed=False)
         actual = original.cut_by_plane(
-            Plane(point_on_plane=np.array([0., 7.5, 0.]), unit_normal=vx.basis.neg_y))
+            Plane(point_on_plane=np.array([0., 7.5, 0.]), unit_normal=vg.basis.neg_y))
 
         np.testing.assert_array_almost_equal(actual.v, expected.v)
         self.assertFalse(actual.closed)
@@ -347,7 +348,7 @@ class TestPolyline(unittest.TestCase):
             [1., 8., 0.],
         ]), closed=False)
         actual = original.cut_by_plane(
-            Plane(point_on_plane=np.array([0., 7.5, 0.]), unit_normal=vx.basis.y))
+            Plane(point_on_plane=np.array([0., 7.5, 0.]), unit_normal=vg.basis.y))
 
         np.testing.assert_array_almost_equal(actual.v, expected.v)
         self.assertFalse(actual.closed)
@@ -360,7 +361,7 @@ class TestPolyline(unittest.TestCase):
             [1., 7.5, 0.],
         ]), closed=False)
         actual = original.cut_by_plane(
-            Plane(point_on_plane=np.array([0., 7.5, 0.]), unit_normal=vx.basis.neg_y))
+            Plane(point_on_plane=np.array([0., 7.5, 0.]), unit_normal=vg.basis.neg_y))
 
         np.testing.assert_array_almost_equal(actual.v, expected.v)
         self.assertFalse(actual.closed)

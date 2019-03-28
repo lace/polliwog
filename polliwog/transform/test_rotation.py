@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from blmath.geometry.transform.rotation import rotation_from_up_and_look, euler
+from .rotation import rotation_from_up_and_look, euler
 
 class TestRotationFromUpAndLook(unittest.TestCase):
 

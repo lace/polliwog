@@ -1,6 +1,6 @@
 import numpy as np
-from blmath.numerics import vx
-from blmath.util.decorators import setter_property
+import vg
+from .._temporary.decorators import setter_property
 
 class Polyline(object):
     '''
@@ -11,8 +11,6 @@ class Polyline(object):
 
     Mutable by setting polyline.v or polyline.closed or calling
     a method like polyline.partition_by_length().
-
-    This replaces the functions in blmath.geometry.segment.
 
     Note this class is distinct from lace.lines.Lines, which
     allows arbitrary edges and enables visualization. To convert to
@@ -89,7 +87,7 @@ class Polyline(object):
         in 3D space. Set to None for an empty polyline.
 
         '''
-        from blmath.numerics import as_numeric_array
+        from .._temporary.coercion import as_numeric_array
         self.__dict__['v'] = as_numeric_array(val, dtype=np.float64, shape=(-1, 3), allow_none=True)
         self._update_edges()
 
@@ -187,7 +185,7 @@ class Polyline(object):
           Otherwise return self for chaining.
 
         '''
-        from blmath.geometry.segment import partition_segment
+        from ..segment.segment import partition_segment
 
         lengths = self.segment_lengths
         num_segments_needed = np.ceil(lengths / max_length)
@@ -222,8 +220,7 @@ class Polyline(object):
         axis: A vector, which is an 3x1 np.array.
 
         '''
-        from blmath.geometry.apex import apex
-        return apex(self.v, axis)
+        return vg.apex(self.v, axis)
 
     def intersect_plane(self, plane, ret_edge_indices=False):
         '''
@@ -256,7 +253,7 @@ class Polyline(object):
         #
         # In case a vert of the intersecting edge lies on the plane, use a
         # vector to identify which direction it's facing.
-        if vx.sproj(intersecting_segment_vector, onto=plane.normal) > 0:
+        if vg.sproj(intersecting_segment_vector, onto=plane.normal) > 0:
             new_v = np.vstack(
                 [intersection_point, self.v[intersecting_edge[1] :]]
             )

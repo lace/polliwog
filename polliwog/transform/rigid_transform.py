@@ -11,7 +11,7 @@ def find_rigid_transform(a, b, visualize=False):
     """
     import numpy as np
     import scipy.linalg
-    from blmath.numerics.matlab import col
+    from .._temporary.matlab import col
 
     if a.shape[0] != 3:
         if a.shape[1] == 3:

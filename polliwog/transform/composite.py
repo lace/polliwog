@@ -1,5 +1,5 @@
 import numpy as np
-from blmath.numerics import vx
+import vg
 
 def convert_33_to_44(matrix):
     '''
@@ -85,7 +85,7 @@ class CompositeTransform(object):
         '''
         matrix = self.matrix_for(from_range=from_range, reverse=reverse)
 
-        return vx.unpad(np.dot(matrix, vx.pad_with_ones(points).T).T)
+        return vg.unpad(np.dot(matrix, vg.pad_with_ones(points).T).T)
 
     def matrix_for(self, from_range=None, reverse=False):
         '''
@@ -183,7 +183,7 @@ class CompositeTransform(object):
         - composite.scale(.01)
 
         '''
-        from blmath import units
+        from .._temporary import units
         factor = units.factor(
             from_units=from_units,
             to_units=to_units,
@@ -225,7 +225,7 @@ class CompositeTransform(object):
         Reorient using up and look.
 
         '''
-        from blmath.geometry.transform import rotation_from_up_and_look
+        from .rotation import rotation_from_up_and_look
         forward3 = rotation_from_up_and_look(up, look)
         # The inverse of a rotation matrix is its transpose.
         return self.append_transform3(forward3, forward3.T)
@@ -234,7 +234,7 @@ class CompositeTransform(object):
         '''
         Rotate by either an explicit matrix or a rodrigues vector
         '''
-        from blmath.geometry.transform.rodrigues import as_rotation_matrix
+        from .rodrigues import as_rotation_matrix
         rot = np.asarray(rot)
         rot = as_rotation_matrix(rot)
         # The inverse of a rotation matrix is its transpose.

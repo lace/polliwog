@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from blmath.geometry.transform.composite import CompositeTransform
+from .composite import CompositeTransform
 
 def create_cube_verts(origin, size):
     # Create a cube. Since CompositeTransform just works on verticies,

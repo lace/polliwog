@@ -12,7 +12,7 @@ class Box(object):
           depth (dz).
 
         '''
-        from blmath.numerics import as_numeric_array
+        from .._temporary.coercion import as_numeric_array
         self.origin = as_numeric_array(origin, shape=(3,))
         self.shape = as_numeric_array(shape, shape=(3,))
         if any(np.less(self.shape, 0)):

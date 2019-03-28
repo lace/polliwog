@@ -2,8 +2,8 @@ import math
 from collections import namedtuple
 import unittest
 import numpy as np
-from blmath.geometry import Plane
-from blmath.numerics import vx
+import vg
+from .plane import Plane
 
 
 class DistanceToPlaneTests(unittest.TestCase):
@@ -155,7 +155,7 @@ class TestCanonicalPoint(unittest.TestCase):
 class TestProjectPoint(unittest.TestCase):
 
     def test_project_point(self):
-        plane = Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vx.basis.y)
+        plane = Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y)
 
         point = np.array([10, 20, -5])
 
@@ -282,155 +282,3 @@ class PlaneXSectionTests(unittest.TestCase):
         intersections, is_intersecting = plane.line_segment_xsections(a, b)
         np.testing.assert_array_equal(intersections, expected)
         np.testing.assert_array_equal(is_intersecting, [False, False, True, True, False])
-
-    def test_mesh_plane_intersection(self):
-        # x-z plane
-        normal = np.array([0., 1., 0.])
-        sample = np.array([0., 0., 0.])
-
-        plane = Plane(sample, normal)
-
-        # Verify that we're finding the correct number of faces to start with
-        self.assertEqual(len(plane.mesh_intersecting_faces(self.box_mesh)), 8)
-
-        xsections = plane.mesh_xsections(self.box_mesh)
-        self.assertIsInstance(xsections, list)
-        self.assertEqual(len(xsections), 1)
-        self.assertEqual(len(xsections[0].v), 8)
-        self.assertTrue(xsections[0].closed)
-
-        self.assertEqual(xsections[0].total_length, 4.0)
-        np.testing.assert_array_equal(xsections[0].v[:, 1], np.zeros((8, )))
-        for a, b in zip(xsections[0].v[0:-1, [0, 2]], xsections[0].v[1:, [0, 2]]):
-            # Each line changes only one coordinate, and is 0.5 long
-            self.assertEqual(np.sum(a == b), 1)
-            self.assertEqual(np.linalg.norm(a - b), 0.5)
-
-        xsection = plane.mesh_xsection(self.box_mesh)
-        self.assertEqual(len(xsection.v), 8)
-        self.assertTrue(xsection.closed)
-
-    def test_mesh_plane_intersection_with_no_intersection(self):
-        # x-z plane
-        normal = np.array([0., 1., 0.])
-        sample = np.array([0., 5., 0.])
-
-        plane = Plane(sample, normal)
-
-        # Verify that we're detecting faces that lay entirely in the plane as potential intersections
-        self.assertEqual(len(plane.mesh_intersecting_faces(self.box_mesh)), 0)
-
-        xsections = plane.mesh_xsections(self.box_mesh)
-        self.assertIsInstance(xsections, list)
-        self.assertEqual(len(xsections), 0)
-
-        xsection = plane.mesh_xsection(self.box_mesh)
-        self.assertIsNone(xsection.v)
-
-    def test_mesh_plane_intersection_wth_two_components(self):
-        # x-z plane
-        normal = np.array([0., 1., 0.])
-        sample = np.array([0., 0., 0.])
-
-        plane = Plane(sample, normal)
-
-        two_box_mesh = self.double_mesh(self.box_mesh)
-
-        xsections = plane.mesh_xsections(two_box_mesh)
-        self.assertIsInstance(xsections, list)
-        self.assertEqual(len(xsections), 2)
-        self.assertEqual(len(xsections[0].v), 8)
-        self.assertTrue(xsections[0].closed)
-        self.assertEqual(len(xsections[1].v), 8)
-        self.assertTrue(xsections[1].closed)
-
-        xsection = plane.mesh_xsection(two_box_mesh)
-        self.assertEqual(len(xsection.v), 16)
-        self.assertTrue(xsection.closed)
-
-    def test_mesh_plane_intersection_wth_neighborhood(self):
-        # x-z plane
-        normal = np.array([0., 1., 0.])
-        sample = np.array([0., 0., 0.])
-
-        plane = Plane(sample, normal)
-
-        two_box_mesh = self.double_mesh(self.box_mesh)
-
-        xsections = plane.mesh_xsections(two_box_mesh, neighborhood=np.array([[0., 0., 0.]]))
-        self.assertIsInstance(xsections, list)
-        self.assertEqual(len(xsections), 1)
-        self.assertEqual(len(xsections[0].v), 8)
-        self.assertTrue(xsections[0].closed)
-
-        xsection = plane.mesh_xsection(two_box_mesh, neighborhood=np.array([[0., 0., 0.]]))
-        self.assertEqual(len(xsection.v), 8)
-        self.assertTrue(xsection.closed)
-
-    def test_mesh_plane_intersection_with_non_watertight_mesh(self):
-        # x-z plane
-        normal = np.array([0., 1., 0.])
-        sample = np.array([0., 0., 0.])
-
-        plane = Plane(sample, normal)
-
-        v_on_faces_to_remove = np.nonzero(self.box_mesh.v[:, 0] < 0.0)[0]
-        faces_to_remove = np.all(np.in1d(self.box_mesh.f.ravel(), v_on_faces_to_remove).reshape((-1, 3)), axis=1)
-        open_mesh = MockMesh(v=self.box_mesh.v, f=self.box_mesh.f[np.logical_not(faces_to_remove)])
-
-        xsections = plane.mesh_xsections(open_mesh)
-
-        # The removed side is not in the xsection:
-        self.assertFalse(any(np.all(xsections[0].v == [-0.5, 0., 0.], axis=1)))
-
-        self.assertIsInstance(xsections, list)
-        self.assertEqual(len(xsections), 1)
-        self.assertEqual(len(xsections[0].v), 7)
-        self.assertFalse(xsections[0].closed)
-
-        self.assertEqual(xsections[0].total_length, 3.0)
-        np.testing.assert_array_equal(xsections[0].v[:, 1], np.zeros((7, )))
-        for a, b in zip(xsections[0].v[0:-1, [0, 2]], xsections[0].v[1:, [0, 2]]):
-            # Each line changes only one coordinate, and is 0.5 long
-            self.assertEqual(np.sum(a == b), 1)
-            self.assertEqual(np.linalg.norm(a - b), 0.5)
-
-        xsection = plane.mesh_xsection(open_mesh)
-        self.assertEqual(len(xsection.v), 7)
-        self.assertTrue(xsection.closed)
-
-    def test_mesh_plane_intersection_with_mulitple_non_watertight_meshes(self):
-        # x-z plane
-        normal = np.array([0., 1., 0.])
-        sample = np.array([0., 0., 0.])
-
-        plane = Plane(sample, normal)
-
-        v_on_faces_to_remove = np.nonzero(self.box_mesh.v[:, 0] < 0.0)[0]
-        faces_to_remove = np.all(np.in1d(self.box_mesh.f.ravel(), v_on_faces_to_remove).reshape((-1, 3)), axis=1)
-        open_mesh = MockMesh(v=self.box_mesh.v, f=self.box_mesh.f[np.logical_not(faces_to_remove)])
-        two_open_meshes = self.double_mesh(open_mesh)
-
-        xsections = plane.mesh_xsections(two_open_meshes)
-
-        # The removed side is not in the xsection:
-        self.assertFalse(any(np.all(xsections[0].v == [-0.5, 0., 0.], axis=1)))
-
-        self.assertIsInstance(xsections, list)
-        self.assertEqual(len(xsections), 2)
-        self.assertEqual(len(xsections[0].v), 7)
-        self.assertFalse(xsections[0].closed)
-        self.assertEqual(len(xsections[1].v), 7)
-        self.assertFalse(xsections[1].closed)
-
-        self.assertEqual(xsections[0].total_length, 3.0)
-        np.testing.assert_array_equal(xsections[0].v[:, 1], np.zeros((7, )))
-        np.testing.assert_array_equal(xsections[1].v[:, 1], np.zeros((7, )))
-        for a, b in zip(xsections[0].v[0:-1, [0, 2]], xsections[0].v[1:, [0, 2]]):
-            # Each line changes only one coordinate, and is 0.5 long
-            self.assertEqual(np.sum(a == b), 1)
-            self.assertEqual(np.linalg.norm(a - b), 0.5)
-
-        xsection = plane.mesh_xsection(two_open_meshes)
-        self.assertEqual(len(xsection.v), 14)
-        self.assertTrue(xsection.closed)
