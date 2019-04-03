@@ -11,7 +11,6 @@ def find_rigid_transform(a, b, visualize=False):
     """
     import numpy as np
     import scipy.linalg
-    from .._temporary.matlab import col
 
     if a.shape[0] != 3:
         if a.shape[1] == 3:
@@ -24,8 +23,8 @@ def find_rigid_transform(a, b, visualize=False):
 
     a_mean = np.mean(a, axis=1)
     b_mean = np.mean(b, axis=1)
-    a_centered = a - col(a_mean)
-    b_centered = b - col(b_mean)
+    a_centered = a - a_mean.reshape(-1, 1)
+    b_centered = b - b_mean.reshape(-1, 1)
 
     c = a_centered.dot(b_centered.T)
     u, s, v = np.linalg.svd(c, full_matrices=False)
@@ -41,7 +40,7 @@ def find_rigid_transform(a, b, visualize=False):
                 "find_rigid_transform found a reflection that it cannot recover from. Try RANSAC or something..."
             )
 
-    T = col(b_mean - R.dot(a_mean))
+    T = (b_mean - R.dot(a_mean)).reshape(-1, 1)
 
     if visualize != False:
         from lace.mesh import Mesh
@@ -72,15 +71,14 @@ def find_rigid_rotation(a, b, allow_scaling=False):
     """
     import numpy as np
     import scipy.linalg
-    from .._temporary.matlab import col
 
     assert a.shape[0] == 3
     assert b.shape[0] == 3
 
     if a.size == 3:
         cx = np.cross(a.ravel(), b.ravel())
-        a = np.hstack((col(a), col(cx)))
-        b = np.hstack((col(b), col(cx)))
+        a = np.hstack([a.reshape(-1, 1), cx.reshape(-1, 1)])
+        b = np.hstack([b.reshape(-1, 1), cx.reshape(-1, 1)])
 
     c = a.dot(b.T)
     u, _, v = np.linalg.svd(c, full_matrices=False)
