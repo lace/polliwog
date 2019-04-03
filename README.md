@@ -8,9 +8,9 @@
 [![docs build](https://img.shields.io/readthedocs/polliwog.svg?style=flat-square)][docs build]
 [![code style](https://img.shields.io/badge/code%20style-black-black.svg?style=flat-square)][black]
 
-A computation library for 3D and 2D geometry, including geometric operations,
+A 2D and 3D computational geometry library, including geometric operations,
 transforms, and primitives like planes, polygonal chains, and axis-aligned
-bounding boxes.
+bounding boxes. Lightweight and pure Python.
 
 The goals of this project are:
 
