@@ -72,7 +72,7 @@ def find_rigid_rotation(a, b, allow_scaling=False):
     """
     import numpy as np
     import scipy.linalg
-    from blmath.numerics.matlab import col
+    from .._temporary.matlab import col
 
     assert a.shape[0] == 3
     assert b.shape[0] == 3
