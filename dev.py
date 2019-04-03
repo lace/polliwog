@@ -29,17 +29,12 @@ def init():
 
 @cli.command()
 def test():
-    # execute("pytest")
-    try:
-        execute("nose2-2.7")
-    except:
-        execute("nose2")
+    execute("pytest")
 
 
 @cli.command()
 def coverage():
-    # execute("pytest --cov=vg")
-    pass
+    execute("pytest --cov=polliwog")
 
 
 @cli.command()
@@ -50,10 +45,8 @@ def coverage_report():
 
 @cli.command()
 def test_both():
-    # execute("python2 -m pytest")
-    # execute("python3 -m pytest")
-    execute("python2 -m nose2")
-    execute("python3 -m nose2")
+    execute("python2 -m pytest")
+    execute("python3 -m pytest")
 
 
 @cli.command()

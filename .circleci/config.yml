@@ -53,19 +53,16 @@ jobs:
       - run:
           name: Run tests
           when: always
-          # command: |
-          #   . venv/bin/activate
-          #   ./dev.py coverage
           command: |
             . venv/bin/activate
-            nose2
+            ./dev.py coverage
 
-      # - run:
-      #     name: Send results to coveralls.io
-      #     when: always
-      #     command: |
-      #       . venv/bin/activate
-      #       coveralls
+      - run:
+          name: Send results to coveralls.io
+          when: always
+          command: |
+            . venv/bin/activate
+            coveralls
 
       # - run:
       #     name: Run the doc build
