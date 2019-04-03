@@ -1,47 +1,6 @@
 import numpy as np
+import vg
 
-
-def barycentric_coordinates_of_projection(p, q, u, v):
-    """ Given a point, gives projected coords of that point to a triangle
-    in barycentric coordinates.
-
-    See Heidrich, Computing the Barycentric Coordinates of a Projected Point, JGT 05
-    at http://www.cs.ubc.ca/~heidrich/Papers/JGT.05.pdf
-
-    Args:
-        p: point to project
-        q: a vertex of the triangle to project into
-        u,v: edges of the the triangle such that it has vertices q, q+u, q+v
-
-    Returns:
-        b: barycentric coordinates of p's projection in triangle defined by q,u,v
-            vectorized so p,q,u,v can all be 3xN
-    """
-
-    p = p.T
-    q = q.T
-    u = u.T
-    v = v.T
-
-    n = np.cross(u, v, axis=0)
-    s = np.sum(n * n, axis=0)
-
-    # If the triangle edges are collinear, cross-product is zero,
-    # which makes "s" 0, which gives us divide by zero. So we
-    # make the arbitrary choice to set s to epsv (=numpy.spacing(1)),
-    # the closest thing to zero
-    if np.isscalar(s):
-        s = s if s else np.spacing(1)
-    else:
-        s[s == 0] = np.spacing(1)
-
-    oneOver4ASquared = 1.0 / s
-    w = p - q
-    b2 = np.sum(np.cross(u, w, axis=0) * n, axis=0) * oneOver4ASquared
-    b1 = np.sum(np.cross(w, v, axis=0) * n, axis=0) * oneOver4ASquared
-    b = np.vstack((1 - b1 - b2, b1, b2))
-
-    return b.T
 
 def compute_barycentric_coordinates(vertices_of_tris, points):
     """
@@ -66,15 +25,35 @@ def compute_barycentric_coordinates(vertices_of_tris, points):
 
     See Also:
         https://en.wikipedia.org/wiki/Barycentric_coordinate_system
+
+    See Also:
+        Heidrich, Computing the Barycentric Coordinates of a Projected Point, JGT 05
+        at http://www.cs.ubc.ca/~heidrich/Papers/JGT.05.pdf
     """
-    from .validation import validate_shape_from_ns
+    k = vg.shape.check(locals(), "vertices_of_tris", (-1, 3, 3))
+    vg.shape.check(locals(), "points", (k, 3))
 
-    k = validate_shape_from_ns(locals(), "vertices_of_tris", (-1, 3, 3))
-    validate_shape_from_ns(locals(), "points", k, 3)
+    p = points.T
+    q = vertices_of_tris[:, 0].T
+    u = (vertices_of_tris[:, 1] - vertices_of_tris[:, 0]).T
+    v = (vertices_of_tris[:, 2] - vertices_of_tris[:, 0]).T
 
-    return barycentric_coordinates_of_projection(
-        points,
-        vertices_of_tris[:, 0],
-        vertices_of_tris[:, 1] - vertices_of_tris[:, 0],
-        vertices_of_tris[:, 2] - vertices_of_tris[:, 0],
-    )
+    n = np.cross(u, v, axis=0)
+    s = np.sum(n * n, axis=0)
+
+    # If the triangle edges are collinear, cross-product is zero,
+    # which makes "s" 0, which gives us divide by zero. So we
+    # make the arbitrary choice to set s to epsv (=numpy.spacing(1)),
+    # the closest thing to zero
+    if np.isscalar(s):
+        s = s if s else np.spacing(1)
+    else:
+        s[s == 0] = np.spacing(1)
+
+    oneOver4ASquared = 1.0 / s
+    w = p - q
+    b2 = np.sum(np.cross(u, w, axis=0) * n, axis=0) * oneOver4ASquared
+    b1 = np.sum(np.cross(w, v, axis=0) * n, axis=0) * oneOver4ASquared
+    b = np.vstack((1 - b1 - b2, b1, b2))
+
+    return b.T
