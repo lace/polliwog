@@ -14,6 +14,7 @@ def test_surface_normal_single():
         surface_normal(points, normalize=False), np.array([9.0, 9.0, 9.0])
     )
 
+
 def test_surface_normal_vectorized():
     from .shapes import create_triangular_prism
 

@@ -33,19 +33,13 @@ def test_coordinate_manager_forward():
         cube_v, from_tag="source", to_tag="centered_at_origin"
     )
     centered_at_origin_v_2 = coordinate_manager.do_transform(
-        floored_and_scaled_v,
-        from_tag="floored_and_scaled",
-        to_tag="centered_at_origin",
+        floored_and_scaled_v, from_tag="floored_and_scaled", to_tag="centered_at_origin"
     )
 
-    np.testing.assert_array_almost_equal(
-        centered_at_origin_v_1[0], [-4.0, -4.0, -4.0]
-    )
+    np.testing.assert_array_almost_equal(centered_at_origin_v_1[0], [-4.0, -4.0, -4.0])
     np.testing.assert_array_almost_equal(centered_at_origin_v_1[6], [4.0, 4.0, 4.0])
 
-    np.testing.assert_array_almost_equal(
-        centered_at_origin_v_2[0], [-4.0, -4.0, -4.0]
-    )
+    np.testing.assert_array_almost_equal(centered_at_origin_v_2[0], [-4.0, -4.0, -4.0])
     np.testing.assert_array_almost_equal(centered_at_origin_v_2[6], [4.0, 4.0, 4.0])
 
     source_v_1 = coordinate_manager.do_transform(
@@ -56,6 +50,7 @@ def test_coordinate_manager_forward():
     )
     np.testing.assert_array_almost_equal(source_v_1, cube_v)
     np.testing.assert_array_almost_equal(source_v_2, cube_v)
+
 
 def test_coordinate_manager_forward_with_attrs():
     cube_v = create_cube_verts([1.0, 0.0, 0.0], 4.0)
@@ -80,13 +75,12 @@ def test_coordinate_manager_forward_with_attrs():
     np.testing.assert_array_almost_equal(floored_and_scaled_v[6], [4.0, 8.0, 4.0])
 
     centered_at_origin_v = coordinate_manager.centered_at_origin
-    np.testing.assert_array_almost_equal(
-        centered_at_origin_v[0], [-4.0, -4.0, -4.0]
-    )
+    np.testing.assert_array_almost_equal(centered_at_origin_v[0], [-4.0, -4.0, -4.0])
     np.testing.assert_array_almost_equal(centered_at_origin_v[6], [4.0, 4.0, 4.0])
 
     source_v = coordinate_manager.source
     np.testing.assert_array_almost_equal(source_v, cube_v)
+
 
 def test_coordinate_manager_forward_on_mesh():
     import sys
@@ -102,9 +96,7 @@ def test_coordinate_manager_forward_on_mesh():
     # By default a magic mock will always have any attribute it's asked for;
     # here we set the spec property so that it will not respond to having a copy method
     # when the CoodinateManager looks for it.
-    cube = MagicMock(
-        spec=["v", "other_thing"], v=cube_v, other_thing=np.array([-9.0])
-    )
+    cube = MagicMock(spec=["v", "other_thing"], v=cube_v, other_thing=np.array([-9.0]))
 
     coordinate_manager = CoordinateManager()
     coordinate_manager.tag_as("source")

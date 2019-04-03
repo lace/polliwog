@@ -6,6 +6,7 @@ def create_points():
     # test data: square of side 1 with lower left corner at (1, 1)
     return np.array([[1.0, 1.0], [1.0, 2.0], [2.0, 2.0], [2.0, 1.0]])
 
+
 def test_translates_and_returns_translation_factor_with_translation_factor():
     points = create_points()
     translation_factor = np.array([-1.0, 2.0])
@@ -16,6 +17,7 @@ def test_translates_and_returns_translation_factor_with_translation_factor():
 
     np.testing.assert_array_equal(image, expected_image)
     np.testing.assert_array_equal(returned_translation_factor, translation_factor)
+
 
 def test_translates_with_center_of_mass_and_returns_translation_factor_with_no_translation_factor():
     points = create_points()

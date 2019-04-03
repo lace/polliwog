@@ -17,6 +17,7 @@ def test_returns_signed_distances_for_xz_plane_at_origin():
 
     np.testing.assert_array_equal(expected, plane.signed_distance(pts))
 
+
 def test_returns_unsigned_distances_for_xz_plane_at_origin():
     # x-z plane
     normal = np.array([0.0, 1.0, 0.0])
@@ -29,6 +30,7 @@ def test_returns_unsigned_distances_for_xz_plane_at_origin():
     expected = np.array([502.0, 501.0])
 
     np.testing.assert_array_equal(expected, plane.distance(pts))
+
 
 def test_returns_signed_distances_for_diagonal_plane():
     # diagonal plane @ origin - draw a picture!
@@ -46,6 +48,7 @@ def test_returns_signed_distances_for_diagonal_plane():
 
     np.testing.assert_array_almost_equal(expected, plane.signed_distance(pts))
 
+
 def test_returns_unsigned_distances_for_diagonal_plane_at_origin():
     # diagonal plane @ origin - draw a picture!
     normal = np.array([1.0, 1.0, 0.0])
@@ -60,6 +63,7 @@ def test_returns_unsigned_distances_for_diagonal_plane_at_origin():
     expected = np.array([math.sqrt(2 * (425.0 ** 2)), math.sqrt(2 * (500.0 ** 2))])
 
     np.testing.assert_array_almost_equal(expected, plane.distance(pts))
+
 
 def test_returns_sign_for_diagonal_plane():
     # diagonal plane @ origin - draw a picture!
@@ -155,12 +159,14 @@ def test_plane_from_points():
     projected_points = [plane.project_point(p) for p in points]
     np.testing.assert_array_almost_equal(projected_points, points)
 
+
 def test_plane_from_points_order():
     points = np.array([[1, 0, 0], [0, math.sqrt(1.25), 0], [-1, 0, 0]])
     plane = Plane.from_points(*points)
 
     expected_v = np.array([0, 0, 1])
     np.testing.assert_array_equal(plane.normal, expected_v)
+
 
 def test_plane_from_points_and_vector():
     p1 = np.array([1, 5, 7])
@@ -172,7 +178,8 @@ def test_plane_from_points_and_vector():
     projected_points = [plane.project_point(p) for p in points]
     np.testing.assert_array_almost_equal(projected_points, points)
 
-    assert(np.dot(v, plane.normal) == 0)
+    assert np.dot(v, plane.normal) == 0
+
 
 def test_fit_from_points():
     # Set up a collection of points in the X-Y plane.
@@ -183,7 +190,7 @@ def test_fit_from_points():
     # The normal vector should be closely aligned with the Z-axis.
     z_axis = np.array([0.0, 0.0, 1.0])
     angle = np.arccos(np.dot(plane.normal, z_axis) / np.linalg.norm(plane.normal))
-    assert(angle % np.pi < 1e-6)
+    assert angle % np.pi < 1e-6
 
 
 def test_line_plane_intersection():
@@ -193,23 +200,16 @@ def test_line_plane_intersection():
 
     plane = Plane(sample, normal)
     # non-intersecting
-    assert(
-        plane.line_xsection(pt=[0.0, -1.0, 0.0], ray=[1.0, 0.0, 0.0])
-        is None
-    )
+    assert plane.line_xsection(pt=[0.0, -1.0, 0.0], ray=[1.0, 0.0, 0.0]) is None
     # coplanar
-    assert(
-        plane.line_xsection(pt=[0.0, 0.0, 0.0], ray=[1.0, 0.0, 0.0])
-        is None
+    assert plane.line_xsection(pt=[0.0, 0.0, 0.0], ray=[1.0, 0.0, 0.0]) is None
+    np.testing.assert_array_equal(
+        plane.line_xsection(pt=[0.0, -1.0, 0.0], ray=[0.0, 1.0, 0.0]), [0.0, 0.0, 0.0]
     )
     np.testing.assert_array_equal(
-        plane.line_xsection(pt=[0.0, -1.0, 0.0], ray=[0.0, 1.0, 0.0]),
-        [0.0, 0.0, 0.0],
+        plane.line_xsection(pt=[0.0, -1.0, 0.0], ray=[1.0, 1.0, 0.0]), [1.0, 0.0, 0.0]
     )
-    np.testing.assert_array_equal(
-        plane.line_xsection(pt=[0.0, -1.0, 0.0], ray=[1.0, 1.0, 0.0]),
-        [1.0, 0.0, 0.0],
-    )
+
 
 def test_line_plane_intersections():
     # x-z plane
@@ -235,6 +235,7 @@ def test_line_plane_intersections():
     np.testing.assert_array_equal(intersections, expected)
     np.testing.assert_array_equal(is_intersecting, [False, False, True, True])
 
+
 def test_line_segment_plane_intersection():
     # x-z plane
     normal = np.array([0.0, 1.0, 0.0])
@@ -242,28 +243,18 @@ def test_line_segment_plane_intersection():
 
     plane = Plane(sample, normal)
     # non-intersecting
-    assert(
-        plane.line_segment_xsection([0.0, -1.0, 0.0], [1.0, -1.0, 0.0])
-        is None
-    )
+    assert plane.line_segment_xsection([0.0, -1.0, 0.0], [1.0, -1.0, 0.0]) is None
     # coplanar
-    assert(
-        plane.line_segment_xsection([0.0, 0.0, 0.0], [1.0, 0.0, 0.0])
-        is None
+    assert plane.line_segment_xsection([0.0, 0.0, 0.0], [1.0, 0.0, 0.0]) is None
+    np.testing.assert_array_equal(
+        plane.line_segment_xsection([0.0, -1.0, 0.0], [0.0, 1.0, 0.0]), [0.0, 0.0, 0.0]
     )
     np.testing.assert_array_equal(
-        plane.line_segment_xsection([0.0, -1.0, 0.0], [0.0, 1.0, 0.0]),
-        [0.0, 0.0, 0.0],
-    )
-    np.testing.assert_array_equal(
-        plane.line_segment_xsection([0.0, -1.0, 0.0], [2.0, 1.0, 0.0]),
-        [1.0, 0.0, 0.0],
+        plane.line_segment_xsection([0.0, -1.0, 0.0], [2.0, 1.0, 0.0]), [1.0, 0.0, 0.0]
     )
     # line intersecting, but not in segment
-    assert(
-        plane.line_segment_xsection([0.0, 1.0, 0.0], [0.0, 2.0, 0.0])
-        is None
-    )
+    assert plane.line_segment_xsection([0.0, 1.0, 0.0], [0.0, 2.0, 0.0]) is None
+
 
 def test_line_segment_plane_intersections():
     # x-z plane
@@ -300,6 +291,4 @@ def test_line_segment_plane_intersections():
     )
     intersections, is_intersecting = plane.line_segment_xsections(a, b)
     np.testing.assert_array_equal(intersections, expected)
-    np.testing.assert_array_equal(
-        is_intersecting, [False, False, True, True, False]
-    )
+    np.testing.assert_array_equal(is_intersecting, [False, False, True, True, False])

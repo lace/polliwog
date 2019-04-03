@@ -23,6 +23,7 @@ def create_cube_verts(origin, size):
 def create_default_cube_verts():
     return create_cube_verts([1.0, 0.0, 0.0], 4.0)
 
+
 def test_translate():
     transform = CompositeTransform()
     transform.translate(np.array([8.0, 6.0, 7.0]))
@@ -37,6 +38,7 @@ def test_translate():
 
     np.testing.assert_array_equal(transformed_cube_v[0], [9.0, 6.0, 7.0])
     np.testing.assert_array_equal(transformed_cube_v[6], [13.0, 10.0, 11.0])
+
 
 def test_translate_by_list():
     transform = CompositeTransform()
@@ -53,6 +55,7 @@ def test_translate_by_list():
     np.testing.assert_array_equal(transformed_cube_v[0], [9.0, 6.0, 7.0])
     np.testing.assert_array_equal(transformed_cube_v[6], [13.0, 10.0, 11.0])
 
+
 def test_scale():
     transform = CompositeTransform()
     transform.scale(10.0)
@@ -67,6 +70,7 @@ def test_scale():
 
     np.testing.assert_array_equal(transformed_cube_v[0], [10.0, 0.0, 0.0])
     np.testing.assert_array_equal(transformed_cube_v[6], [50.0, 40.0, 40.0])
+
 
 def test_translate_then_scale():
     transform = CompositeTransform()
@@ -84,6 +88,7 @@ def test_translate_then_scale():
     np.testing.assert_array_equal(transformed_cube_v[0], [90.0, 60.0, 70.0])
     np.testing.assert_array_equal(transformed_cube_v[6], [130.0, 100.0, 110.0])
 
+
 def test_scale_then_translate():
     transform = CompositeTransform()
     transform.scale(10.0)
@@ -99,6 +104,7 @@ def test_scale_then_translate():
 
     np.testing.assert_array_equal(transformed_cube_v[0], [18.0, 6.0, 7.0])
     np.testing.assert_array_equal(transformed_cube_v[6], [58.0, 46.0, 47.0])
+
 
 def test_rotate_then_translate():
     transform = CompositeTransform()
@@ -117,13 +123,12 @@ def test_rotate_then_translate():
         transform(v, reverse=True),
     )
 
+
 def test_reorient():
     # TODO We should also test a non-axis-aligned up and look.
 
     transform = CompositeTransform()
-    transform.reorient(
-        up=np.array([0.0, 1.0, 0.0]), look=np.array([-1.0, 0.0, 0.0])
-    )
+    transform.reorient(up=np.array([0.0, 1.0, 0.0]), look=np.array([-1.0, 0.0, 0.0]))
 
     cube_v = create_default_cube_verts()
 
@@ -135,6 +140,7 @@ def test_reorient():
 
     np.testing.assert_array_equal(transformed_cube_v[0], [0.0, 0.0, -1.0])
     np.testing.assert_array_equal(transformed_cube_v[6], [4, 4.0, -5.0])
+
 
 def test_rotate():
     ways_to_rotate_around_y_a_quarter_turn = [
@@ -157,6 +163,7 @@ def test_rotate():
 
         np.testing.assert_array_almost_equal(transformed_cube_v[0], [0.0, 0.0, -1.0])
         np.testing.assert_array_almost_equal(transformed_cube_v[6], [4, 4.0, -5.0])
+
 
 def test_reverse_transforms():
     transforms = [CompositeTransform() for _ in range(5)]
@@ -184,6 +191,7 @@ def test_reverse_transforms():
 
         np.testing.assert_array_almost_equal(untransformed_v[0], [1.0, 0.0, 0.0])
         np.testing.assert_array_almost_equal(untransformed_v[6], [5.0, 4.0, 4.0])
+
 
 def test_forward_reverse_equivalence():
     transform = CompositeTransform()

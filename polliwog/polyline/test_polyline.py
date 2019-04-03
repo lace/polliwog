@@ -23,11 +23,10 @@ def test_edges():
 
     np.testing.assert_array_equal(Polyline(v, closed=True).e, expected_closed)
 
+
 def test_segments():
     polyline = Polyline(
-        np.array(
-            [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
-        ),
+        np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]),
         closed=True,
     )
 
@@ -42,11 +41,10 @@ def test_segments():
 
     np.testing.assert_array_equal(polyline.segments, expected)
 
+
 def test_segment_vectors():
     polyline = Polyline(
-        np.array(
-            [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
-        ),
+        np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]),
         closed=True,
     )
 
@@ -56,12 +54,14 @@ def test_segment_vectors():
 
     np.testing.assert_array_equal(polyline.segment_vectors, expected)
 
+
 def test_length_of_empty_polyline():
     polyline = Polyline(None)
-    assert(polyline.total_length == 0)
+    assert polyline.total_length == 0
 
     polyline = Polyline(None, closed=True)
-    assert(polyline.total_length == 0)
+    assert polyline.total_length == 0
+
 
 def test_partition_by_length_noop():
     original = Polyline(
@@ -85,14 +85,13 @@ def test_partition_by_length_noop():
     np.testing.assert_array_equal(result.e, original.e)
     np.testing.assert_array_equal(indices, expected_indices)
 
+
 def test_partition_by_length_degenerate():
     """
     This covers a bug that arose from a numerical stability issue in
     measurement on EC2 / MKL.
     """
-    original = Polyline(
-        np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.0, 0.0]])
-    )
+    original = Polyline(np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.0, 0.0]]))
 
     result = original.copy()
     indices = result.partition_by_length(1.0, ret_indices=True)
@@ -102,6 +101,7 @@ def test_partition_by_length_degenerate():
     np.testing.assert_array_almost_equal(result.v, original.v)
     np.testing.assert_array_equal(result.e, original.e)
     np.testing.assert_array_equal(indices, expected_indices)
+
 
 def test_partition_by_length_divide_by_two():
     original = Polyline(
@@ -141,6 +141,7 @@ def test_partition_by_length_divide_by_two():
         np.testing.assert_array_almost_equal(result.v, expected.v)
         np.testing.assert_array_equal(result.e, expected.e)
         np.testing.assert_array_equal(indices, expected_indices)
+
 
 def test_partition_length_divide_by_five():
     original = Polyline(
@@ -193,6 +194,7 @@ def test_partition_length_divide_by_five():
         np.testing.assert_array_equal(result.e, expected.e)
         np.testing.assert_array_equal(indices, expected_indices)
 
+
 def test_partition_by_length_divide_some_leave_some():
     original = Polyline(
         np.array(
@@ -229,6 +231,7 @@ def test_partition_by_length_divide_some_leave_some():
         np.testing.assert_array_almost_equal(result.v, expected.v)
         np.testing.assert_array_equal(result.e, expected.e)
         np.testing.assert_array_equal(indices, expected_indices)
+
 
 def test_partition_by_length_closed():
     original = Polyline(
@@ -274,6 +277,7 @@ def test_partition_by_length_closed():
         np.testing.assert_array_equal(result.e, expected.e)
         np.testing.assert_array_equal(indices, expected_indices)
 
+
 def test_flip():
     original = Polyline(
         np.array(
@@ -307,6 +311,7 @@ def test_flip():
 
     np.testing.assert_array_almost_equal(original.v, expected.v)
 
+
 def test_reindexed():
     original = Polyline(
         np.array(
@@ -339,9 +344,8 @@ def test_reindexed():
     )
 
     np.testing.assert_array_almost_equal(reindexed.v, expected.v)
-    np.testing.assert_array_equal(
-        original.segments[edge_mapping], reindexed.segments
-    )
+    np.testing.assert_array_equal(original.segments[edge_mapping], reindexed.segments)
+
 
 def test_cut_by_plane_closed():
     original = Polyline(
@@ -359,9 +363,7 @@ def test_cut_by_plane_closed():
     )
 
     expected = Polyline(
-        np.array(
-            [[1.0, 7.5, 0.0], [1.0, 8.0, 0.0], [0.0, 8.0, 0.0], [0.0, 7.5, 0.0]]
-        ),
+        np.array([[1.0, 7.5, 0.0], [1.0, 8.0, 0.0], [0.0, 8.0, 0.0], [0.0, 7.5, 0.0]]),
         closed=False,
     )
     actual = original.cut_by_plane(
@@ -369,7 +371,7 @@ def test_cut_by_plane_closed():
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected.v)
-    assert(actual.closed == False)
+    assert actual.closed == False
 
     expected = Polyline(
         np.array(
@@ -389,7 +391,8 @@ def test_cut_by_plane_closed():
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected.v)
-    assert(actual.closed == False)
+    assert actual.closed == False
+
 
 def test_cut_by_plane_open():
     original = Polyline(
@@ -411,7 +414,7 @@ def test_cut_by_plane_open():
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected.v)
-    assert(actual.closed == False)
+    assert actual.closed == False
 
     expected = Polyline(
         np.array(
@@ -430,4 +433,4 @@ def test_cut_by_plane_open():
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected.v)
-    assert(actual.closed == False)
+    assert actual.closed == False

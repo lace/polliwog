@@ -10,12 +10,14 @@ def test_partition_segment_old_raises_exception_for_invalid_partition_size_type(
     with pytest.raises(TypeError):
         partition_segment_old(p1, p2, "foobar")
 
+
 def test_partition_segment_old_raises_exception_for_invalid_partition_size_value():
     p1 = np.array([0.0, 0.0, 0.0])
     p2 = np.array([1.0, 0.0, 0.0])
 
     with pytest.raises(ValueError):
         partition_segment_old(p1, p2, 1)
+
 
 def test_partition_segment_old_returns_partition_for_odd_partition_size():
     p1 = np.array([0.0, 0.0, 0.0])
@@ -33,6 +35,7 @@ def test_partition_segment_old_returns_partition_for_odd_partition_size():
         decimal=7,
     )
 
+
 def test_partition_segment_old_returns_partition_points_for_even_partition_size():
     p1 = np.array([0.0, 0.0, 0.0])
     p2 = np.array([1.0, 0.0, 0.0])
@@ -49,6 +52,7 @@ def test_partition_segment_old_returns_partition_points_for_even_partition_size(
         decimal=7,
     )
 
+
 def test_partition_segment_old_returns_partition_points_in_oriented_order():
     p1 = np.array([0.0, 0.0, 0.0])
     p2 = np.array([1.0, 0.0, 0.0])
@@ -64,6 +68,7 @@ def test_partition_segment_old_returns_partition_points_in_oriented_order():
         expected_partition_points,
         decimal=7,
     )
+
 
 def test_partition_segment_old_returns_partition_points_for_diagonal_segment():
     p1 = np.array([0.0, 0.0, 0.0])
@@ -87,7 +92,6 @@ def test_partition_segment_old_returns_partition_points_for_diagonal_segment():
     )
 
 
-
 def test_partition_segment_raises_exception_for_invalid_partition_size_type():
     p1 = np.array([0.0, 0.0, 0.0])
     p2 = np.array([1.0, 0.0, 0.0])
@@ -95,12 +99,14 @@ def test_partition_segment_raises_exception_for_invalid_partition_size_type():
     with pytest.raises(TypeError):
         partition_segment(p1, p2, "foobar")
 
+
 def test_partition_segment_raises_exception_for_invalid_partition_size_value():
     p1 = np.array([0.0, 0.0, 0.0])
     p2 = np.array([1.0, 0.0, 0.0])
 
     with pytest.raises(ValueError):
         partition_segment(p1, p2, 1)
+
 
 def test_partition_segment_returns_partition_for_odd_partition_size():
     p1 = np.array([0.0, 0.0, 0.0])
@@ -119,10 +125,9 @@ def test_partition_segment_returns_partition_for_odd_partition_size():
     )
 
     np.testing.assert_array_almost_equal(
-        partition_segment(p1, p2, partition_size),
-        expected_partition_points,
-        decimal=7,
+        partition_segment(p1, p2, partition_size), expected_partition_points, decimal=7
     )
+
 
 def test_partition_segment_returns_partition_points_for_even_partition_size():
     p1 = np.array([0.0, 0.0, 0.0])
@@ -142,10 +147,9 @@ def test_partition_segment_returns_partition_points_for_even_partition_size():
     )
 
     np.testing.assert_array_almost_equal(
-        partition_segment(p1, p2, partition_size),
-        expected_partition_points,
-        decimal=7,
+        partition_segment(p1, p2, partition_size), expected_partition_points, decimal=7
     )
+
 
 def test_partition_segment_returns_partition_omitting_endpoint():
     p1 = np.array([0.0, 0.0, 0.0])
@@ -209,10 +213,9 @@ def test_partition_adds_points_for_equal_length_line_segments():
 
     np.testing.assert_array_almost_equal(partition(v), expected)
 
+
 def test_partition_adds_points_for_nonequal_arbitrarily_oriented_line():
-    v = np.array(
-        [[0.0, 0.0, 0.0], [1.0, 0.0, 1.0], [2.0, 0.0, 1.0], [2.0, 2.0, 1.0]]
-    )
+    v = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 1.0], [2.0, 0.0, 1.0], [2.0, 2.0, 1.0]])
 
     expected = np.array(
         [
