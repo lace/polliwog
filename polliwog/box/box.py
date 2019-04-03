@@ -1,4 +1,5 @@
 import numpy as np
+import vg
 
 
 class Box(object):
@@ -14,12 +15,12 @@ class Box(object):
           depth (dz).
 
         """
-        from .._temporary.coercion import as_numeric_array
-
-        self.origin = as_numeric_array(origin, shape=(3,))
-        self.shape = as_numeric_array(shape, shape=(3,))
-        if any(np.less(self.shape, 0)):
+        vg.shape.check(locals(), "origin", (3,))
+        vg.shape.check(locals(), "shape", (3,))
+        if any(np.less(shape, 0)):
             raise ValueError("Shape should be zero or positive")
+        self.origin = origin
+        self.shape = shape
 
     @property
     def ranges(self):
