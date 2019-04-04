@@ -1,4 +1,3 @@
-from functools import lru_cache
 import numpy as np
 import vg
 
@@ -41,12 +40,15 @@ def convert_44_to_33(matrix):
     return matrix[:3, :3]
 
 
-@lru_cache(maxsize=1)
+_unit_registry = None
+# Avoid creating more than one of these.
 def unit_registry():
-    # Use @lru_cache to avoid creating more than one of these.
     from pint import UnitRegistry
 
-    return UnitRegistry()
+    global _unit_registry
+    if _unit_registry is None:
+        _unit_registry = UnitRegistry()
+    return _unit_registry
 
 
 class CompositeTransform(object):
