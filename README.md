@@ -69,7 +69,7 @@ Other modules:
 ## Installation
 
 ```sh
-pip install numpy polliwog
+pip install polliwog
 ```
 
 ## Usage
