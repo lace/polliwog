@@ -74,7 +74,7 @@ def test_scale():
 
 def test_convert_units():
     transform = CompositeTransform()
-    transform.convert_units('m', 'cm')
+    transform.convert_units("m", "cm")
 
     cube_v = create_default_cube_verts()
 
