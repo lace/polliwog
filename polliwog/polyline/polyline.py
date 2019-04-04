@@ -264,7 +264,7 @@ class Polyline(object):
         #
         # In case a vert of the intersecting edge lies on the plane, use a
         # vector to identify which direction it's facing.
-        if vg.sproj(intersecting_segment_vector, onto=plane.normal) > 0:
+        if vg.scalar_projection(intersecting_segment_vector, onto=plane.normal) > 0:
             new_v = np.vstack([intersection_point, self.v[intersecting_edge[1] :]])
         else:
             new_v = np.vstack([self.v[: intersecting_edge[0] + 1], intersection_point])

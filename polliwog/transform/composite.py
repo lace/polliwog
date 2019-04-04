@@ -98,7 +98,7 @@ class CompositeTransform(object):
         """
         matrix = self.matrix_for(from_range=from_range, reverse=reverse)
 
-        return vg.unpad(np.dot(matrix, vg.pad_with_ones(points).T).T)
+        return vg.matrix.unpad(np.dot(matrix, vg.matrix.pad_with_ones(points).T).T)
 
     def matrix_for(self, from_range=None, reverse=False):
         """
