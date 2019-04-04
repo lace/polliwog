@@ -27,7 +27,6 @@ The goals of this project are:
 
 ## TODO
 
-- [ ] Replace `_temporary.units` with `pint` in `polliwog/transform/composite.py`.
 - [ ] Replace `_temporary.setter_property` with ??.
 
 ## Features
