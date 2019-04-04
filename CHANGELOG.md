@@ -1,6 +1,10 @@
 Changelog
 =========
 
+## 0.5.0 (Apr 4, 2019)
+
+- Update vg dependency (now requires 1.0.0)
+
 ## 0.4.0 (Apr 3, 2019)
 
 - Replace most np array coercion with shape checking.
