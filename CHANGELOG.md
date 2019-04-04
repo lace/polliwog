@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## 0.4.0 (Apr 3, 2019)
+
+- Replace most np array coercion with shape checking.
+- Use pint for unit conversion.
+- Remove most modules from \_temporary.
+- Fix erroneous in rigid_transform.
+
 ## 0.3.0 (Apr 3, 2019)
 
 - Rewrite `polliwog.tri.barycentric` with new function signature.
