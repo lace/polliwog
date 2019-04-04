@@ -72,6 +72,22 @@ def test_scale():
     np.testing.assert_array_equal(transformed_cube_v[6], [50.0, 40.0, 40.0])
 
 
+def test_convert_units():
+    transform = CompositeTransform()
+    transform.convert_units('m', 'cm')
+
+    cube_v = create_default_cube_verts()
+
+    # Confidence check.
+    np.testing.assert_array_equal(cube_v[0], [1.0, 0.0, 0.0])
+    np.testing.assert_array_equal(cube_v[6], [5.0, 4.0, 4.0])
+
+    transformed_cube_v = transform(cube_v)
+
+    np.testing.assert_array_equal(transformed_cube_v[0], [100.0, 0.0, 0.0])
+    np.testing.assert_array_equal(transformed_cube_v[6], [500.0, 400.0, 400.0])
+
+
 def test_translate_then_scale():
     transform = CompositeTransform()
     transform.translate(np.array([8.0, 6.0, 7.0]))

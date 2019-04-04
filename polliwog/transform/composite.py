@@ -1,3 +1,4 @@
+from functools import lru_cache
 import numpy as np
 import vg
 
@@ -38,6 +39,14 @@ def convert_44_to_33(matrix):
     if matrix.shape != (4, 4):
         raise ValueError("Expected 4x4 matrix, got: %s" % matrix.shape)
     return matrix[:3, :3]
+
+
+@lru_cache(maxsize=1)
+def unit_registry():
+    # Use @lru_cache to avoid creating more than one of these.
+    from pint import UnitRegistry
+
+    return UnitRegistry()
 
 
 class CompositeTransform(object):
@@ -189,12 +198,11 @@ class CompositeTransform(object):
         - composite.scale(.01)
 
         """
-        from .._temporary import units
-
-        factor = units.factor(
-            from_units=from_units, to_units=to_units, units_class="length"
+        ureg = unit_registry()
+        conversion = ureg.parse_expression(from_units).to(
+            ureg.parse_expression(to_units)
         )
-        self.scale(factor)
+        self.scale(conversion.magnitude)
 
     def translate(self, vector):
         """
