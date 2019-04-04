@@ -21,7 +21,7 @@ class Polyline(object):
 
     def __init__(self, v, closed=False):
         """
-        v: An array-like thing containing points in 3-space.
+        v: np.array containing points in 3-space.
         closed: True indicates a closed chain, which has an extra
           segment connecting the last point back to the first
           point.
@@ -92,11 +92,9 @@ class Polyline(object):
         in 3D space. Set to None for an empty polyline.
 
         """
-        from .._temporary.coercion import as_numeric_array
-
-        self.__dict__["v"] = as_numeric_array(
-            val, dtype=np.float64, shape=(-1, 3), allow_none=True
-        )
+        if val is not None:
+            vg.shape.check_value(val, (-1, 3))
+        self.__dict__["v"] = val
         self._update_edges()
 
     @setter_property

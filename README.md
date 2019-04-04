@@ -28,7 +28,6 @@ The goals of this project are:
 ## TODO
 
 - [ ] Replace `_temporary.units` with `pint` in `polliwog/transform/composite.py`.
-- [ ] Replace `_temporary.as_numeric_array` with coercion function in vg.
 - [ ] Replace `_temporary.setter_property` with ??.
 
 ## Features

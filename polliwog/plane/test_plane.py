@@ -200,14 +200,15 @@ def test_line_plane_intersection():
 
     plane = Plane(sample, normal)
     # non-intersecting
-    assert plane.line_xsection(pt=[0.0, -1.0, 0.0], ray=[1.0, 0.0, 0.0]) is None
+    assert plane.line_xsection(pt=vg.basis.neg_y, ray=vg.basis.x) is None
     # coplanar
-    assert plane.line_xsection(pt=[0.0, 0.0, 0.0], ray=[1.0, 0.0, 0.0]) is None
+    assert plane.line_xsection(pt=np.zeros(3), ray=vg.basis.x) is None
     np.testing.assert_array_equal(
-        plane.line_xsection(pt=[0.0, -1.0, 0.0], ray=[0.0, 1.0, 0.0]), [0.0, 0.0, 0.0]
+        plane.line_xsection(pt=vg.basis.neg_y, ray=vg.basis.y), np.zeros(3)
     )
     np.testing.assert_array_equal(
-        plane.line_xsection(pt=[0.0, -1.0, 0.0], ray=[1.0, 1.0, 0.0]), [1.0, 0.0, 0.0]
+        plane.line_xsection(pt=vg.basis.neg_y, ray=np.array([1.0, 1.0, 0.0])),
+        vg.basis.x,
     )
 
 
@@ -243,17 +244,20 @@ def test_line_segment_plane_intersection():
 
     plane = Plane(sample, normal)
     # non-intersecting
-    assert plane.line_segment_xsection([0.0, -1.0, 0.0], [1.0, -1.0, 0.0]) is None
+    assert (
+        plane.line_segment_xsection(vg.basis.neg_y, np.array([1.0, -1.0, 0.0])) is None
+    )
     # coplanar
-    assert plane.line_segment_xsection([0.0, 0.0, 0.0], [1.0, 0.0, 0.0]) is None
+    assert plane.line_segment_xsection(np.zeros(3), vg.basis.x) is None
     np.testing.assert_array_equal(
-        plane.line_segment_xsection([0.0, -1.0, 0.0], [0.0, 1.0, 0.0]), [0.0, 0.0, 0.0]
+        plane.line_segment_xsection(vg.basis.neg_y, vg.basis.y), np.zeros(3)
     )
     np.testing.assert_array_equal(
-        plane.line_segment_xsection([0.0, -1.0, 0.0], [2.0, 1.0, 0.0]), [1.0, 0.0, 0.0]
+        plane.line_segment_xsection(vg.basis.neg_y, np.array([2.0, 1.0, 0.0])),
+        vg.basis.x,
     )
     # line intersecting, but not in segment
-    assert plane.line_segment_xsection([0.0, 1.0, 0.0], [0.0, 2.0, 0.0]) is None
+    assert plane.line_segment_xsection(vg.basis.y, np.array([0.0, 2.0, 0.0])) is None
 
 
 def test_line_segment_plane_intersections():
