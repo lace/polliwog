@@ -20,7 +20,7 @@ The goals of this project are:
 - Eventually provide a complete set of functionality for this problem domain.
 
 [pypi]: https://pypi.org/project/polliwog/
-[coverage]: https://coveralls.io/github/lacepolliwog/
+[coverage]: https://coveralls.io/github/lace/polliwog
 [build]: https://circleci.com/gh/lace/polliwog/tree/master
 [docs build]: https://polliwog.readthedocs.io/en/latest/
 [black]: https://black.readthedocs.io/en/stable/
