@@ -151,15 +151,9 @@ def test_project_point():
 def test_project_point_vectorized():
     plane = Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y)
 
-    points = np.array([
-        [10, 20, -5],
-        [2, 7, 203],
-    ])
+    points = np.array([[10, 20, -5], [2, 7, 203]])
 
-    expected = np.array([
-        [10, 10, -5],
-        [2, 10, 203],
-    ])
+    expected = np.array([[10, 10, -5], [2, 10, 203]])
 
     np.testing.assert_array_equal(plane.project_point(points), expected)
 

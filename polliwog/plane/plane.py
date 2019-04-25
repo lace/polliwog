@@ -184,7 +184,9 @@ class Plane(object):
         elif points.ndim == 2:
             vg.shape.check(locals(), "points", (-1, 3))
         else:
-            raise ValueError("Don't know what to do with {} dimensions".format(points.ndim))
+            raise ValueError(
+                "Don't know what to do with {} dimensions".format(points.ndim)
+            )
 
         return np.dot(points, self.equation[:3]) + self.equation[3]
 
@@ -201,7 +203,9 @@ class Plane(object):
         elif points.ndim == 2:
             vg.shape.check(locals(), "points", (-1, 3))
         else:
-            raise ValueError("Don't know what to do with {} dimensions".format(points.ndim))
+            raise ValueError(
+                "Don't know what to do with {} dimensions".format(points.ndim)
+            )
 
         # Translate the point back to the plane along the normal.
         signed_distance_to_points = self.signed_distance(points)
