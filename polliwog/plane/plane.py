@@ -172,28 +172,47 @@ class Plane(object):
 
     def signed_distance(self, points):
         """
-        Returns the signed distances given an np.array of 3-vectors.
+        Returns the signed distances to the given points or the signed
+        distance to a single point.
 
         Params:
             - points:
                 V x 3 np.array
         """
-        vg.shape.check(locals(), "points", (-1, 3))
+        if points.ndim == 1:
+            vg.shape.check(locals(), "points", (3,))
+        elif points.ndim == 2:
+            vg.shape.check(locals(), "points", (-1, 3))
+        else:
+            raise ValueError(
+                "Don't know what to do with {} dimensions".format(points.ndim)
+            )
+
         return np.dot(points, self.equation[:3]) + self.equation[3]
 
     def distance(self, points):
         vg.shape.check(locals(), "points", (-1, 3))
         return np.absolute(self.signed_distance(points))
 
-    def project_point(self, point):
+    def project_point(self, points):
         """
-        Project a given point to the plane.
+        Project a given point (or stack of points) to the plane.
+        """
+        if points.ndim == 1:
+            vg.shape.check(locals(), "points", (3,))
+        elif points.ndim == 2:
+            vg.shape.check(locals(), "points", (-1, 3))
+        else:
+            raise ValueError(
+                "Don't know what to do with {} dimensions".format(points.ndim)
+            )
 
-        """
-        vg.shape.check(locals(), "point", (3,))
         # Translate the point back to the plane along the normal.
-        signed_distance_to_point = self.signed_distance(point.reshape((-1, 3)))[0]
-        return point - signed_distance_to_point * self._n
+        signed_distance_to_points = self.signed_distance(points)
+        if points.ndim == 2:
+            # Convert to a column vector.
+            signed_distance_to_points = signed_distance_to_points.reshape(-1, 1)
+        return points - signed_distance_to_points * self._n
 
     def polyline_xsection(self, polyline, ret_edge_indices=False):
         """
