@@ -16,6 +16,7 @@ def test_returns_signed_distances_for_xz_plane_at_origin():
     expected = np.array([502.0, -501.0])
 
     np.testing.assert_array_equal(expected, plane.signed_distance(pts))
+    np.testing.assert_array_equal(expected[0], plane.signed_distance(pts[0]))
 
 
 def test_returns_unsigned_distances_for_xz_plane_at_origin():
@@ -145,6 +146,22 @@ def test_project_point():
     expected = np.array([10, 10, -5])
 
     np.testing.assert_array_equal(plane.project_point(point), expected)
+
+
+def test_project_point_vectorized():
+    plane = Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y)
+
+    points = np.array([
+        [10, 20, -5],
+        [2, 7, 203],
+    ])
+
+    expected = np.array([
+        [10, 10, -5],
+        [2, 10, 203],
+    ])
+
+    np.testing.assert_array_equal(plane.project_point(points), expected)
 
 
 def test_plane_from_points():
