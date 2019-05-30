@@ -34,7 +34,7 @@ class Line:
         """
         from .line_intersect import line_intersect3
 
-        return line_intersect3(*self.reference_points, *other.reference_points)
+        return line_intersect3(*(self.reference_points + other.reference_points))
 
     def project(self, points):
         """
