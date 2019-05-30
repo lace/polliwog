@@ -5,6 +5,7 @@ Changelog
 
 - Add Line primitive.
 - Add `polliwog.tri.contains.planar_point`.
+- Update vg dependency (now requires 1.2.0).
 
 ## 0.5.0 (Apr 4, 2019)
 
