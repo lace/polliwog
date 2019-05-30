@@ -2,7 +2,7 @@ import numpy as np
 from .contains import contains_coplanar_point
 
 
-def test_contains():
+def test_contains_coplanar_point():
     a = np.array([0.0, 0.0, 0.0])
     b = np.array([4.0, 0.1, 0.0])
     c = np.array([3.0, 3.1, 0.0])
