@@ -84,6 +84,7 @@ def test_partition_by_length_noop():
     np.testing.assert_array_almost_equal(result.v, original.v)
     np.testing.assert_array_equal(result.e, original.e)
     np.testing.assert_array_equal(indices, expected_indices)
+    np.testing.assert_array_equal(result.v[indices], original.v)
 
 
 def test_partition_by_length_degenerate():
@@ -101,6 +102,7 @@ def test_partition_by_length_degenerate():
     np.testing.assert_array_almost_equal(result.v, original.v)
     np.testing.assert_array_equal(result.e, original.e)
     np.testing.assert_array_equal(indices, expected_indices)
+    np.testing.assert_array_equal(result.v[indices], original.v)
 
 
 def test_partition_by_length_divide_by_two():
@@ -141,6 +143,7 @@ def test_partition_by_length_divide_by_two():
         np.testing.assert_array_almost_equal(result.v, expected.v)
         np.testing.assert_array_equal(result.e, expected.e)
         np.testing.assert_array_equal(indices, expected_indices)
+    np.testing.assert_array_equal(result.v[indices], original.v)
 
 
 def test_partition_length_divide_by_five():
@@ -193,6 +196,7 @@ def test_partition_length_divide_by_five():
         np.testing.assert_array_almost_equal(result.v, expected.v)
         np.testing.assert_array_equal(result.e, expected.e)
         np.testing.assert_array_equal(indices, expected_indices)
+    np.testing.assert_array_equal(result.v[indices], original.v)
 
 
 def test_partition_by_length_divide_some_leave_some():
@@ -231,6 +235,7 @@ def test_partition_by_length_divide_some_leave_some():
         np.testing.assert_array_almost_equal(result.v, expected.v)
         np.testing.assert_array_equal(result.e, expected.e)
         np.testing.assert_array_equal(indices, expected_indices)
+    np.testing.assert_array_equal(result.v[indices], original.v)
 
 
 def test_partition_by_length_closed():
@@ -276,6 +281,45 @@ def test_partition_by_length_closed():
         np.testing.assert_array_almost_equal(result.v, expected.v)
         np.testing.assert_array_equal(result.e, expected.e)
         np.testing.assert_array_equal(indices, expected_indices)
+    np.testing.assert_array_equal(result.v[indices], original.v)
+
+
+def test_bisect_edges():
+    original = Polyline(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [1.0, 2.0, 0.0],
+                [1.0, 3.0, 0.0],
+            ]
+        )
+    )
+
+    expected = Polyline(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 0.5, 0.0],
+                [1.0, 1.0, 0.0],
+                [1.0, 1.5, 0.0],
+                [1.0, 2.0, 0.0],
+                [1.0, 3.0, 0.0],
+            ]
+        )
+    )
+
+    expected_indices_of_original_vertices = np.array([0, 1, 3, 5, 6])
+
+    result = original.copy()
+    indices = result.bisect_edges([1, 2])
+
+    np.testing.assert_array_almost_equal(result.v, expected.v)
+    np.testing.assert_array_equal(result.e, expected.e)
+    np.testing.assert_array_equal(indices, expected_indices_of_original_vertices)
+    np.testing.assert_array_equal(result.v[indices], original.v)
 
 
 def test_flip():
