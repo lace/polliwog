@@ -1,5 +1,8 @@
-Changelog
-=========
+# Changelog
+
+## 0.7.0 (June 30, 2019)
+
+- Polyline: Add `bisect_edges()` method.
 
 ## 0.6.0 (May 29, 2019)
 
