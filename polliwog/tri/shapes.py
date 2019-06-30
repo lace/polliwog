@@ -32,19 +32,22 @@ def create_rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
 
     vertices = np.vstack([lower_base_plane, upper_base_plane])
 
-    faces = np.array(quads_to_tris(
-        np.array(
-            [
-                [0, 1, 2, 3],  # lower base (-y)
-                [7, 6, 5, 4],  # upper base (+y)
-                [4, 5, 1, 0],  # +z face
-                [5, 6, 2, 1],  # +x face
-                [6, 7, 3, 2],  # -z face
-                [3, 7, 4, 0],  # -x face
-            ],
-            dtype=np.uint64
-        )
-    ), dtype=np.uint64)
+    faces = np.array(
+        quads_to_tris(
+            np.array(
+                [
+                    [0, 1, 2, 3],  # lower base (-y)
+                    [7, 6, 5, 4],  # upper base (+y)
+                    [4, 5, 1, 0],  # +z face
+                    [5, 6, 2, 1],  # +x face
+                    [6, 7, 3, 2],  # -z face
+                    [3, 7, 4, 0],  # -x face
+                ],
+                dtype=np.uint64,
+            )
+        ),
+        dtype=np.uint64,
+    )
 
     return _maybe_flatten(vertices, faces, ret_unique_vertices_and_faces)
 
@@ -92,7 +95,7 @@ def create_triangular_prism(p1, p2, p3, height, ret_unique_vertices_and_faces=Fa
             [2, 3, 0],  # side 2, 5, 3, 0
             [5, 4, 3],  # base
         ],
-        dtype=np.uint64
+        dtype=np.uint64,
     )
 
     return _maybe_flatten(vertices, faces, ret_unique_vertices_and_faces)
