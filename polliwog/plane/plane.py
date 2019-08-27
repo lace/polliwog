@@ -133,8 +133,7 @@ class Plane(object):
         """
         Creates a new Plane with an inverted orientation.
         """
-        normal = self._n * -1
-        return Plane(self._r0, normal)
+        return Plane(point_on_plane=self._r0, unit_normal=-1 * self._n)
 
     def sign(self, points):
         """
@@ -214,7 +213,7 @@ class Plane(object):
             signed_distance_to_points = signed_distance_to_points.reshape(-1, 1)
         return points - signed_distance_to_points * self._n
 
-    def polyline_xsection(self, polyline, ret_edge_indices=False):
+    def polyline_xsection(self, polyline, ret_edge_indices=False):  # pragma: no cover
         """
         Deprecated.
         """
