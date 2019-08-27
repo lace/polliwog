@@ -4,6 +4,18 @@ from ..plane.plane import Plane
 from .polyline import Polyline
 
 
+def test_num_v_num_e():
+    example_vs = np.array(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
+    )
+    closed_polyline = Polyline(example_vs, closed=True)
+    assert closed_polyline.num_v == 4
+    assert closed_polyline.num_e == 4
+    open_polyline = Polyline(example_vs, closed=False)
+    assert open_polyline.num_v == 4
+    assert open_polyline.num_e == 3
+
+
 def test_edges():
     v = np.array(
         [
