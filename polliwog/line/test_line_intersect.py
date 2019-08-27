@@ -44,6 +44,13 @@ def test_line_intersect3_with_degenerate_input_q():
     np.testing.assert_array_equal(result, [0.0, 10.0, 20.0])
 
 
+def test_line_intersect3_with_degenerate_input_q_2():
+    p0, q0 = np.array([[0.0, 1.0, 2.0], [0.0, 10.0, 20.0]])
+    p1, q1 = np.array([[0.0, 10.0, 20.0], [1.0, 2.0, 3.0]])
+    result = line_intersect3(p0, q0, p1, q1)
+    np.testing.assert_array_equal(result, [0.0, 10.0, 20.0])
+
+
 def test_line_intersect3_example_1():
     # This example tests the codirectional cross product case
     p0, q0 = np.array([[5.0, 5.0, 4.0], [10.0, 10.0, 6.0]])
