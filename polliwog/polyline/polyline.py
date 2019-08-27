@@ -43,6 +43,20 @@ class Polyline(object):
     def __len__(self):
         return len(self.v)
 
+    @property
+    def num_v(self):
+        """
+        Return the number of vertices in the polyline.
+        """
+        return len(self)
+
+    @property
+    def num_e(self):
+        """
+        Return the number of segments in the polyline.
+        """
+        return len(self.e)
+
     def copy(self):
         """
         Return a copy of this polyline.
