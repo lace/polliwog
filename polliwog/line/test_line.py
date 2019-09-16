@@ -13,11 +13,9 @@ def test_constructor():
 
 def test_constructor_error():
     with pytest.raises(ValueError):
-        Line.from_points([1.0, 2.0, 3.0], [1.0, 2.0, 3.0])
+        Line.from_points(np.array([1.0, 2.0, 3.0]), np.array([1.0, 2.0, 3.0]))
     with pytest.raises(ValueError):
-        Line.from_points([1.0, 2.0], [3.0, 4.0])
-    with pytest.raises(ValueError):
-        Line.from_points([1.0, 2.0], [3.0, 2.0])
+        Line.from_points(np.array([1.0, 2.0]), np.array([3.0, 4.0]))
 
 
 def test_intersect():
