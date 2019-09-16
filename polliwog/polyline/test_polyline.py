@@ -611,4 +611,3 @@ def test_apex():
     np.testing.assert_array_equal(
         Polyline(v, closed=False).apex(vg.basis.y), np.array([1.0, 3.0, 0.0])
     )
-
