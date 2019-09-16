@@ -534,11 +534,11 @@ def test_cut_by_plane_closed():
     assert actual.closed == False
 
     zigzag = Polyline(
-        np.array([[0.0, 0.0, 0.0], [5.0, 0.0, 0.0], [2.0, 0.0, 0.0], [2.0, 5.0, 0.0]]),
+        np.array([[0.0, 0.0, 0.0], [5.0, 0.0, 0.0], [0.0, 2.0, 0.0], [5.0, 2.0, 0.0]]),
         closed=True,
     )
     with pytest.raises(ValueError):
-        original.cut_by_plane(
+        zigzag.cut_by_plane(
             Plane(point_on_plane=np.array([2.5, 0.0, 0.0]), unit_normal=vg.basis.x)
         )
 
