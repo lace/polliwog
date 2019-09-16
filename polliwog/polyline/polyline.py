@@ -65,15 +65,6 @@ class Polyline(object):
         v = None if self.v is None else np.copy(self.v)
         return self.__class__(v, closed=self.closed)
 
-    def as_lines(self, vc=None):
-        """
-        Return a Lines instance with our vertices and edges.
-
-        """
-        from lace.lines import Lines
-
-        return Lines(v=self.v, e=self.e, vc=vc)
-
     def to_dict(self, decimals=3):
         return {
             "vertices": [np.around(v, decimals=decimals).tolist() for v in self.v],
