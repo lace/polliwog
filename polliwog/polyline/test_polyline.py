@@ -1,7 +1,52 @@
 import numpy as np
 import vg
+import pytest
 from ..plane.plane import Plane
 from .polyline import Polyline
+
+
+def test_repr():
+    example_vs = np.array(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
+    )
+    assert repr(Polyline(example_vs, closed=True)) == "<closed Polyline with 4 verts>"
+    assert repr(Polyline(example_vs, closed=False)) == "<open Polyline with 4 verts>"
+    assert (
+        repr(Polyline(np.array([]).reshape(-1, 3), closed=False))
+        == "<Polyline with no verts>"
+    )
+
+
+def test_to_dict():
+    example_vs = np.array(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
+    )
+    expected_dict = {
+        "vertices": [
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [1.0, 1.0, 0.0],
+            [1.0, 2.0, 0.0],
+        ],
+        "edges": [[0, 1], [1, 2], [2, 3], [3, 0]],
+    }
+    actual_dict = Polyline(example_vs, closed=True).to_dict(decimals=3)
+    # TODO Is there a cleaner way to assert deep equal?
+    assert set(actual_dict.keys()) == set(expected_dict.keys())
+    np.testing.assert_array_equal(expected_dict["vertices"], actual_dict["vertices"])
+    np.testing.assert_array_equal(expected_dict["edges"], actual_dict["edges"])
+
+
+def test_update_closed():
+    example_vs = np.array(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
+    )
+    polyline = Polyline(example_vs, closed=False)
+    assert polyline.num_e == 3
+    assert polyline.closed == False
+    polyline.closed = True
+    assert polyline.num_e == 4
+    assert polyline.closed == True
 
 
 def test_num_v_num_e():
@@ -402,6 +447,45 @@ def test_reindexed():
     np.testing.assert_array_almost_equal(reindexed.v, expected.v)
     np.testing.assert_array_equal(original.segments[edge_mapping], reindexed.segments)
 
+    open_polyline = Polyline(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [1.0, 7.0, 0.0],
+                [1.0, 8.0, 0.0],
+                [0.0, 8.0, 0.0],
+            ]
+        ),
+        closed=False,
+    )
+    with pytest.raises(ValueError):
+        open_polyline.reindexed(5)
+
+
+def test_intersect_plane():
+    polyline = Polyline(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [1.0, 7.0, 0.0],
+                [1.0, 8.0, 0.0],
+                [0.0, 8.0, 0.0],
+            ]
+        ),
+        closed=True,
+    )
+
+    expected = np.array([[1.0, 7.5, 0.0], [0.0, 7.5, 0.0]])
+    actual = polyline.intersect_plane(
+        Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
+    )
+
+    np.testing.assert_array_equal(actual, expected)
+
 
 def test_cut_by_plane_closed():
     original = Polyline(
@@ -449,6 +533,15 @@ def test_cut_by_plane_closed():
     np.testing.assert_array_almost_equal(actual.v, expected.v)
     assert actual.closed == False
 
+    zigzag = Polyline(
+        np.array([[0.0, 0.0, 0.0], [5.0, 0.0, 0.0], [2.0, 0.0, 0.0], [2.0, 5.0, 0.0]]),
+        closed=True,
+    )
+    with pytest.raises(ValueError):
+        original.cut_by_plane(
+            Plane(point_on_plane=np.array([2.5, 0.0, 0.0]), unit_normal=vg.basis.x)
+        )
+
 
 def test_cut_by_plane_open():
     original = Polyline(
@@ -490,3 +583,32 @@ def test_cut_by_plane_open():
 
     np.testing.assert_array_almost_equal(actual.v, expected.v)
     assert actual.closed == False
+
+    with pytest.raises(ValueError):
+        original.cut_by_plane(
+            Plane(point_on_plane=np.array([0.0, 15.0, 0.0]), unit_normal=vg.basis.neg_y)
+        )
+
+    with pytest.raises(ValueError):
+        original.cut_by_plane(
+            Plane(
+                point_on_plane=np.array([0.5, 0.0, 0.0]),
+                unit_normal=vg.normalize(np.array([1.0, -1.0, 0.0])),
+            )
+        )
+
+
+def test_apex():
+    v = np.array(
+        [
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [1.0, 1.0, 0.0],
+            [1.0, 2.0, 0.0],
+            [1.0, 3.0, 0.0],
+        ]
+    )
+    np.testing.assert_array_equal(
+        Polyline(v, closed=False).apex(vg.basis.y), np.array([1.0, 3.0, 0.0])
+    )
+
