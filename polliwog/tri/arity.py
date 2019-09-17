@@ -1,4 +1,5 @@
 import numpy as np
+import vg
 
 
 def quads_to_tris(quads, ret_mapping=False):
@@ -13,6 +14,8 @@ def quads_to_tris(quads, ret_mapping=False):
 
     When `ret_mapping` is `False`, return the 2nx3 array of triangles.
     """
+    vg.shape.check(locals(), "quads", (-1, 4))
+
     tris = np.empty((2 * len(quads), 3))
     tris[0::2, :] = quads[:, [0, 1, 2]]
     tris[1::2, :] = quads[:, [0, 2, 3]]
