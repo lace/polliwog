@@ -24,4 +24,3 @@ def quads_to_tris(quads, ret_mapping=False):
         return tris, f_old_to_new
     else:
         return tris
-
