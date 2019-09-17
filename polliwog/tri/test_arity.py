@@ -34,4 +34,4 @@ def test_quads_to_tris():
 
     quads, f_old_to_new = quads_to_tris(tris, ret_mapping=True)
     np.testing.assert_array_equal(expected_quads, quads)
-    np.testing.assert_array_equal(f_old_to_new, f_old_to_new)
+    np.testing.assert_array_equal(f_old_to_new, expected_f_old_to_new)
