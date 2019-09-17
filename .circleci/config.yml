@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  python2:
+  main@py2:
     docker:
       - image: circleci/python:2
 
@@ -29,7 +29,7 @@ jobs:
             . venv/bin/activate
             ./dev.py test
 
-  python3:
+  main@py3:
     docker:
       - image: circleci/python:3
 
@@ -78,6 +78,27 @@ jobs:
             . venv/bin/activate
             ./dev.py lint
 
+  format:
+    docker:
+      - image: circleci/python:3
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install python dependencies
+          command: |
+            mkdir -p venv
+            virtualenv venv
+            . venv/bin/activate
+            set -o pipefail; pip install --upgrade -r requirements_dev_py3.txt | cat
+
+      - run:
+          name: Show versions
+          command: |
+            . venv/bin/activate
+            pip freeze
+
       - run:
           name: Check code format
           when: always
@@ -90,8 +111,9 @@ workflows:
 
   on-commit:
     jobs:
-      - python2
-      - python3
+      - main@py2
+      - main@py3
+      - format
 
   daily:
     triggers:
@@ -101,5 +123,6 @@ workflows:
             branches:
               only: master
     jobs:
-      - python2
-      - python3
+      - main@py2
+      - main@py3
+      - format
