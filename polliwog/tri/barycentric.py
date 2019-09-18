@@ -45,10 +45,7 @@ def compute_barycentric_coordinates(vertices_of_tris, points):
     # which makes "s" 0, which gives us divide by zero. So we
     # make the arbitrary choice to set s to epsv (=numpy.spacing(1)),
     # the closest thing to zero
-    if np.isscalar(s):
-        s = s if s else np.spacing(1)
-    else:
-        s[s == 0] = np.spacing(1)
+    s[s == 0] = np.spacing(1)
 
     oneOver4ASquared = 1.0 / s
     w = p - q
