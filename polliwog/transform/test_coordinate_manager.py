@@ -241,4 +241,3 @@ def test_coordinate_manager_rotate():
         expected_v0=np.array([0.0, 0.0, -1.0]),
         expected_v6=np.array([4, 4.0, -5.0]),
     )
-
