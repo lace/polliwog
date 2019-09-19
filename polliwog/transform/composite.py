@@ -15,8 +15,7 @@ def convert_33_to_44(matrix):
                [0., 0., 0., 1.]])
 
     """
-    if matrix.shape != (3, 3):
-        raise ValueError("Expected 3x3 matrix, got: %s" % matrix.shape)
+    vg.shape.check(locals(), "matrix", (3, 3))
     result = np.pad(matrix, ((0, 1), (0, 1)), mode="constant")
     result[3][3] = 1
     return result
@@ -35,8 +34,7 @@ def convert_44_to_33(matrix):
                [5., 6., 7.]])
 
     """
-    if matrix.shape != (4, 4):
-        raise ValueError("Expected 4x4 matrix, got: %s" % matrix.shape)
+    vg.shape.check(locals(), "matrix", (4, 4))
     return matrix[:3, :3]
 
 
