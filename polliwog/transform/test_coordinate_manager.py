@@ -8,7 +8,6 @@ from .coordinate_manager import CoordinateManager
 
 def perform_transform_test(apply_transform_fn, expected_v0, expected_v6):
     cube_v = create_cube_verts([1.0, 0.0, 0.0], 4.0)
-    cube_floor_point = np.array([3.0, 0.0, 2.0])  # as lace.mesh.floor_point
 
     coordinate_manager = CoordinateManager()
     coordinate_manager.tag_as("before")
@@ -165,15 +164,13 @@ def test_coordinate_manager_mesh_with_no_vs():
 
 
 def test_coordinate_manager_out_of_order():
-    cube_v = create_cube_verts([1.0, 0.0, 0.0], 4.0)
-
     coordinate_manager = CoordinateManager()
     coordinate_manager.tag_as("before")
     coordinate_manager.scale(2)
     coordinate_manager.tag_as("after")
 
     with pytest.raises(ValueError):
-        _ = coordinate_manager.after
+        coordinate_manager.after
 
 
 def test_coordinate_manager_invalid_tag():
@@ -190,7 +187,7 @@ def test_coordinate_manager_invalid_tag():
     coordinate_manager.before = cube_v
 
     with pytest.raises(AttributeError):
-        _ = coordinate_manager.affturr
+        coordinate_manager.affturr
 
 
 def test_coordinate_manager_custom_transform():
