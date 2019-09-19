@@ -1,4 +1,5 @@
 import numpy as np
+import vg
 from .composite import CompositeTransform
 
 
@@ -144,7 +145,7 @@ def test_reorient():
     # TODO We should also test a non-axis-aligned up and look.
 
     transform = CompositeTransform()
-    transform.reorient(up=np.array([0.0, 1.0, 0.0]), look=np.array([-1.0, 0.0, 0.0]))
+    transform.reorient(up=vg.basis.y, look=vg.basis.neg_x)
 
     cube_v = create_default_cube_verts()
 

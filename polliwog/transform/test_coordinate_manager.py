@@ -1,7 +1,30 @@
 # pylint: disable=invalid-unary-operand-type
 import numpy as np
+import vg
+import pytest
 from .test_composite import create_cube_verts
 from .coordinate_manager import CoordinateManager
+
+
+def perform_transform_test(apply_transform_fn, expected_v0, expected_v6):
+    cube_v = create_cube_verts([1.0, 0.0, 0.0], 4.0)
+
+    coordinate_manager = CoordinateManager()
+    coordinate_manager.tag_as("before")
+    apply_transform_fn(coordinate_manager)
+    coordinate_manager.tag_as("after")
+
+    # Confidence check.
+    np.testing.assert_array_almost_equal(cube_v[0], np.array([1.0, 0.0, 0.0]))
+    np.testing.assert_array_almost_equal(cube_v[6], np.array([5.0, 4.0, 4.0]))
+
+    coordinate_manager.before = cube_v
+    scaled_v = coordinate_manager.do_transform(
+        cube_v, from_tag="before", to_tag="after"
+    )
+
+    np.testing.assert_array_almost_equal(scaled_v[0], expected_v0)
+    np.testing.assert_array_almost_equal(scaled_v[6], expected_v6)
 
 
 def test_coordinate_manager_forward():
@@ -22,7 +45,7 @@ def test_coordinate_manager_forward():
         cube_v, from_tag="source", to_tag="floored_and_scaled"
     )
 
-    # Sanity check
+    # Confidence check.
     np.testing.assert_array_almost_equal(cube_v[0], [1.0, 0.0, 0.0])
     np.testing.assert_array_almost_equal(cube_v[6], [5.0, 4.0, 4.0])
 
@@ -66,7 +89,7 @@ def test_coordinate_manager_forward_with_attrs():
 
     coordinate_manager.source = cube_v
 
-    # Sanity check
+    # Confidence check.
     np.testing.assert_array_almost_equal(cube_v[0], [1.0, 0.0, 0.0])
     np.testing.assert_array_almost_equal(cube_v[6], [5.0, 4.0, 4.0])
 
@@ -108,7 +131,7 @@ def test_coordinate_manager_forward_on_mesh():
 
     coordinate_manager.source = cube
 
-    # Sanity check
+    # Confidence check.
     np.testing.assert_array_almost_equal(cube.v[0], [1.0, 0.0, 0.0])
     np.testing.assert_array_almost_equal(cube.v[6], [5.0, 4.0, 4.0])
     np.testing.assert_array_equal(cube.other_thing, [-9.0])
@@ -117,3 +140,101 @@ def test_coordinate_manager_forward_on_mesh():
     np.testing.assert_array_almost_equal(floored_and_scaled.v[0], [-4.0, 0.0, -4.0])
     np.testing.assert_array_almost_equal(floored_and_scaled.v[6], [4.0, 8.0, 4.0])
     np.testing.assert_array_equal(floored_and_scaled.other_thing, [-9.0])
+
+
+def test_coordinate_manager_mesh_with_no_vs():
+    import sys
+
+    if sys.version_info >= (3, 3):
+        from unittest.mock import MagicMock
+    else:
+        from mock import MagicMock
+
+    cube = MagicMock(spec=["v"], v=None)
+
+    coordinate_manager = CoordinateManager()
+    coordinate_manager.tag_as("before")
+    coordinate_manager.scale(2)
+    coordinate_manager.tag_as("after")
+
+    coordinate_manager.before = cube
+    after = coordinate_manager.after
+
+    assert after.v is None
+
+
+def test_coordinate_manager_out_of_order():
+    coordinate_manager = CoordinateManager()
+    coordinate_manager.tag_as("before")
+    coordinate_manager.scale(2)
+    coordinate_manager.tag_as("after")
+
+    with pytest.raises(ValueError):
+        coordinate_manager.after
+
+
+def test_coordinate_manager_invalid_tag():
+    cube_v = create_cube_verts([1.0, 0.0, 0.0], 4.0)
+
+    coordinate_manager = CoordinateManager()
+    coordinate_manager.tag_as("before")
+    coordinate_manager.scale(2)
+    coordinate_manager.tag_as("after")
+
+    with pytest.raises(AttributeError):
+        coordinate_manager.beefour = cube_v
+
+    coordinate_manager.before = cube_v
+
+    with pytest.raises(KeyError):
+        coordinate_manager.affturr
+
+
+def test_coordinate_manager_custom_transform():
+    scale4 = np.array([[3, 0, 0, 0], [0, 3, 0, 0], [0, 0, 3, 0], [0, 0, 0, 1]])
+    perform_transform_test(
+        apply_transform_fn=lambda coordinate_manager: coordinate_manager.append_transform4(
+            scale4
+        ),
+        expected_v0=np.array([3.0, 0.0, 0.0]),
+        expected_v6=np.array([15.0, 12.0, 12.0]),
+    )
+
+    scale3 = np.array([[3, 0, 0], [0, 3, 0], [0, 0, 3]])
+    perform_transform_test(
+        apply_transform_fn=lambda coordinate_manager: coordinate_manager.append_transform3(
+            scale3
+        ),
+        expected_v0=np.array([3.0, 0.0, 0.0]),
+        expected_v6=np.array([15.0, 12.0, 12.0]),
+    )
+
+
+def test_coordinate_manager_convert_units():
+    perform_transform_test(
+        apply_transform_fn=lambda coordinate_manager: coordinate_manager.convert_units(
+            from_units="cm", to_units="m"
+        ),
+        expected_v0=np.array([0.01, 0.0, 0.0]),
+        expected_v6=np.array([0.05, 0.04, 0.04]),
+    )
+
+
+def test_coordinate_manager_reorient():
+    perform_transform_test(
+        apply_transform_fn=lambda coordinate_manager: coordinate_manager.reorient(
+            up=vg.basis.y, look=vg.basis.neg_x
+        ),
+        expected_v0=np.array([0.0, 0.0, -1.0]),
+        expected_v6=np.array([4, 4.0, -5.0]),
+    )
+
+
+def test_coordinate_manager_rotate():
+    perform_transform_test(
+        apply_transform_fn=lambda coordinate_manager: coordinate_manager.rotate(
+            np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]])
+        ),
+        expected_v0=np.array([0.0, 0.0, -1.0]),
+        expected_v6=np.array([4, 4.0, -5.0]),
+    )
