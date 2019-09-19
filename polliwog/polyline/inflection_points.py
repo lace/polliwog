@@ -28,7 +28,7 @@ def inflection_points(points, axis, span):
 
     # Compare the product of all neighboring pairs of points in the second
     # derivative. If a pair of points has a negative product, then the second
-    # derivative changes sign between those points. Those are the inflection
+    # derivative changes sign between those points. These are the inflection
     # points.
     is_inflection_point = np.concatenate(
         [finite_difference_2[:-1] * finite_difference_2[1:] <= 0, [False]]
