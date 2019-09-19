@@ -186,7 +186,7 @@ def test_coordinate_manager_invalid_tag():
 
     coordinate_manager.before = cube_v
 
-    with pytest.raises(AttributeError):
+    with pytest.raises(KeyError):
         coordinate_manager.affturr
 
 

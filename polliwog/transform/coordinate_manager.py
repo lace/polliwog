@@ -82,7 +82,8 @@ class CoordinateManager(object):
             from_index = self.tags_to_indices[from_tag]
             to_index = self.tags_to_indices[to_tag]
         except KeyError as e:
-            raise KeyError("No such tag: %s" % e.message)
+            tag = e.args[0]
+            raise KeyError("No such tag: {}".format(tag))
 
         if from_index == to_index:
             result_points = points
