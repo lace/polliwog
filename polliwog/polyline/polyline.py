@@ -204,7 +204,10 @@ class Polyline(object):
             old_edge_v_index_from, old_edge_v_index_to = self.e[old_e_index]
             start_point, end_point = self.v[self.e[old_e_index]]
 
-            # Insert new vertices.
+            # Insert new vertices. Saving up the new v's and running `np.insert`
+            # once at the end might speed this up a bit. However, the bookkeeping
+            # for indices_of_original_vertices is also happening in this loop.
+            # Although that could be vectorizecd too...
             vs_to_insert = partition_segment(
                 self.v[old_edge_v_index_from],
                 self.v[old_edge_v_index_to],
