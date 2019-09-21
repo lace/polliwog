@@ -217,9 +217,9 @@ class Polyline(object):
                 # Exclude the start point.
                 1:
             ]
-            # Insert after the from vertex (which is before the from vertex +
-            # 1). This ensure the algorithm works correctly when subdividing
-            # the last edge.
+            # Insert after the `from` vertex (which is _before_ the `from`
+            # vertex + 1). This ensure the algorithm works correctly when
+            # subdividing the last edge.
             insert_before = indices_of_original_vertices[old_edge_v_index_from] + 1
             new_v = np.insert(new_v, insert_before, vs_to_insert, axis=0)
 
