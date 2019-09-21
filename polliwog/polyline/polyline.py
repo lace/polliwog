@@ -195,38 +195,40 @@ class Polyline(object):
         """
         from ..segment.segment import partition_segment
 
-        lengths = self.segment_lengths
-        num_segments_needed = np.ceil(lengths / max_length)
+        num_segments_needed = np.ceil(self.segment_lengths / max_length)
 
-        indices_of_orig_vertices = []
-        new_v = np.empty((0, 3))
+        indices_of_original_vertices = np.arange(self.num_v)
+        new_v = self.v
 
-        for i, num_segments in enumerate(num_segments_needed):
-            start_point, end_point = self.v[self.e[i]]
+        for old_e_index in (num_segments_needed > 1).nonzero()[0]:
+            old_edge_v_index_from, old_edge_v_index_to = self.e[old_e_index]
+            start_point, end_point = self.v[self.e[old_e_index]]
 
-            indices_of_orig_vertices.append(len(new_v))
+            # Insert new vertices.
+            vs_to_insert = partition_segment(
+                self.v[old_edge_v_index_from],
+                self.v[old_edge_v_index_to],
+                np.int(num_segments_needed[old_e_index]),
+                endpoint=False,
+            )[
+                # Exclude the start point.
+                1:
+            ]
+            # Insert after the from vertex (which is before the from vertex +
+            # 1). This ensure the algorithm works correctly when subdividing
+            # the last edge.
+            insert_before = indices_of_original_vertices[old_edge_v_index_from] + 1
+            new_v = np.insert(new_v, insert_before, vs_to_insert, axis=0)
 
-            # In the simple case, one segment, or degenerate case, with
-            # a repeated vertex, we do not need to subdivide.
-            if num_segments <= 1:
-                new_v = np.vstack((new_v, start_point.reshape(-1, 3)))
-            else:
-                new_v = np.vstack(
-                    (
-                        new_v,
-                        partition_segment(
-                            start_point, end_point, np.int(num_segments), endpoint=False
-                        ),
-                    )
-                )
-
-        if not self.closed:
-            indices_of_orig_vertices.append(len(new_v))
-            new_v = np.vstack((new_v, self.v[-1].reshape(-1, 3)))
+            # Shift affected vert records.
+            first_v_affected = old_edge_v_index_from + 1
+            indices_of_original_vertices[
+                first_v_affected:
+            ] = indices_of_original_vertices[first_v_affected:] + len(vs_to_insert)
 
         self.v = new_v
 
-        return np.array(indices_of_orig_vertices) if ret_indices else self
+        return np.array(indices_of_original_vertices) if ret_indices else self
 
     def bisect_edges(self, edges):
         """
