@@ -223,7 +223,8 @@ class Polyline(object):
             insert_before = indices_of_original_vertices[old_edge_v_index_from] + 1
             new_v = np.insert(new_v, insert_before, vs_to_insert, axis=0)
 
-            # Shift affected vert records.
+            # The verts after the insertion point were shifted. Record how the
+            # new indices have changed.
             first_v_affected = old_edge_v_index_from + 1
             indices_of_original_vertices[
                 first_v_affected:
