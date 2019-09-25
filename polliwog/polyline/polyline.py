@@ -230,6 +230,9 @@ class Polyline(object):
         )
 
         if ret_indices:
+            # In a degenerate case, `partition_segment()` may return fewer than
+            # the requested number of indices. So, recompute the actual number of
+            # segments inserted.
             num_segments_inserted = np.zeros(old_num_e, dtype=np.int64)
             num_segments_inserted[es_to_subdivide] = [len(vs) for vs in vs_to_insert]
             stepwise_index_offsets = np.concatenate(
