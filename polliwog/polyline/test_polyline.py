@@ -200,6 +200,11 @@ def test_partition_by_length_divide_by_two():
         np.testing.assert_array_almost_equal(result.v, expected.v)
         np.testing.assert_array_equal(result.e, expected.e)
         np.testing.assert_array_equal(indices, expected_indices)
+
+        result_2 = original.copy()
+        ret = result_2.partition_by_length(max_length, ret_indices=False)
+        np.testing.assert_array_almost_equal(result.v, expected.v)
+        assert ret is result_2
     np.testing.assert_array_equal(result.v[indices], original.v)
 
 
