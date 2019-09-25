@@ -193,40 +193,69 @@ class Polyline(object):
           Otherwise return self for chaining.
 
         """
+        import itertools
         from ..segment.segment import partition_segment
 
-        lengths = self.segment_lengths
-        num_segments_needed = np.ceil(lengths / max_length)
+        old_num_e = self.num_e
+        old_num_v = self.num_v
+        num_segments_needed = np.ceil(self.segment_lengths / max_length).astype(
+            dtype=np.int64
+        )
+        es_to_subdivide, = (num_segments_needed > 1).nonzero()
+        vs_to_insert = [
+            partition_segment(
+                self.v[self.e[old_e_index][0]],
+                self.v[self.e[old_e_index][1]],
+                np.int(num_segments_needed[old_e_index]),
+                endpoint=False,
+            )[
+                # Exclude the start point, which like the endpoint, is already
+                # present.
+                1:
+            ]
+            for old_e_index in es_to_subdivide
+        ]
 
-        indices_of_orig_vertices = []
-        new_v = np.empty((0, 3))
-
-        for i, num_segments in enumerate(num_segments_needed):
-            start_point, end_point = self.v[self.e[i]]
-
-            indices_of_orig_vertices.append(len(new_v))
-
-            # In the simple case, one segment, or degenerate case, with
-            # a repeated vertex, we do not need to subdivide.
-            if num_segments <= 1:
-                new_v = np.vstack((new_v, start_point.reshape(-1, 3)))
-            else:
-                new_v = np.vstack(
-                    (
-                        new_v,
-                        partition_segment(
-                            start_point, end_point, np.int(num_segments), endpoint=False
-                        ),
+        splits_of_original_vs = np.vsplit(self.v, es_to_subdivide + 1)
+        self.v = np.concatenate(
+            list(
+                itertools.chain(
+                    *zip(
+                        splits_of_original_vs,
+                        vs_to_insert + [np.empty((0, 3), dtype=np.float64)],
                     )
                 )
+            )
+        )
 
-        if not self.closed:
-            indices_of_orig_vertices.append(len(new_v))
-            new_v = np.vstack((new_v, self.v[-1].reshape(-1, 3)))
-
-        self.v = new_v
-
-        return np.array(indices_of_orig_vertices) if ret_indices else self
+        if ret_indices:
+            # In a degenerate case, `partition_segment()` may return fewer than
+            # the requested number of indices. So, recompute the actual number of
+            # segments inserted.
+            num_segments_inserted = np.zeros(old_num_e, dtype=np.int64)
+            num_segments_inserted[es_to_subdivide] = [len(vs) for vs in vs_to_insert]
+            stepwise_index_offsets = np.concatenate(
+                [
+                    # The first vertex is never moved.
+                    np.zeros(1, dtype=np.int64),
+                    # In a closed polyline, the last edge goes back to vertex
+                    # 0. Subdivisions of that segment do not affect indexing of
+                    # any of the vertices (since the original end vertex is
+                    # still at index 0).
+                    num_segments_inserted[:-1]
+                    if self.closed
+                    else num_segments_inserted,
+                ]
+            )
+            cumulative_index_offsets = np.sum(
+                np.tril(
+                    np.broadcast_to(stepwise_index_offsets, (old_num_v, old_num_v))
+                ),
+                axis=1,
+            )
+            return np.arange(old_num_v) + cumulative_index_offsets
+        else:
+            return self
 
     def bisect_edges(self, edges):
         """
