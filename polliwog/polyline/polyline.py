@@ -195,10 +195,15 @@ class Polyline(object):
         """
         from ..segment.segment import partition_segment
 
-        num_segments_needed = np.ceil(self.segment_lengths / max_length)
+        old_num_v = self.num_v
+        num_segments_needed = np.ceil(self.segment_lengths / max_length).astype(
+            dtype=np.int64
+        )
 
         indices_of_original_vertices = np.arange(self.num_v)
         new_v = self.v
+
+        num_segments_inserted = np.zeros(self.num_e, dtype=np.int64)
 
         for old_e_index in (num_segments_needed > 1).nonzero()[0]:
             old_edge_v_index_from, old_edge_v_index_to = self.e[old_e_index]
@@ -223,6 +228,8 @@ class Polyline(object):
             insert_before = indices_of_original_vertices[old_edge_v_index_from] + 1
             new_v = np.insert(new_v, insert_before, vs_to_insert, axis=0)
 
+            num_segments_inserted[old_e_index] = len(vs_to_insert)
+
             # The verts after the insertion point were shifted. Record how the
             # new indices have changed.
             first_v_affected = old_edge_v_index_from + 1
@@ -232,7 +239,25 @@ class Polyline(object):
 
         self.v = new_v
 
-        return np.array(indices_of_original_vertices) if ret_indices else self
+        if ret_indices:
+            stepwise_index_offsets = np.concatenate(
+                [
+                    # The first vertex is never moved.
+                    np.zeros(1, dtype=np.int64),
+                    num_segments_inserted[:-1]
+                    if self.closed
+                    else num_segments_inserted,
+                ]
+            )
+            cumulative_index_offsets = np.sum(
+                np.tril(
+                    np.broadcast_to(stepwise_index_offsets, (old_num_v, old_num_v))
+                ),
+                axis=1,
+            )
+            return np.arange(old_num_v) + cumulative_index_offsets
+        else:
+            return self
 
     def bisect_edges(self, edges):
         """
