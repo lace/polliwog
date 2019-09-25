@@ -201,7 +201,6 @@ class Polyline(object):
         num_segments_needed = np.ceil(self.segment_lengths / max_length).astype(
             dtype=np.int64
         )
-
         es_to_subdivide, = (num_segments_needed > 1).nonzero()
         vs_to_insert = [
             partition_segment(
