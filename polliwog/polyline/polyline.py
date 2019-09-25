@@ -193,57 +193,53 @@ class Polyline(object):
           Otherwise return self for chaining.
 
         """
+        import itertools
         from ..segment.segment import partition_segment
 
+        old_num_e = self.num_e
         old_num_v = self.num_v
         num_segments_needed = np.ceil(self.segment_lengths / max_length).astype(
             dtype=np.int64
         )
 
-        indices_of_original_vertices = np.arange(self.num_v)
-        new_v = self.v
-
-        num_segments_inserted = np.zeros(self.num_e, dtype=np.int64)
-
-        for old_e_index in (num_segments_needed > 1).nonzero()[0]:
-            old_edge_v_index_from, old_edge_v_index_to = self.e[old_e_index]
-            start_point, end_point = self.v[self.e[old_e_index]]
-
-            # Insert new vertices. Saving up the new v's and running `np.insert`
-            # once at the end might speed this up a bit. However, the bookkeeping
-            # for indices_of_original_vertices is also happening in this loop.
-            # Although that could be vectorizecd too...
-            vs_to_insert = partition_segment(
-                self.v[old_edge_v_index_from],
-                self.v[old_edge_v_index_to],
+        es_to_subdivide, = (num_segments_needed > 1).nonzero()
+        vs_to_insert = [
+            partition_segment(
+                self.v[self.e[old_e_index][0]],
+                self.v[self.e[old_e_index][1]],
                 np.int(num_segments_needed[old_e_index]),
                 endpoint=False,
             )[
-                # Exclude the start point.
+                # Exclude the start point, which like the endpoint, is already
+                # present.
                 1:
             ]
-            # Insert after the `from` vertex (which is _before_ the `from`
-            # vertex + 1). This ensure the algorithm works correctly when
-            # subdividing the last edge.
-            insert_before = indices_of_original_vertices[old_edge_v_index_from] + 1
-            new_v = np.insert(new_v, insert_before, vs_to_insert, axis=0)
+            for old_e_index in es_to_subdivide
+        ]
 
-            num_segments_inserted[old_e_index] = len(vs_to_insert)
-
-            # The verts after the insertion point were shifted. Record how the
-            # new indices have changed.
-            first_v_affected = old_edge_v_index_from + 1
-            indices_of_original_vertices[
-                first_v_affected:
-            ] = indices_of_original_vertices[first_v_affected:] + len(vs_to_insert)
-
-        self.v = new_v
+        splits_of_original_vs = np.vsplit(self.v, es_to_subdivide + 1)
+        self.v = np.concatenate(
+            list(
+                itertools.chain(
+                    *zip(
+                        splits_of_original_vs,
+                        vs_to_insert + [np.empty((0, 3), dtype=np.float64)],
+                    )
+                )
+            )
+        )
 
         if ret_indices:
+            num_segments_inserted = np.zeros(old_num_e, dtype=np.int64)
+            num_segments_inserted[es_to_subdivide] = [len(vs) for vs in vs_to_insert]
             stepwise_index_offsets = np.concatenate(
                 [
                     # The first vertex is never moved.
                     np.zeros(1, dtype=np.int64),
+                    # In a closed polyline, the last edge goes back to vertex
+                    # 0. Subdivisions of that segment do not affect indexing of
+                    # any of the vertices (since the original end vertex is
+                    # still at index 0).
                     num_segments_inserted[:-1]
                     if self.closed
                     else num_segments_inserted,
