@@ -30,9 +30,8 @@ def inflection_points(points, axis, span):
 
     # Take the second order finite difference of the curve with respect to the
     # defined coordinate system
-    finite_difference_2 = np.gradient(
-        np.gradient(coords_on_axis, coords_on_span), coords_on_span
-    )
+    finite_difference_1 = np.gradient(coords_on_axis, coords_on_span)
+    finite_difference_2 = np.gradient(finite_difference_1, coords_on_span)
 
     # Compare the product of all neighboring pairs of points in the second
     # derivative. If a pair of points has a negative product, then the second
