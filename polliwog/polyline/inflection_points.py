@@ -7,6 +7,14 @@ def inflection_points(points, axis, span):
     Find the list of vertices that preceed inflection points in a curve. The curve is differentiated
     with respect to the coordinate system defined by axis and span.
 
+    Interestingly, `lambda x: 2*x + 1` should have no inflection points, but
+    almost every point on the line is detected. It's because a zero or zero
+    crossing in the second derivative is necessary but not sufficient to
+    detect an inflection point. You also need a higher derivative of odd
+    order that's non-zero. But that gets ugly to detect reliably using sparse
+    finite differences. Just know that if you've got a straight line this
+    method will go a bit haywire.
+
     axis: A vector representing the vertical axis of the coordinate system.
     span: A vector representing the the horiztonal axis of the coordinate system.
 
