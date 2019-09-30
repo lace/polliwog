@@ -101,7 +101,7 @@ This collection was developed at Body Labs and includes a combination of code
 developed at Body Labs, from legacy code and significant new portions by
 [Eric Rachlin][], [Alex Weiss][], and [Paul Melnikow][]. It was extracted
 from the Body Labs codebase and open-sourced by [Alex Weiss][] into a library
-called [blmath][], which was subsequnetly [forked by Paul Melnikow][blmath fork].
+called [blmath][], which was subsequently [forked by Paul Melnikow][blmath fork].
 This library and the 3D geometry and linear-algebra toolbelt [vg][] were later
 extracted.
 
