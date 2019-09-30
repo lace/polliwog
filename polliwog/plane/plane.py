@@ -248,6 +248,7 @@ class Plane(object):
     def line_xsections(self, pts, rays):
         k = vg.shape.check(locals(), "pts", (-1, 3))
         vg.shape.check(locals(), "rays", (k, 3))
+
         denoms = np.dot(rays, self.normal)
         denom_is_zero = denoms == 0
         denoms[denom_is_zero] = np.nan
