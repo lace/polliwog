@@ -134,9 +134,11 @@ class Polyline(object):
 
         """
         if self.e is None:
-            return np.empty((0,))
-
-        return ((self.v[self.e[:, 1]] - self.v[self.e[:, 0]]) ** 2.0).sum(axis=1) ** 0.5
+            return np.zeros(0)
+        else:
+            v1s = self.v[self.e[:, 0]]
+            v2s = self.v[self.e[:, 1]]
+            return vg.euclidean_distance(v1s, v2s)
 
     @property
     def total_length(self):
