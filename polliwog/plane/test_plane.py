@@ -3,6 +3,7 @@ import numpy as np
 import pytest
 import vg
 from .plane import Plane
+from .test_functions import assert_plane_equation_satisfies_points
 
 
 def test_validation():
@@ -185,49 +186,27 @@ def test_canonical_point():
 
 
 def test_project_point():
-    plane = Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y)
-
-    point = np.array([10, 20, -5])
-    expected = np.array([10, 10, -5])
-
-    np.testing.assert_array_equal(plane.project_point(point), expected)
+    np.testing.assert_array_equal(
+        Plane(
+            point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+        ).project_point(np.array([10, 20, -5])),
+        np.array([10, 10, -5]),
+    )
 
 
 def test_project_point_vectorized():
-    plane = Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y)
-
-    points = np.array([[10, 20, -5], [2, 7, 203]])
-    expected = np.array([[10, 10, -5], [2, 10, 203]])
-
-    np.testing.assert_array_equal(plane.project_point(points), expected)
-
-
-def test_project_point_validation():
-    plane = Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y)
-
-    with pytest.raises(ValueError):
-        plane.project_point(np.array([[[1.0]]]))
+    np.testing.assert_array_equal(
+        Plane(
+            point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+        ).project_point(np.array([[10, 20, -5], [2, 7, 203]])),
+        np.array([[10, 10, -5], [2, 10, 203]]),
+    )
 
 
 def test_plane_from_points():
     points = np.array([[1, 1, 1], [-1, 1, 0], [2, 0, 3]])
     plane = Plane.from_points(*points)
-
-    a, b, c, d = plane.equation
-
-    plane_equation_test = [a * x + b * y + c * z + d for x, y, z in points]
-    np.testing.assert_array_equal(plane_equation_test, [0, 0, 0])
-
-    projected_points = [plane.project_point(p) for p in points]
-    np.testing.assert_array_almost_equal(projected_points, points)
-
-
-def test_plane_from_points_order():
-    points = np.array([[1, 0, 0], [0, math.sqrt(1.25), 0], [-1, 0, 0]])
-    plane = Plane.from_points(*points)
-
-    expected_v = np.array([0, 0, 1])
-    np.testing.assert_array_equal(plane.normal, expected_v)
+    assert_plane_equation_satisfies_points(plane.equation, points)
 
 
 def test_plane_from_points_and_vector():

@@ -1,5 +1,6 @@
 import numpy as np
 import vg
+from . import functions
 
 
 class Plane(object):
@@ -36,12 +37,10 @@ class Plane(object):
         vg.shape.check(locals(), "p1", (3,))
         vg.shape.check(locals(), "p2", (3,))
         vg.shape.check(locals(), "p3", (3,))
-
-        v1 = p2 - p1
-        v2 = p3 - p1
-        normal = np.cross(v1, v2)
-
-        return cls(point_on_plane=p1, unit_normal=normal)
+        points = np.array([p1, p2, p3])
+        return cls(
+            point_on_plane=p1, unit_normal=functions.plane_normal_from_points(points)
+        )
 
     @classmethod
     def from_points_and_vector(cls, p1, p2, vector):
@@ -133,7 +132,7 @@ class Plane(object):
         """
         Creates a new Plane with an inverted orientation.
         """
-        return Plane(point_on_plane=self._r0, unit_normal=-1 * self._n)
+        return Plane(point_on_plane=self._r0, unit_normal=-self._n)
 
     def sign(self, points):
         """
@@ -178,16 +177,7 @@ class Plane(object):
             - points:
                 V x 3 np.array
         """
-        if points.ndim == 1:
-            vg.shape.check(locals(), "points", (3,))
-        elif points.ndim == 2:
-            vg.shape.check(locals(), "points", (-1, 3))
-        else:
-            raise ValueError(
-                "Don't know what to do with {} dimensions".format(points.ndim)
-            )
-
-        return np.dot(points, self.equation[:3]) + self.equation[3]
+        return functions.signed_distance_to_plane(points, self.equation)
 
     def distance(self, points):
         vg.shape.check(locals(), "points", (-1, 3))
@@ -197,21 +187,7 @@ class Plane(object):
         """
         Project a given point (or stack of points) to the plane.
         """
-        if points.ndim == 1:
-            vg.shape.check(locals(), "points", (3,))
-        elif points.ndim == 2:
-            vg.shape.check(locals(), "points", (-1, 3))
-        else:
-            raise ValueError(
-                "Don't know what to do with {} dimensions".format(points.ndim)
-            )
-
-        # Translate the point back to the plane along the normal.
-        signed_distance_to_points = self.signed_distance(points)
-        if points.ndim == 2:
-            # Convert to a column vector.
-            signed_distance_to_points = signed_distance_to_points.reshape(-1, 1)
-        return points - signed_distance_to_points * self._n
+        return functions.project_point_to_plane(points, self.equation)
 
     def polyline_xsection(self, polyline, ret_edge_indices=False):  # pragma: no cover
         """
