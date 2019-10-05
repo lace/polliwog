@@ -2,7 +2,7 @@ import numpy as np
 import vg
 
 
-def columnize(points, shape=(-1, 3)):
+def columnize(arr, shape=(-1, 3)):
     """
     Helper for functions which may accept many stacks of three points (kx3)
     returning a stack of results, or a single set of three points (3x1)
@@ -17,12 +17,12 @@ def columnize(points, shape=(-1, 3)):
     if not isinstance(shape, tuple):
         raise ValueError("shape should be a tuple")
 
-    if points.ndim == 3:
-        vg.shape.check(locals(), "points", shape)
-        return points, True, lambda x: x
+    if arr.ndim == len(shape):
+        vg.shape.check(locals(), "arr", shape)
+        return arr, True, lambda x: x
     else:
-        vg.shape.check(locals(), "points", shape[1:])
-        return points.reshape(*shape), False, lambda x: x[0]
+        vg.shape.check(locals(), "arr", shape[1:])
+        return arr.reshape(*shape), False, lambda x: x[0]
 
 
 def columnize_together(points, plane_equations):
@@ -86,11 +86,14 @@ def normal_and_offset_from_plane_equations(plane_equations):
     Given `A`, `B`, `C`, `D` of the plane equation `Ax + By + Cz + D = 0`,
     return the plane normal vector which is `[A, B, C]` and the offset `D`.
     """
-    vg.shape.check(locals(), "plane_equations", (-1, 4))
-
-    normal = plane_equations[:, :3]
-    offset = plane_equations[:, 3]
-
+    if plane_equations.ndim == 2:
+        vg.shape.check(locals(), "plane_equations", (-1, 4))
+        normal = plane_equations[:, :3]
+        offset = plane_equations[:, 3]
+    else:
+        vg.shape.check(locals(), "plane_equations", (4,))
+        normal = plane_equations[:3]
+        offset = plane_equations[3]
     return normal, offset
 
 
@@ -101,12 +104,10 @@ def signed_distance_to_plane(points, plane_equations):
     For convenience, can also be called with a single point and a single
     plane.
     """
-    points, plane_equations, transform_result = columnize_together(
-        points, plane_equations
-    )
+    input_is_columnized = points.ndim == 2 or plane_equations.ndim == 2
+    transform_result = lambda x: x if input_is_columnized else lambda x: x[0]
 
-    normals = plane_equations[:, :3]
-    offsets = plane_equations[:, 3]
+    normals, offsets = normal_and_offset_from_plane_equations(plane_equations)
     signed_distance = vg.dot(points, normals) + offsets
 
     return transform_result(signed_distance)

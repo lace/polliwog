@@ -177,16 +177,7 @@ class Plane(object):
             - points:
                 V x 3 np.array
         """
-        if points.ndim == 1:
-            vg.shape.check(locals(), "points", (3,))
-        elif points.ndim == 2:
-            vg.shape.check(locals(), "points", (-1, 3))
-        else:
-            raise ValueError(
-                "Don't know what to do with {} dimensions".format(points.ndim)
-            )
-
-        return np.dot(points, self.equation[:3]) + self.equation[3]
+        return equations.signed_distance_to_plane(points, self.equation)
 
     def distance(self, points):
         vg.shape.check(locals(), "points", (-1, 3))
