@@ -86,7 +86,6 @@ def signed_distance_to_plane(points, plane_equations):
     For convenience, can also be called with a single point and a single
     plane.
     """
-    input_is_columnized = points.ndim == 2 or plane_equations.ndim == 2
     normals, offsets = normal_and_offset_from_plane_equations(plane_equations)
     return vg.dot(points, normals) + offsets
 
@@ -95,8 +94,6 @@ def project_point_to_plane(points, plane_equations):
     """
     Project each point to the corresponding plane.
     """
-    input_is_columnized = points.ndim == 2 or plane_equations.ndim == 2
-
     # Translate the point back to the plane along the normal.
     normals, _ = normal_and_offset_from_plane_equations(plane_equations)
     signed_distance = signed_distance_to_plane(points, plane_equations)
