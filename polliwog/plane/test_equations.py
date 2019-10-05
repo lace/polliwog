@@ -62,6 +62,11 @@ def test_columnize_3d():
     assert transform_result([1.0]) == [1.0]
 
 
+def test_columnize_invalid_shape():
+    with pytest.raises(ValueError):
+        _columnize(vg.basis.x, "this is not a shape")
+
+
 def test_plane_equation_from_points():
     points = np.array([[1, 1, 1], [-1, 1, 0], [2, 0, 3]])
     equation = plane_equation_from_points(points)

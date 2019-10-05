@@ -26,25 +26,6 @@ def _columnize(arr, shape=(-1, 3), name=None):
         return arr.reshape(*shape), False, lambda x: x[0]
 
 
-def _columnize_together(points, plane_equations):
-    """
-    If points and plane_equations are both stacked, they must be the same
-    length. Enforce this constraint, then return columnized versions of
-    both inputs.
-    """
-    if points.ndim == 2 and plane_equations.ndim == 2:
-        # If points and plane_equations are both stacked, they must be the same
-        # length.
-        k = vg.shape.check(locals(), "points", (-1, 3))
-        vg.shape.check(locals(), "plane_equations", (k, 4))
-        return points, plane_equations, lambda x: x
-    else:
-        columnized_points, _, _ = _columnize(points, (-1, 3))
-        columnized_plane_equations, _, _ = _columnize(plane_equations, (-1, 4))
-        input_is_columnized = points.ndim == 2 or plane_equations.ndim == 2
-        return columnized_points, columnized_plane_equations, lambda x: x[0]
-
-
 def plane_normal_from_points(points):
     """
     Given a set of three points, compute the normal of the plane which
