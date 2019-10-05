@@ -1,6 +1,6 @@
 import numpy as np
 import vg
-from . import equations
+from . import functions
 
 
 class Plane(object):
@@ -39,7 +39,7 @@ class Plane(object):
         vg.shape.check(locals(), "p3", (3,))
         points = np.array([p1, p2, p3])
         return cls(
-            point_on_plane=p1, unit_normal=equations.plane_normal_from_points(points)
+            point_on_plane=p1, unit_normal=functions.plane_normal_from_points(points)
         )
 
     @classmethod
@@ -177,7 +177,7 @@ class Plane(object):
             - points:
                 V x 3 np.array
         """
-        return equations.signed_distance_to_plane(points, self.equation)
+        return functions.signed_distance_to_plane(points, self.equation)
 
     def distance(self, points):
         vg.shape.check(locals(), "points", (-1, 3))
@@ -187,7 +187,7 @@ class Plane(object):
         """
         Project a given point (or stack of points) to the plane.
         """
-        return equations.project_point_to_plane(points, self.equation)
+        return functions.project_point_to_plane(points, self.equation)
 
     def polyline_xsection(self, polyline, ret_edge_indices=False):  # pragma: no cover
         """

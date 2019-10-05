@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 import vg
 from .plane import Plane
-from .test_equations import assert_plane_equation_satisfies_points
+from .test_functions import assert_plane_equation_satisfies_points
 
 
 def test_validation():

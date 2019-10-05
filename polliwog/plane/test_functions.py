@@ -2,7 +2,7 @@ import math
 import numpy as np
 import vg
 import pytest
-from .equations import (
+from .functions import (
     _columnize,
     plane_equation_from_points,
     plane_normal_from_points,
