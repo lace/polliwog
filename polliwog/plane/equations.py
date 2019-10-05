@@ -105,27 +105,20 @@ def signed_distance_to_plane(points, plane_equations):
     plane.
     """
     input_is_columnized = points.ndim == 2 or plane_equations.ndim == 2
-    transform_result = lambda x: x if input_is_columnized else lambda x: x[0]
-
     normals, offsets = normal_and_offset_from_plane_equations(plane_equations)
-    signed_distance = vg.dot(points, normals) + offsets
-
-    return transform_result(signed_distance)
+    return vg.dot(points, normals) + offsets
 
 
 def project_point_to_plane(points, plane_equations):
     """
     Project each point to the corresponding plane.
     """
-    points, plane_equations, transform_result = columnize_together(
-        points, plane_equations
-    )
+    input_is_columnized = points.ndim == 2 or plane_equations.ndim == 2
 
     # Translate the point back to the plane along the normal.
     normals, _ = normal_and_offset_from_plane_equations(plane_equations)
-    projected = (
-        points
-        - signed_distance_to_plane(points, plane_equations).reshape(-1, 1) * normals
-    )
-
-    return transform_result(projected)
+    signed_distance = signed_distance_to_plane(points, plane_equations)
+    if np.isscalar(signed_distance):
+        return points - signed_distance * normals
+    else:
+        return points - signed_distance.reshape(-1, 1) * normals

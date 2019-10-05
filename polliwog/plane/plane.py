@@ -187,21 +187,7 @@ class Plane(object):
         """
         Project a given point (or stack of points) to the plane.
         """
-        if points.ndim == 1:
-            vg.shape.check(locals(), "points", (3,))
-        elif points.ndim == 2:
-            vg.shape.check(locals(), "points", (-1, 3))
-        else:
-            raise ValueError(
-                "Don't know what to do with {} dimensions".format(points.ndim)
-            )
-
-        # Translate the point back to the plane along the normal.
-        signed_distance_to_points = self.signed_distance(points)
-        if points.ndim == 2:
-            # Convert to a column vector.
-            signed_distance_to_points = signed_distance_to_points.reshape(-1, 1)
-        return points - signed_distance_to_points * self._n
+        return equations.project_point_to_plane(points, self.equation)
 
     def polyline_xsection(self, polyline, ret_edge_indices=False):  # pragma: no cover
         """

@@ -186,28 +186,21 @@ def test_canonical_point():
 
 
 def test_project_point():
-    plane = Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y)
-
-    point = np.array([10, 20, -5])
-    expected = np.array([10, 10, -5])
-
-    np.testing.assert_array_equal(plane.project_point(point), expected)
+    np.testing.assert_array_equal(
+        Plane(
+            point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+        ).project_point(np.array([10, 20, -5])),
+        np.array([10, 10, -5]),
+    )
 
 
 def test_project_point_vectorized():
-    plane = Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y)
-
-    points = np.array([[10, 20, -5], [2, 7, 203]])
-    expected = np.array([[10, 10, -5], [2, 10, 203]])
-
-    np.testing.assert_array_equal(plane.project_point(points), expected)
-
-
-def test_project_point_validation():
-    plane = Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y)
-
-    with pytest.raises(ValueError):
-        plane.project_point(np.array([[[1.0]]]))
+    np.testing.assert_array_equal(
+        Plane(
+            point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+        ).project_point(np.array([[10, 20, -5], [2, 7, 203]])),
+        np.array([[10, 10, -5], [2, 10, 203]]),
+    )
 
 
 def test_plane_from_points():

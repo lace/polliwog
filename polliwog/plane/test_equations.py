@@ -91,16 +91,16 @@ def test_signed_distances_for_xz_plane_at_origin():
 def test_signed_distances_for_diagonal_plane():
     np.testing.assert_array_almost_equal(
         signed_distance_to_plane(
-            points=np.array(
-                [math.sqrt(2 * (425.0 - 1.0) ** 2), -math.sqrt(2 * (500.0 + 1.0) ** 2)]
-            ),
+            points=np.array([[425.0, 425.0, 25.0], [-500.0, -500.0, 25.0]]),
             # Diagonal plane @ origin - draw a picture!
             plane_equations=Plane(
                 point_on_plane=np.array([1.0, 1.0, 0.0]),
                 unit_normal=vg.normalize(np.array([1.0, 1.0, 0.0])),
             ).equation,
         ),
-        np.array([[425.0, 425.0, 25.0], [-500.0, -500.0, 25.0]]),
+        np.array(
+            [math.sqrt(2 * (425.0 - 1.0) ** 2), -math.sqrt(2 * (500.0 + 1.0) ** 2)]
+        ),
     )
 
 
