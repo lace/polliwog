@@ -3,6 +3,7 @@ import numpy as np
 import pytest
 import vg
 from .plane import Plane
+from .test_equations import assert_plane_equation_satisfies_points
 
 
 def test_validation():
@@ -212,22 +213,7 @@ def test_project_point_validation():
 def test_plane_from_points():
     points = np.array([[1, 1, 1], [-1, 1, 0], [2, 0, 3]])
     plane = Plane.from_points(*points)
-
-    a, b, c, d = plane.equation
-
-    plane_equation_test = [a * x + b * y + c * z + d for x, y, z in points]
-    np.testing.assert_array_equal(plane_equation_test, [0, 0, 0])
-
-    projected_points = [plane.project_point(p) for p in points]
-    np.testing.assert_array_almost_equal(projected_points, points)
-
-
-def test_plane_from_points_order():
-    points = np.array([[1, 0, 0], [0, math.sqrt(1.25), 0], [-1, 0, 0]])
-    plane = Plane.from_points(*points)
-
-    expected_v = np.array([0, 0, 1])
-    np.testing.assert_array_equal(plane.normal, expected_v)
+    assert_plane_equation_satisfies_points(plane.equation, points)
 
 
 def test_plane_from_points_and_vector():

@@ -1,5 +1,6 @@
 import numpy as np
 import vg
+from . import equations
 
 
 class Plane(object):
@@ -36,12 +37,10 @@ class Plane(object):
         vg.shape.check(locals(), "p1", (3,))
         vg.shape.check(locals(), "p2", (3,))
         vg.shape.check(locals(), "p3", (3,))
-
-        v1 = p2 - p1
-        v2 = p3 - p1
-        normal = np.cross(v1, v2)
-
-        return cls(point_on_plane=p1, unit_normal=normal)
+        points = np.array([p1, p2, p3])
+        return cls(
+            point_on_plane=p1, unit_normal=equations.plane_normal_from_points(points)
+        )
 
     @classmethod
     def from_points_and_vector(cls, p1, p2, vector):
@@ -133,7 +132,7 @@ class Plane(object):
         """
         Creates a new Plane with an inverted orientation.
         """
-        return Plane(point_on_plane=self._r0, unit_normal=-1 * self._n)
+        return Plane(point_on_plane=self._r0, unit_normal=-self._n)
 
     def sign(self, points):
         """
