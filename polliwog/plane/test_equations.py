@@ -7,6 +7,7 @@ from .equations import (
     plane_normal_from_points,
     normal_and_offset_from_plane_equations,
     signed_distance_to_plane,
+    project_point_to_plane,
 )
 from .plane import Plane
 from .coordinate_planes import coordinate_planes
@@ -108,3 +109,37 @@ def test_signed_distance_validation():
         signed_distance_to_plane(
             points=np.array([[[1.0]]]), plane_equations=coordinate_planes.xz.equation
         ),
+
+
+def test_project_point_to_plane():
+    np.testing.assert_array_equal(
+        project_point_to_plane(
+            points=np.array([10, 20, -5]),
+            plane_equations=Plane(
+                point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+            ).equation,
+        ),
+        np.array([10, 10, -5]),
+    )
+
+
+def test_project_point_to_plane_vectorized():
+    np.testing.assert_array_equal(
+        project_point_to_plane(
+            points=np.array([[10, 20, -5], [2, 7, 203]]),
+            plane_equations=Plane(
+                point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+            ).equation,
+        ),
+        np.array([[10, 10, -5], [2, 10, 203]]),
+    )
+
+
+def test_project_point_to_plane_validation():
+    with pytest.raises(ValueError):
+        project_point_to_plane(
+            points=np.array([[[1.0]]]),
+            plane_equations=Plane(
+                point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+            ).equation,
+        )
