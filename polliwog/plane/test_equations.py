@@ -52,3 +52,14 @@ def test_plane_normal_from_points_stacked():
         ),
         np.array([np.repeat(math.sqrt(1.0 / 3.0), 3), vg.basis.z]),
     )
+
+
+def normal_and_offset_from_plane_equations():
+    points = np.array(
+        [[[1, 1, 1], [-1, 1, 0], [2, 0, 3]], [vg.basis.x, vg.basis.y, vg.basis.neg_x]]
+    )
+    equations = plane_equation_from_points(points)
+    normals, offsets = equations
+    np.testing.assert_array_almost_equal(
+        normals, np.array([np.repeat(math.sqrt(1.0 / 3.0), 3), vg.basis.z])
+    )
