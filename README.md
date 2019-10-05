@@ -10,8 +10,9 @@
 
 2D and 3D computational geometry library which scales from prototyping to production.
 
-Includes geometric operations, transforms, and primitives like planes,
-polygonal chains, and axis-aligned bounding boxes. Lightweight and pure Python/NumPy.
+Includes vectorized geometric operations, transforms, and primitives like planes,
+polygonal chains, and axis-aligned bounding boxes. Implemented in pure Python/NumPy.
+Lightweight and fast.
 
 The goals of this project are:
 
