@@ -15,7 +15,7 @@ with open("requirements.txt") as f:
 setup(
     name="polliwog",
     version=version_info["__version__"],
-    description="2D and 3D computational geometry library in pure Python",
+    description="2D and 3D computational geometry library which scales from prototyping to production",
     long_description=readme,
     long_description_content_type="text/markdown",
     author="Body Labs, Metabolize, and other contributors",
