@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.8.0 (Oct. 5, 2019)
+
+- Polyline:
+    - Add `num_v` and `num_e` properties.
+    - Remove `as_lines()` and references to lace.
+    - Refactor `segment_lengths` using `vg.euclidean_distance()`.
+    - Vectorize `partition_by_length()`.
+- Fix `inflection_points` and add test coverage.
+- Add `tri.arity.quads_to_tris()` (from lace).
+- Add vectorized plane functions.
+- Improve test coverage.
+- Don't ship the tests.
+
 ## 0.7.0 (June 30, 2019)
 
 - Polyline: Add `bisect_edges()` method.
