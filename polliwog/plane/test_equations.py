@@ -3,6 +3,7 @@ import numpy as np
 import vg
 import pytest
 from .equations import (
+    _columnize,
     plane_equation_from_points,
     plane_normal_from_points,
     normal_and_offset_from_plane_equations,
@@ -17,6 +18,48 @@ def assert_plane_equation_satisfies_points(plane_equation, points):
     a, b, c, d = plane_equation
     plane_equation_test = [a * x + b * y + c * z + d for x, y, z in points]
     assert np.any(plane_equation_test) == False
+
+
+def test_columnize_2d():
+    shape = (-1, 3)
+
+    columnized, is_columnized, transform_result = _columnize(vg.basis.x, shape)
+    np.testing.assert_array_equal(columnized, np.array([vg.basis.x]))
+    assert columnized.shape == (1, 3)
+    assert is_columnized is False
+    assert transform_result([1.0]) == 1.0
+
+    columnized, is_columnized, transform_result = _columnize(
+        np.array([vg.basis.x]), shape
+    )
+    np.testing.assert_array_equal(columnized, np.array([vg.basis.x]))
+    assert columnized.shape == (1, 3)
+    assert is_columnized is True
+    assert transform_result([1.0]) == [1.0]
+
+
+def test_columnize_3d():
+    shape = (-1, 3, 3)
+
+    columnized, is_columnized, transform_result = _columnize(
+        np.array([vg.basis.x, vg.basis.y, vg.basis.z]), shape
+    )
+    np.testing.assert_array_equal(
+        columnized, np.array([[vg.basis.x, vg.basis.y, vg.basis.z]])
+    )
+    assert columnized.shape == (1, 3, 3)
+    assert is_columnized is False
+    assert transform_result([1.0]) == 1.0
+
+    columnized, is_columnized, transform_result = _columnize(
+        np.array([[vg.basis.x, vg.basis.y, vg.basis.z]]), shape
+    )
+    np.testing.assert_array_equal(
+        columnized, np.array([[vg.basis.x, vg.basis.y, vg.basis.z]])
+    )
+    assert columnized.shape == (1, 3, 3)
+    assert is_columnized is True
+    assert transform_result([1.0]) == [1.0]
 
 
 def test_plane_equation_from_points():

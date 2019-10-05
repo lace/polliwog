@@ -2,7 +2,7 @@ import numpy as np
 import vg
 
 
-def columnize(arr, shape=(-1, 3)):
+def _columnize(arr, shape=(-1, 3), name=None):
     """
     Helper for functions which may accept many stacks of three points (kx3)
     returning a stack of results, or a single set of three points (3x1)
@@ -16,16 +16,17 @@ def columnize(arr, shape=(-1, 3)):
     """
     if not isinstance(shape, tuple):
         raise ValueError("shape should be a tuple")
+    name = name or "arr"
 
     if arr.ndim == len(shape):
-        vg.shape.check(locals(), "arr", shape)
+        vg.shape.check_value(arr, shape, name=name)
         return arr, True, lambda x: x
     else:
-        vg.shape.check(locals(), "arr", shape[1:])
+        vg.shape.check_value(arr, shape[1:], name=name)
         return arr.reshape(*shape), False, lambda x: x[0]
 
 
-def columnize_together(points, plane_equations):
+def _columnize_together(points, plane_equations):
     """
     If points and plane_equations are both stacked, they must be the same
     length. Enforce this constraint, then return columnized versions of
@@ -38,8 +39,8 @@ def columnize_together(points, plane_equations):
         vg.shape.check(locals(), "plane_equations", (k, 4))
         return points, plane_equations, lambda x: x
     else:
-        columnized_points, _, _ = columnize(points, (-1, 3))
-        columnized_plane_equations, _, _ = columnize(plane_equations, (-1, 4))
+        columnized_points, _, _ = _columnize(points, (-1, 3))
+        columnized_plane_equations, _, _ = _columnize(plane_equations, (-1, 4))
         input_is_columnized = points.ndim == 2 or plane_equations.ndim == 2
         return columnized_points, columnized_plane_equations, lambda x: x[0]
 
@@ -50,7 +51,7 @@ def plane_normal_from_points(points):
     passes through them. Also works on stacked inputs (i.e. many sets
     of three points).
     """
-    points, _, transform_result = columnize(points, (-1, 3, 3))
+    points, _, transform_result = _columnize(points, (-1, 3, 3), name="points")
 
     p1s = points[:, 0]
     p2s = points[:, 1]
@@ -72,7 +73,7 @@ def plane_equation_from_points(points):
     which is `[A, B, C]` and the offset `D`, either by the caller or
     by using `normal_and_offset_from_plane_equations()`.
     """
-    points, _, transform_result = columnize(points, (-1, 3, 3))
+    points, _, transform_result = _columnize(points, (-1, 3, 3), name="points")
 
     p1s = points[:, 0]
     unit_normals = plane_normal_from_points(points)
