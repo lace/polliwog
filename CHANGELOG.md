@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.0 (Oct. 6, 2019)
+
+- Add `segment.segment.closest_point_of_line_segment()`
+- Add `line.functions.project_to_line()`
+
 ## 0.8.0 (Oct. 5, 2019)
 
 - Polyline:
