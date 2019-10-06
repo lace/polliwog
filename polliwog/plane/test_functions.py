@@ -157,6 +157,25 @@ def test_project_point_to_plane_vectorized_planes():
     )
 
 
+def test_project_point_to_plane_vectorized_both():
+    np.testing.assert_array_equal(
+        project_point_to_plane(
+            points=np.array([[10, 20, -5], [10, 30, -5]]),
+            plane_equations=np.array(
+                [
+                    Plane(
+                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                    ).equation,
+                    Plane(
+                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                    ).equation,
+                ]
+            ),
+        ),
+        np.array([[10, 10, -5], [10, 10, -5]]),
+    )
+
+
 def test_project_point_to_plane_validation():
     with pytest.raises(
         ValueError,
