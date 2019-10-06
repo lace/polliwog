@@ -90,4 +90,3 @@ def test_project_to_line_stacked_lines():
                 project_to_line(points=point_on_line + displacement, **common_kwargs),
                 np.array([point_on_line, point_on_line]),
             )
-

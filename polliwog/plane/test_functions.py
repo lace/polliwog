@@ -186,4 +186,3 @@ def test_project_point_to_plane_validation():
                 ]
             ),
         )
-
