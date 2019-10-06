@@ -1,29 +1,6 @@
 import numpy as np
 import vg
-
-
-def _columnize(arr, shape=(-1, 3), name=None):
-    """
-    Helper for functions which may accept many stacks of three points (kx3)
-    returning a stack of results, or a single set of three points (3x1)
-    returning a single result.
-
-    Returns the points as kx3, and a `transform_result` function which can
-    be applied to the result. It picks off the first result in the 3x1 case.
-
-    Not limited to kx3; this can be used different dimensional shapes like
-    kx4, or higher dimensional shapes like kx3x3.
-    """
-    if not isinstance(shape, tuple):
-        raise ValueError("shape should be a tuple")
-    name = name or "arr"
-
-    if arr.ndim == len(shape):
-        vg.shape.check_value(arr, shape, name=name)
-        return arr, True, lambda x: x
-    else:
-        vg.shape.check_value(arr, shape[1:], name=name)
-        return arr.reshape(*shape), False, lambda x: x[0]
+from .._common.shape import columnize, check_shape_any
 
 
 def plane_normal_from_points(points):
@@ -32,7 +9,7 @@ def plane_normal_from_points(points):
     passes through them. Also works on stacked inputs (i.e. many sets
     of three points).
     """
-    points, _, transform_result = _columnize(points, (-1, 3, 3), name="points")
+    points, _, transform_result = columnize(points, (-1, 3, 3), name="points")
 
     p1s = points[:, 0]
     p2s = points[:, 1]
@@ -54,7 +31,7 @@ def plane_equation_from_points(points):
     which is `[A, B, C]` and the offset `D`, either by the caller or
     by using `normal_and_offset_from_plane_equations()`.
     """
-    points, _, transform_result = _columnize(points, (-1, 3, 3), name="points")
+    points, _, transform_result = columnize(points, (-1, 3, 3), name="points")
 
     p1s = points[:, 0]
     unit_normals = plane_normal_from_points(points)
@@ -68,12 +45,12 @@ def normal_and_offset_from_plane_equations(plane_equations):
     Given `A`, `B`, `C`, `D` of the plane equation `Ax + By + Cz + D = 0`,
     return the plane normal vector which is `[A, B, C]` and the offset `D`.
     """
+    check_shape_any(plane_equations, (4,), (-1, 4), name="plane_equations")
+
     if plane_equations.ndim == 2:
-        vg.shape.check(locals(), "plane_equations", (-1, 4))
         normal = plane_equations[:, :3]
         offset = plane_equations[:, 3]
     else:
-        vg.shape.check(locals(), "plane_equations", (4,))
         normal = plane_equations[:3]
         offset = plane_equations[3]
     return normal, offset
@@ -86,6 +63,11 @@ def signed_distance_to_plane(points, plane_equations):
     For convenience, can also be called with a single point and a single
     plane.
     """
+    check_shape_any(points, (3,), (-1, 3), name="points")
+    check_shape_any(plane_equations, (4,), (-1, 4), name="plane_equations")
+    if points.ndim == 2 and plane_equations.ndim == 2:
+        vg.shape.check(locals(), "plane_equations", (len(points), 4))
+
     normals, offsets = normal_and_offset_from_plane_equations(plane_equations)
     return vg.dot(points, normals) + offsets
 
@@ -94,9 +76,15 @@ def project_point_to_plane(points, plane_equations):
     """
     Project each point to the corresponding plane.
     """
+    check_shape_any(points, (3,), (-1, 3), name="points")
+    check_shape_any(plane_equations, (4,), (-1, 4), name="plane_equations")
+    if points.ndim == 2 and plane_equations.ndim == 2:
+        vg.shape.check(locals(), "plane_equations", (len(points), 4))
+
     # Translate the point back to the plane along the normal.
-    normals, _ = normal_and_offset_from_plane_equations(plane_equations)
     signed_distance = signed_distance_to_plane(points, plane_equations)
+    normals, _ = normal_and_offset_from_plane_equations(plane_equations)
+
     if np.isscalar(signed_distance):
         return points - signed_distance * normals
     else:

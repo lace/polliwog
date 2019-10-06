@@ -1,5 +1,6 @@
 from __future__ import print_function, absolute_import
 import vg
+from .functions import project_to_line
 
 
 class Line:
@@ -39,6 +40,8 @@ class Line:
         """
         Project a given point (or stack of points) to the plane.
         """
-        return self.reference_point + vg.project(
-            points - self.reference_point, onto=self.along
+        return project_to_line(
+            points=points,
+            reference_points_of_lines=self.reference_point,
+            vectors_along_lines=self.along,
         )
