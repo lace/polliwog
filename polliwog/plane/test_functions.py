@@ -3,7 +3,6 @@ import numpy as np
 import vg
 import pytest
 from .functions import (
-    _columnize,
     plane_equation_from_points,
     plane_normal_from_points,
     normal_and_offset_from_plane_equations,
@@ -18,53 +17,6 @@ def assert_plane_equation_satisfies_points(plane_equation, points):
     a, b, c, d = plane_equation
     plane_equation_test = [a * x + b * y + c * z + d for x, y, z in points]
     assert np.any(plane_equation_test) == False
-
-
-def test_columnize_2d():
-    shape = (-1, 3)
-
-    columnized, is_columnized, transform_result = _columnize(vg.basis.x, shape)
-    np.testing.assert_array_equal(columnized, np.array([vg.basis.x]))
-    assert columnized.shape == (1, 3)
-    assert is_columnized is False
-    assert transform_result([1.0]) == 1.0
-
-    columnized, is_columnized, transform_result = _columnize(
-        np.array([vg.basis.x]), shape
-    )
-    np.testing.assert_array_equal(columnized, np.array([vg.basis.x]))
-    assert columnized.shape == (1, 3)
-    assert is_columnized is True
-    assert transform_result([1.0]) == [1.0]
-
-
-def test_columnize_3d():
-    shape = (-1, 3, 3)
-
-    columnized, is_columnized, transform_result = _columnize(
-        np.array([vg.basis.x, vg.basis.y, vg.basis.z]), shape
-    )
-    np.testing.assert_array_equal(
-        columnized, np.array([[vg.basis.x, vg.basis.y, vg.basis.z]])
-    )
-    assert columnized.shape == (1, 3, 3)
-    assert is_columnized is False
-    assert transform_result([1.0]) == 1.0
-
-    columnized, is_columnized, transform_result = _columnize(
-        np.array([[vg.basis.x, vg.basis.y, vg.basis.z]]), shape
-    )
-    np.testing.assert_array_equal(
-        columnized, np.array([[vg.basis.x, vg.basis.y, vg.basis.z]])
-    )
-    assert columnized.shape == (1, 3, 3)
-    assert is_columnized is True
-    assert transform_result([1.0]) == [1.0]
-
-
-def test_columnize_invalid_shape():
-    with pytest.raises(ValueError):
-        _columnize(vg.basis.x, "this is not a shape")
 
 
 def test_plane_equation_from_points():
@@ -153,7 +105,10 @@ def test_signed_distances_for_diagonal_plane():
 
 
 def test_signed_distance_validation():
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError,
+        match=r"points must be an array with shape \(3,\) or \(-1, 3\); got \(1, 1, 1\)",
+    ):
         signed_distance_to_plane(
             points=np.array([[[1.0]]]), plane_equations=coordinate_planes.xz.equation
         ),
@@ -171,7 +126,7 @@ def test_project_point_to_plane():
     )
 
 
-def test_project_point_to_plane_vectorized():
+def test_project_point_to_plane_vectorized_points():
     np.testing.assert_array_equal(
         project_point_to_plane(
             points=np.array([[10, 20, -5], [2, 7, 203]]),
@@ -183,11 +138,70 @@ def test_project_point_to_plane_vectorized():
     )
 
 
+def test_project_point_to_plane_vectorized_planes():
+    np.testing.assert_array_equal(
+        project_point_to_plane(
+            points=np.array([10, 20, -5]),
+            plane_equations=np.array(
+                [
+                    Plane(
+                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                    ).equation,
+                    Plane(
+                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                    ).equation,
+                ]
+            ),
+        ),
+        np.array([[10, 10, -5], [10, 10, -5]]),
+    )
+
+
+def test_project_point_to_plane_vectorized_both():
+    np.testing.assert_array_equal(
+        project_point_to_plane(
+            points=np.array([[10, 20, -5], [10, 30, -5]]),
+            plane_equations=np.array(
+                [
+                    Plane(
+                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                    ).equation,
+                    Plane(
+                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                    ).equation,
+                ]
+            ),
+        ),
+        np.array([[10, 10, -5], [10, 10, -5]]),
+    )
+
+
 def test_project_point_to_plane_validation():
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError,
+        match=r"points must be an array with shape \(3,\) or \(-1, 3\); got \(1, 1, 1\)",
+    ):
         project_point_to_plane(
             points=np.array([[[1.0]]]),
             plane_equations=Plane(
                 point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
             ).equation,
+        )
+
+    with pytest.raises(
+        ValueError,
+        match=r"plane_equations must be an array with shape \(3, 4\); got \(2, 4\)",
+    ):
+        project_point_to_plane(
+            points=np.array([vg.basis.x, vg.basis.x, vg.basis.x]),
+            plane_equations=np.array(
+                [
+                    Plane(
+                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                    ).equation,
+                    Plane(
+                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                    ).equation,
+                ]
+            ),
         )
