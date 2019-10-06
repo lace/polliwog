@@ -265,7 +265,6 @@ def test_closest_point_of_line_segment():
             [5, 5, 3],
         ]
     )
-    import vg
 
     expected_closest_points = np.array(
         [
@@ -285,6 +284,3 @@ def test_closest_point_of_line_segment():
         segment_vectors=np.broadcast_to(segment_vector, query_points.shape),
     )
     np.testing.assert_array_almost_equal(closest_points, expected_closest_points)
-    import pdb
-
-    pdb.set_trace()
