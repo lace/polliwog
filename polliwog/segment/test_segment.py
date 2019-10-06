@@ -288,4 +288,3 @@ def test_closest_point_of_line_segment():
     import pdb
 
     pdb.set_trace()
-
