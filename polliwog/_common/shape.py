@@ -37,7 +37,7 @@ def check_shape_any(arr, *shapes, **kwargs):
         except ValueError:
             pass
 
-    if "name" is None:
+    if name is None:
         preamble = "Expected an array"
     else:
         preamble = "{} must be an array".format(name)
