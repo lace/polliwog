@@ -8,7 +8,7 @@ def project_to_line(points, reference_points_of_lines, vectors_along_lines):
         reference_points_of_lines, (3,), (-1, 3), name="reference_points_of_lines"
     )
     if points.ndim == 2 and reference_points_of_lines.ndim == 2:
-        vg.shape.check(locals(), "reference_points_of_lines", (len(points), 4))
+        vg.shape.check(locals(), "reference_points_of_lines", (len(points), 3))
     vg.shape.check(locals(), "vectors_along_lines", reference_points_of_lines.shape)
 
     return reference_points_of_lines + vg.project(
