@@ -548,7 +548,7 @@ def test_cut_by_plane_closed():
         )
 
 
-def test_cut_by_polyline_closed_on_vertex():
+def test_cut_by_plane_closed_on_vertex():
     original = Polyline(
         np.array(
             [
@@ -565,12 +565,11 @@ def test_cut_by_polyline_closed_on_vertex():
     expected = Polyline(
         np.array(
             [
-                [0.0, 7.5, 0.0],
-                [0.0, 0.0, 0.0],
-                [1.0, 0.0, 0.0],
                 [1.0, 1.0, 0.0],
                 [1.0, 7.0, 0.0],
-                [1.0, 7.5, 0.0],
+                [1.0, 8.0, 0.0],
+                [0.0, 8.0, 0.0],
+                [0.0, 1.0, 0.0],
             ]
         ),
         closed=False,
@@ -596,31 +595,28 @@ def test_cut_by_plane_open():
         closed=False,
     )
 
-    expected = Polyline(np.array([[1.0, 7.5, 0.0], [1.0, 8.0, 0.0]]), closed=False)
+    expected_vs = np.array([[1.0, 7.5, 0.0], [1.0, 8.0, 0.0]])
     actual = original.cut_by_plane(
         Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
     )
 
-    np.testing.assert_array_almost_equal(actual.v, expected.v)
+    np.testing.assert_array_almost_equal(actual.v, expected_vs)
     assert actual.closed == False
 
-    expected = Polyline(
-        np.array(
-            [
-                [0.0, 0.0, 0.0],
-                [1.0, 0.0, 0.0],
-                [1.0, 1.0, 0.0],
-                [1.0, 7.0, 0.0],
-                [1.0, 7.5, 0.0],
-            ]
-        ),
-        closed=False,
+    expected_vs = np.array(
+        [
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [1.0, 1.0, 0.0],
+            [1.0, 7.0, 0.0],
+            [1.0, 7.5, 0.0],
+        ]
     )
     actual = original.cut_by_plane(
         Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.neg_y)
     )
 
-    np.testing.assert_array_almost_equal(actual.v, expected.v)
+    np.testing.assert_array_almost_equal(actual.v, expected_vs)
     assert actual.closed == False
 
     with pytest.raises(ValueError):
@@ -628,13 +624,15 @@ def test_cut_by_plane_open():
             Plane(point_on_plane=np.array([0.0, 15.0, 0.0]), unit_normal=vg.basis.neg_y)
         )
 
-    with pytest.raises(ValueError):
-        original.cut_by_plane(
-            Plane(
-                point_on_plane=np.array([0.5, 0.0, 0.0]),
-                unit_normal=vg.normalize(np.array([1.0, -1.0, 0.0])),
-            )
+    actual = original.cut_by_plane(
+        Plane(
+            point_on_plane=np.array([0.5, 0.0, 0.0]),
+            unit_normal=vg.normalize(np.array([1.0, -1.0, 0.0])),
         )
+    )
+    expected_vs = np.array([[0.5, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.5, 0.0]])
+    np.testing.assert_array_almost_equal(actual.v, expected_vs)
+    assert actual.closed == False
 
 
 def test_apex():

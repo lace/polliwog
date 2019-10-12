@@ -235,34 +235,32 @@ def test_open_all_in_plane():
         cut_open_polyline_by_plane(vertices, plane)
 
 
-def test_one_vert_in_front():
+def test_open_one_vert_in_front():
     signs = np.array([1])
     vertices = vertices_with_signs(signs)
 
     with pytest.raises(
-        ValueError,
-        match=r"Polyline does not intersect the plane \(note: adjacent doesn't count\)",
+        ValueError, match="Polyline lies entirely in front of the plane"
     ):
         cut_open_polyline_by_plane(vertices, plane)
 
 
-def test_one_vert_in_back():
+def test_open_one_vert_in_back():
     signs = np.array([-1])
     vertices = vertices_with_signs(signs)
 
     with pytest.raises(
-        ValueError,
-        match=r"Polyline does not intersect the plane \(note: adjacent doesn't count\)",
+        ValueError, match="Polyline has no vertices in front of the plane"
     ):
         cut_open_polyline_by_plane(vertices, plane)
 
 
-def test_one_vert_on_plane():
+def test_open_one_vert_on_plane():
     signs = np.array([0])
     vertices = vertices_with_signs(signs)
 
     with pytest.raises(
-        ValueError,
-        match=r"Polyline does not intersect the plane \(note: adjacent doesn't count\)",
+        ValueError, match="Polyline has no vertices in front of the plane"
     ):
         cut_open_polyline_by_plane(vertices, plane)
+

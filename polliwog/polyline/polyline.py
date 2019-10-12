@@ -1,8 +1,6 @@
 import numpy as np
 import vg
 from .._temporary.decorators import setter_property
-from ..plane.intersections import intersect_segment_with_plane
-from ._array import find_changes
 
 
 class Polyline(object):
@@ -448,37 +446,50 @@ class Polyline(object):
         For closed polylines, the plane must intersect the polylint exactly
         twice, leaving a single contiguous segment in front.
         """
+        from .cut_by_plane import cut_open_polyline_by_plane
+        from ._array import find_changes
+
         if self.num_v == 0:
             raise ValueError("A plane can't intersect a polyline with no points")
 
         signed_distances = plane.signed_distance(self.v)
         signs_of_verts = np.sign(signed_distances)
 
-        # Handle an exception case that will cause a crash later on.
-        if self.num_v == 1:
-            if signs_of_verts[0] == 0:
-                return Polyline(v=self.v, closed=False)
-            else:
-                raise ValueError("Plane does not intersect polyline")
+        # # Handle an exception case that will cause a crash later on.
+        # if self.num_v == 1:
+        #     if signs_of_verts[0] == 0:
+        #         return Polyline(v=self.v, closed=False)
+        #     else:
+        #         raise ValueError("Plane does not intersect polyline")
 
-        vs_to_drop = signs_of_verts < 1
-        changes = find_changes(vs_to_drop, wrap=self.closed)
-        num_changes = np.count_nonzero(changes)
+        # vs_to_drop = signs_of_verts < 1
+        # changes = find_changes(vs_to_drop, wrap=self.closed)
+        # num_changes = np.count_nonzero(changes)
 
-        # Verify the plane properly can cut the polyline.
-        expected_num_changes = 2 if self.closed else 1
-        if num_changes == 0:
-            raise ValueError("Plane does not intersect polyline")
-        elif num_changes != expected_num_changes:
-            raise ValueError(
-                "Plane intersects polyline at {} points; expected {}".format(
-                    num_changes, expected_num_changes
-                )
-            )
+        # # Verify the plane properly can cut the polyline.
+        # expected_num_changes = 2 if self.closed else 1
+        # import pdb
+
+        # pdb.set_trace()
+        # if num_changes == 0:
+        #     raise ValueError("Plane does not intersect polyline")
+        # elif num_changes != expected_num_changes:
+        #     raise ValueError(
+        #         "Plane intersects polyline at {} points; expected {}".format(
+        #             num_changes, expected_num_changes
+        #         )
+        #     )
 
         signs_of_verts_by_edge = signs_of_verts[self.e]
 
         if self.closed:
+            # Handle an exception case that will cause a crash here.
+            if self.num_v == 1:
+                if signs_of_verts[0] == 0:
+                    return Polyline(v=self.v, closed=False)
+                else:
+                    raise ValueError("Plane does not intersect polyline")
+
             # For closed polylines, roll the edges so the ones in front of the
             # plane start at index 1 and the one to be cut is at index 0. (If
             # that edge stops directly on the plane, it may not actually need
@@ -501,145 +512,136 @@ class Polyline(object):
             working_v = np.roll(self.v, roll, axis=0)
             signs_of_working_v = np.roll(signs_of_verts, roll)
             # Assertions.
-            np.testing.assert_array_equal(
-                signs_of_working_v, plane.signed_distance(working_v)
-            )
+            np.testing.assert_array_equal(signs_of_working_v, plane.sign(working_v))
             if np.max(signs_of_verts) == 0:
                 assert plane.signed_distance(working_v)[1] == 0
             else:
-                assert plane.signed_distance(working_v)[0] < 1
-                assert plane.signed_distance(working_v)[1] == 1
-                first_not_in_front = np.where(plane.signed)
-                assert (plane.signed_distance(working_v)[2:] < 1).nonzero()[0][0] + 2
+                assert plane.sign(working_v)[0] < 1
+                assert plane.sign(working_v)[1] == 1
+                assert (plane.sign(working_v)[2:] < 1).nonzero()[0][0] + 2
         else:
-            # For open polylines, trim any leading edges which are behind the
-            # plane.
-            edges_in_back = np.all(signs_of_verts_by_edge == -1, axis=0)
-            if edges_in_back[0]:
-                vertices_not_in_back, = np.where(signs_of_verts != -1)
-                start_index = vertices_not_in_back[0] - 1
-                working_v = self.v[start_index:]
-                signs_of_working_v = signs_of_verts[start_index:]
+            working_v = self.v
 
-        from .cut_by_plane import cut_open_polyline_by_plane
-
-        import pdb
-
-        pdb.set_trace()
-        return
-
-        # First, remove all the segments that lie entirely in the plane. These
-        # could either be degenerate segments or
-        # edges_in_plane = np.all(signs_of_verts_by_edge == 0, axis=1)
-        # verts_on_
-        # new_vs =
-
-        # If it's open, compute the cut segment and append or prepend it.
-        if self.closed:
-            # Reindex the polyline so it starts with a contiguous subchain which
-            # lies in front of the plane. (In the extreme cases of a polyline
-            # which intersects a plane at a single point, it starts at that point.)
-            first_point_is_in_back = signs_of_verts[0] == -1
-            if first_point_is_in_back:
-                # e.g. v_sign = np.array([-1, 1, 1, 1, -1, -1, -1])
-                points_on_or_in_front, = np.where(signs_of_verts >= 0)
-                working = self.reindexed(index=points_on_or_in_front[0])
-            else:
-                # e.g. v_sign = np.array([1, -1, -1, -1, 1, 1, 1])
-                points_in_back, = np.where(signs_of_verts < 0)
-                working = self.reindexed(index=points_in_back[-1] + 1)
-        else:
-            intersecting_edge_index, = np.nonzero(changes)[0]
-
-        intersecting_edge = self.e[intersecting_edge_index]
-        intersecting_segment_vector = self.segment_vectors[intersecting_edge_index]
-        # Do we want the edges before or after the intersecting edge? Determine that
-        # by checking whether the intersecting edge crosses from back to front or
-        # front to back. If back to front, keep the edges after it. If front to back,
-        # keep the edges before it. In either case, add a new edge for the portion of
-        # the intersecting edge that is in front.
-        #
-        # In case a vert of the intersecting edge lies on the plane, use a
-        # vector to identify which direction it's facing.
-        if vg.scalar_projection(intersecting_segment_vector, onto=plane.normal) > 0:
-            new_v = np.vstack([intersection_point, self.v[intersecting_edge[1] :]])
-        else:
-            new_v = np.vstack([self.v[: intersecting_edge[0] + 1], intersection_point])
+        new_v = cut_open_polyline_by_plane(working_v, plane)
         return Polyline(v=new_v, closed=False)
 
-        # If it's closed, rotate so it starts with the first kept segment, then
-        # compute the two cut segments.
+        # import pdb
 
-        edges_to_cut = signs_of_verts_by_edge[:, 0] * signs_of_verts_by_edge[:, 1] == -1
-        num_edges_to_cut = len(edges_to_cut)
-        new_vertices_for_cut_edges = intersect_segment_with_plane(
-            start_points=self.v[edges_to_cut],
-            segment_vectors=self.segment_vectors[edges_to_cut],
-            points_on_plane=np.broadcast_to(
-                self.reference_point, (num_edges_to_cut, 3)
-            ),
-            plane_normals=np.broadcast_to(self.normal, (num_edges_to_cut, 3)),
-        )
+        # pdb.set_trace()
+        # return
 
-        edges_to_keep_or_cut = ~np.all(signs_of_verts_by_edge == 0, axis=1)
+        # # First, remove all the segments that lie entirely in the plane. These
+        # # could either be degenerate segments or
+        # # edges_in_plane = np.all(signs_of_verts_by_edge == 0, axis=1)
+        # # verts_on_
+        # # new_vs =
 
-        es_to_drop = edges_in_plane
-        es_to_preserve = np.logical_and(~es_to_cut, ~es_to_drop)
+        # # If it's open, compute the cut segment and append or prepend it.
+        # if self.closed:
+        #     # Reindex the polyline so it starts with a contiguous subchain which
+        #     # lies in front of the plane. (In the extreme cases of a polyline
+        #     # which intersects a plane at a single point, it starts at that point.)
+        #     first_point_is_in_back = signs_of_verts[0] == -1
+        #     if first_point_is_in_back:
+        #         # e.g. v_sign = np.array([-1, 1, 1, 1, -1, -1, -1])
+        #         points_on_or_in_front, = np.where(signs_of_verts >= 0)
+        #         working = self.reindexed(index=points_on_or_in_front[0])
+        #     else:
+        #         # e.g. v_sign = np.array([1, -1, -1, -1, 1, 1, 1])
+        #         points_in_back, = np.where(signs_of_verts < 0)
+        #         working = self.reindexed(index=points_in_back[-1] + 1)
+        # else:
+        #     intersecting_edge_index, = np.nonzero(changes)[0]
 
-        # First handle the edge case where a vertex lies on the plane. Because
-        # the goal is to produce the correct result when a vertex lies on the
-        # plane, there is no need to detect using a floating-point tolerance.
-        # It is perfectly acceptable to miss an intersection which lies
-        # very close to one side or the other. So long as the input polyline is
-        # well-formed (i.e. not zig-zagging near the plane), the result will be
-        # correct.
-        verts_of_edges = self.v[self.e]
-        degenerate_segments = np.all(
-            verts_of_edges[:, 0] == verts_of_edges[:, 1], axis=1
-        )
+        # intersecting_edge = self.e[intersecting_edge_index]
+        # intersecting_segment_vector = self.segment_vectors[intersecting_edge_index]
+        # # Do we want the edges before or after the intersecting edge? Determine that
+        # # by checking whether the intersecting edge crosses from back to front or
+        # # front to back. If back to front, keep the edges after it. If front to back,
+        # # keep the edges before it. In either case, add a new edge for the portion of
+        # # the intersecting edge that is in front.
+        # #
+        # # In case a vert of the intersecting edge lies on the plane, use a
+        # # vector to identify which direction it's facing.
+        # if vg.scalar_projection(intersecting_segment_vector, onto=plane.normal) > 0:
+        #     new_v = np.vstack([intersection_point, self.v[intersecting_edge[1] :]])
+        # else:
+        #     new_v = np.vstack([self.v[: intersecting_edge[0] + 1], intersection_point])
+        # return Polyline(v=new_v, closed=False)
 
-        signs_of_verts_by_edge = signs_of_verts[self.e]
-        edges_in_plane = np.all(signs_of_verts_by_edge == 0, axis=1)
-        # nondegenerate_edges_in_plane = np.logical_and(
-        #     edges_in_plane, ~degenerate_segments
+        # # If it's closed, rotate so it starts with the first kept segment, then
+        # # compute the two cut segments.
+
+        # edges_to_cut = signs_of_verts_by_edge[:, 0] * signs_of_verts_by_edge[:, 1] == -1
+        # num_edges_to_cut = len(edges_to_cut)
+        # new_vertices_for_cut_edges = intersect_segment_with_plane(
+        #     start_points=self.v[edges_to_cut],
+        #     segment_vectors=self.segment_vectors[edges_to_cut],
+        #     points_on_plane=np.broadcast_to(
+        #         self.reference_point, (num_edges_to_cut, 3)
+        #     ),
+        #     plane_normals=np.broadcast_to(self.normal, (num_edges_to_cut, 3)),
         # )
-        # TODO When there are contiguous nondegenerate edges which lie the plane,
-        # an excpetion is raised. This case could be handled better by collapsing
-        # them into a single vertex.
 
-        edges_crossing_plane = (
-            signs_of_verts_by_edge[:, 0] * signs_of_verts_by_edge[:, 1] == -1
-        )
+        # edges_to_keep_or_cut = ~np.all(signs_of_verts_by_edge == 0, axis=1)
 
-        es_to_cut = edges_crossing_plane
-        es_to_drop = edges_in_plane
-        es_to_preserve = np.logical_and(~es_to_cut, ~es_to_drop)
+        # es_to_drop = edges_in_plane
+        # es_to_preserve = np.logical_and(~es_to_cut, ~es_to_drop)
 
-        intersection_points, edge_indices = self.intersect_plane(
-            plane, ret_edge_and_vertex_indices=True
-        )
+        # # First handle the edge case where a vertex lies on the plane. Because
+        # # the goal is to produce the correct result when a vertex lies on the
+        # # plane, there is no need to detect using a floating-point tolerance.
+        # # It is perfectly acceptable to miss an intersection which lies
+        # # very close to one side or the other. So long as the input polyline is
+        # # well-formed (i.e. not zig-zagging near the plane), the result will be
+        # # correct.
+        # verts_of_edges = self.v[self.e]
+        # degenerate_segments = np.all(
+        #     verts_of_edges[:, 0] == verts_of_edges[:, 1], axis=1
+        # )
 
-        num_edge_indices = len(edge_indices)
-        if num_edge_indices == 0:
-            raise ValueError("Plane does not intersect polyline")
+        # signs_of_verts_by_edge = signs_of_verts[self.e]
+        # edges_in_plane = np.all(signs_of_verts_by_edge == 0, axis=1)
+        # # nondegenerate_edges_in_plane = np.logical_and(
+        # #     edges_in_plane, ~degenerate_segments
+        # # )
+        # # TODO When there are contiguous nondegenerate edges which lie the plane,
+        # # an excpetion is raised. This case could be handled better by collapsing
+        # # them into a single vertex.
 
-        if self.closed:
-            if num_edge_indices != 2:
-                raise ValueError(
-                    "Plane intersects polyline at {} points; expected 2".format(
-                        num_edge_indices
-                    )
-                )
-            return self._cut_by_plane_closed(plane)
-        else:
-            if num_edge_indices > 1:
-                raise ValueError(
-                    "Plane intersects polyline at {} points; expected 1".format(
-                        num_edge_indices
-                    )
-                )
-            intersection_point = intersection_points[0]
-            intersecting_edge_index = edge_indices[0]
-            return self._cut_by_plane_open(
-                plane, intersection_point, intersecting_edge_index
-            )
+        # edges_crossing_plane = (
+        #     signs_of_verts_by_edge[:, 0] * signs_of_verts_by_edge[:, 1] == -1
+        # )
+
+        # es_to_cut = edges_crossing_plane
+        # es_to_drop = edges_in_plane
+        # es_to_preserve = np.logical_and(~es_to_cut, ~es_to_drop)
+
+        # intersection_points, edge_indices = self.intersect_plane(
+        #     plane, ret_edge_and_vertex_indices=True
+        # )
+
+        # num_edge_indices = len(edge_indices)
+        # if num_edge_indices == 0:
+        #     raise ValueError("Plane does not intersect polyline")
+
+        # if self.closed:
+        #     if num_edge_indices != 2:
+        #         raise ValueError(
+        #             "Plane intersects polyline at {} points; expected 2".format(
+        #                 num_edge_indices
+        #             )
+        #         )
+        #     return self._cut_by_plane_closed(plane)
+        # else:
+        #     if num_edge_indices > 1:
+        #         raise ValueError(
+        #             "Plane intersects polyline at {} points; expected 1".format(
+        #                 num_edge_indices
+        #             )
+        #         )
+        #     intersection_point = intersection_points[0]
+        #     intersecting_edge_index = edge_indices[0]
+        #     return self._cut_by_plane_open(
+        #         plane, intersection_point, intersecting_edge_index
+        #     )
