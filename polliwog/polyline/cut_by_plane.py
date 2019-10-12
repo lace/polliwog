@@ -2,7 +2,6 @@ import numpy as np
 import vg
 from ..plane.plane import Plane
 from ..plane.intersections import intersect_segment_with_plane
-from ._array import find_changes
 
 
 def cut_open_polyline_by_plane(vertices, plane):
