@@ -1,9 +1,25 @@
 import numpy as np
 import vg
+from ..polyline.polyline import Polyline
 from .intersections import intersect_segment_with_plane
 
 
-def test_intersect_plane_new():
+def test_intersect_segment_with_plane_single():
+    start_point = np.array([0.0, 9.0, 0.0])
+    segment_vector = np.array([0.0, -9.0, 0.0])
+
+    np.testing.assert_array_equal(
+        intersect_segment_with_plane(
+            start_points=start_point,
+            segment_vectors=segment_vector,
+            points_on_plane=np.array([0.0, 7.5, 0.0]),
+            plane_normals=vg.basis.y,
+        ),
+        np.array([0.0, 7.5, 0.0]),
+    )
+
+
+def test_intersect_segment_with_plane_stacked():
     start_points = np.array(
         [
             [0.0, 0.0, 0.0],
@@ -24,24 +40,6 @@ def test_intersect_plane_new():
             [0.0, -9.0, 0.0],
         ]
     )
-
-    from ..polyline.polyline import Polyline
-
-    polyline = Polyline(
-        np.array(
-            [
-                [0.0, 0.0, 0.0],
-                [1.0, 0.0, 0.0],
-                [1.0, 1.0, 0.0],
-                [1.0, 7.0, 0.0],
-                [1.0, 9.0, 0.0],
-                [0.0, 9.0, 0.0],
-            ]
-        ),
-        closed=True,
-    )
-    np.testing.assert_array_equal(start_points, polyline.segments[:, 0])
-    np.testing.assert_array_equal(segment_vectors, polyline.segment_vectors)
 
     num_points = len(start_points)
 

@@ -35,11 +35,11 @@ def intersect_segment_with_plane(p1, p2):
     )
 
     return _intersect_segment_with_plane(
-        start_points=np.array([p1]),
-        segment_vectors=np.array([p2 - p1]),
-        points_on_plane=np.array([point_on_plane]),
-        plane_normals=np.array([plane_normal]),
-    )[0]
+        start_points=p1,
+        segment_vectors=p2 - p1,
+        points_on_plane=point_on_plane,
+        plane_normals=plane_normal,
+    )
 
 
 def test_open_starts_in_front_ends_in_back():

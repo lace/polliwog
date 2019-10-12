@@ -1,14 +1,18 @@
 import numpy as np
 import vg
+from .._common.shape import columnize
 
 
 def intersect_segment_with_plane(
     start_points, segment_vectors, points_on_plane, plane_normals
 ):
-    k = vg.shape.check(locals(), "start_points", (-1, 3))
-    vg.shape.check(locals(), "segment_vectors", (k, 3))
-    vg.shape.check(locals(), "points_on_plane", (k, 3))
-    vg.shape.check(locals(), "plane_normals", (k, 3))
+    orig_shape = start_points.shape
+    start_points, _, transform_result = columnize(
+        start_points, (-1, 3), name="start_points"
+    )
+    vg.shape.check(locals(), "segment_vectors", orig_shape)
+    vg.shape.check(locals(), "points_on_plane", orig_shape)
+    vg.shape.check(locals(), "plane_normals", orig_shape)
 
     # Compute t values such that
     # `result = reference_point + t * segment_vectors`.
@@ -23,4 +27,4 @@ def intersect_segment_with_plane(
     intersection_points[t < 0] = np.nan
     intersection_points[t > 1] = np.nan
 
-    return intersection_points
+    return transform_result(intersection_points)
