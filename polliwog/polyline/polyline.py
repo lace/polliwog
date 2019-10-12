@@ -197,7 +197,6 @@ class Polyline(object):
         """
         import itertools
         from ..segment.segment import partition_segment
-        from ..plane.intersections import intersect_segment_with_plane
 
         old_num_e = self.num_e
         old_num_v = self.num_v
@@ -372,28 +371,15 @@ class Polyline(object):
         twice, leaving a single contiguous segment in front.
         """
         from .cut_by_plane import cut_open_polyline_by_plane
-        from ._array import find_changes
 
-        if self.num_v == 0:
-            raise ValueError("A plane can't intersect a polyline with no points")
-
-        signed_distances = plane.signed_distance(self.v)
-        signs_of_verts = np.sign(signed_distances)
-
-        signs_of_verts_by_edge = signs_of_verts[self.e]
-
-        if self.closed:
-            # Handle an exception case that will cause a crash here.
-            if self.num_v == 1:
-                if signs_of_verts[0] == 0:
-                    return Polyline(v=self.v, closed=False)
-                else:
-                    raise ValueError("Plane does not intersect polyline")
-
+        if self.closed and self.num_v > 1:
+            signed_distances = plane.signed_distance(self.v)
+            signs_of_verts = np.sign(signed_distances)
             # For closed polylines, roll the edges so the ones in front of the
             # plane start at index 1 and the one to be cut is at index 0. (If
             # that edge stops directly on the plane, it may not actually need
-            # to be cut.)
+            # to be cut.) This reduces it to the open polyline intersection
+            # problem.
             if signs_of_verts[-1] == 1:
                 # e.g. signs_of_verts = np.array([1, -1, -1, 1, 1, 1, 1])
                 vertices_not_in_front, = np.where(signs_of_verts != 1)
@@ -410,7 +396,6 @@ class Polyline(object):
                     vertices_in_plane, = np.where(signs_of_verts == 0)
                     roll = -vertices_in_plane[0] + 1
             working_v = np.roll(self.v, roll, axis=0)
-            signs_of_working_v = np.roll(signs_of_verts, roll)
         else:
             working_v = self.v
 

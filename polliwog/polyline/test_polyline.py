@@ -581,6 +581,16 @@ def test_cut_by_plane_closed_on_vertex():
     assert actual.closed == False
 
 
+def test_cut_by_plane_closed_one_vertex():
+    original = Polyline(np.array([[0.0, 0.0, 0.0]]), closed=True)
+    with pytest.raises(
+        ValueError, match="Polyline has no vertices in front of the plane"
+    ):
+        original.cut_by_plane(
+            Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
+        )
+
+
 def test_cut_by_plane_open():
     original = Polyline(
         np.array(
