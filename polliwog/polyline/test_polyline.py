@@ -548,39 +548,38 @@ def test_cut_by_plane_closed():
         )
 
 
-# def test_cut_by_polyline_closed_on_vertex():
-#     # TODO: This isn't working right now.
-#     original = Polyline(
-#         np.array(
-#             [
-#                 [0.0, 0.0, 0.0],
-#                 [1.0, 0.0, 0.0],
-#                 [1.0, 1.0, 0.0],
-#                 [1.0, 7.0, 0.0],
-#                 [1.0, 8.0, 0.0],
-#                 [0.0, 8.0, 0.0],
-#             ]
-#         ),
-#         closed=True,
-#     )
-#     expected = Polyline(
-#         np.array(
-#             [
-#                 [0.0, 7.5, 0.0],
-#                 [0.0, 0.0, 0.0],
-#                 [1.0, 0.0, 0.0],
-#                 [1.0, 1.0, 0.0],
-#                 [1.0, 7.0, 0.0],
-#                 [1.0, 7.5, 0.0],
-#             ]
-#         ),
-#         closed=False,
-#     )
-#     actual = original.cut_by_plane(
-#         Plane(point_on_plane=np.array([0.0, 1.0, 0.0]), unit_normal=vg.basis.y)
-#     )
-#     np.testing.assert_array_almost_equal(actual.v, expected.v)
-#     assert actual.closed == False
+def test_cut_by_polyline_closed_on_vertex():
+    original = Polyline(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [1.0, 7.0, 0.0],
+                [1.0, 8.0, 0.0],
+                [0.0, 8.0, 0.0],
+            ]
+        ),
+        closed=True,
+    )
+    expected = Polyline(
+        np.array(
+            [
+                [0.0, 7.5, 0.0],
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [1.0, 7.0, 0.0],
+                [1.0, 7.5, 0.0],
+            ]
+        ),
+        closed=False,
+    )
+    actual = original.cut_by_plane(
+        Plane(point_on_plane=np.array([0.0, 1.0, 0.0]), unit_normal=vg.basis.y)
+    )
+    np.testing.assert_array_almost_equal(actual.v, expected.v)
+    assert actual.closed == False
 
 
 def test_cut_by_plane_open():
