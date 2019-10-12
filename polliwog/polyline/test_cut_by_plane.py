@@ -263,4 +263,3 @@ def test_open_one_vert_on_plane():
         ValueError, match="Polyline has no vertices in front of the plane"
     ):
         cut_open_polyline_by_plane(vertices, plane)
-

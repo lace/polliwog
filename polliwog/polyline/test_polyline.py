@@ -492,6 +492,31 @@ def test_intersect_plane():
     np.testing.assert_array_equal(actual, expected)
 
 
+# def test_intersect_plane_with_vertex_on_plane():
+#     # TODO: This isn't working correctly.
+#     polyline = Polyline(
+#         np.array(
+#             [
+#                 [0.0, 0.0, 0.0],
+#                 [1.0, 0.0, 0.0],
+#                 [1.0, 1.0, 0.0],
+#                 [1.0, 7.0, 0.0],
+#                 [1.0, 8.0, 0.0],
+#                 [0.0, 8.0, 0.0],
+#                 [0.0, 7.5, 0.0],
+#             ]
+#         ),
+#         closed=True,
+#     )
+
+#     expected = np.array([[1.0, 7.5, 0.0], [0.0, 7.5, 0.0]])
+#     actual = polyline.intersect_plane(
+#         Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
+#     )
+
+#     np.testing.assert_array_equal(actual, expected)
+
+
 def test_cut_by_plane_closed():
     original = Polyline(
         np.array(

@@ -287,76 +287,24 @@ class Polyline(object):
         """
         return vg.apex(self.v, axis)
 
-    def intersect_plane(self, plane, ret_edge_and_vertex_indices=False):
+    def intersect_plane(self, plane, ret_edge_indices=False):
         """
         Returns the points of intersection between the plane and any of the
         edges of `polyline`, which should be an instance of Polyline.
         """
-        if self.num_v == 0:
-            intersection_points = np.zeros((3, 0))
-            if ret_edge_and_vertex_indices:
-                edge_indices = np.zeros((3,))
-                vertex_indices = np.zeros((3,))
-                return intersection_points, vertex_indices, edge_indices
-            else:
-                return intersection_points
-
         # Identify edges with endpoints that are not on the same side of the plane
         signed_distances = plane.signed_distance(self.v)
-        signs_of_verts = np.sign(signed_distances)
-
-        # First handle the edge case where a vertex lies on the plane. Because
-        # the goal is to produce the correct result when a vertex lies on the
-        # plane, there is no need to detect using a floating-point tolerance.
-        # It is perfectly acceptable to miss an intersection which lies
-        # very close to one side or the other. So long as the input polyline is
-        # well-formed (i.e. not zig-zagging near the plane), the result will be
-        # correct.
-        verts_of_edges = self.v[self.e]
-        degenerate_segments = np.all(
-            verts_of_edges[:, 0] == verts_of_edges[:, 1], axis=1
-        )
-
-        signs_of_verts_by_edge = signs_of_verts[self.e]
-        edges_in_plane = np.all(signs_of_verts_by_edge == 0, axis=1)
-        # nondegenerate_edges_in_plane = np.logical_and(
-        #     edges_in_plane, ~degenerate_segments
-        # )
-        # TODO When there are contiguous nondegenerate edges which lie the plane,
-        # an excpetion is raised. This case could be handled better by collapsing
-        # them into a single vertex.
-
-        edges_crossing_plane = (
-            signs_of_verts_by_edge[:, 0] * signs_of_verts_by_edge[:, 1] == -1
-        )
-
-        es_to_cut = edges_crossing_plane
-        es_to_drop = edges_in_plane
-        es_to_preserve = np.logical_and(~es_to_cut, ~es_to_drop)
-
-        # vs_to_drop = either end of es_to_drop, and unwanted end of es_to_cut.
-        # vs to drop: the ones with sign 0 or -1.
-        vs_to_drop = signs_of_verts < 1
-        num_changes = find_changes(vs_to_drop, wrap=self.closed)
-        if self.closed and num_changes != 2:
-            raise ValueError("")
-
-        # Check integrity. All the verts of edges being dropped should be contiguous.
-
-        num_v_intersections = np.sum(signs == 0, axis=1)
-        intersecting_vertex_indices, = sides_of_edge_vertices.sum(axis=1) == 1
-        intersecting_edge_indices, = np.abs(sides_of_edge_vertices.sum(axis=1)) == 2
+        which_es = np.abs(np.sign(signed_distances)[self.e].sum(axis=1)) != 2
         # For the intersecting edges, compute the distance of the endpoints to the plane
-        endpoint_distances = np.abs(signed_distances[self.e[intersecting_edge_indices]])
+        endpoint_distances = np.abs(signed_distances[self.e[which_es]])
         # Normalize the rows of endpoint_distances
         t = endpoint_distances / endpoint_distances.sum(axis=1)[:, np.newaxis]
         # Take a weighted average of the endpoints to obtain the points of intersection
         intersection_points = (
             (1.0 - t[:, :, np.newaxis]) * self.segments[which_es]
         ).sum(axis=1)
-        if ret_edge_and_vertex_indices:
-            edge_indices, = which_es.nonzero()
-            return intersection_points, edge_indices
+        if ret_edge_indices:
+            return intersection_points, which_es.nonzero()[0]
         else:
             return intersection_points
 
