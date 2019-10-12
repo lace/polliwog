@@ -1,6 +1,5 @@
 import numpy as np
 import vg
-from ..polyline.polyline import Polyline
 from .intersections import intersect_segment_with_plane
 
 
