@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.0 (Oct. 12, 2019)
+
+- `Polyline.cut_by_plane()`: Handle vertices which lie in the plane.
+
 ## 0.9.0 (Oct. 6, 2019)
 
 - Add `segment.segment.closest_point_of_line_segment()`
