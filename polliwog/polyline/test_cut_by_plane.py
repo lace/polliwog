@@ -263,3 +263,15 @@ def test_open_one_vert_on_plane():
         ValueError, match="Polyline has no vertices in front of the plane"
     ):
         cut_open_polyline_by_plane(vertices, plane)
+
+
+def test_open_not_a_plane():
+    signs = np.array([1, -1])
+    vertices = vertices_with_signs(signs)
+
+    not_a_plane = []
+
+    with pytest.raises(
+        ValueError, match="plane should be an instance of polliwog.Plane"
+    ):
+        cut_open_polyline_by_plane(vertices, not_a_plane)

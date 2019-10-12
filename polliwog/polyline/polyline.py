@@ -338,11 +338,7 @@ class Polyline(object):
                 if len(vertices_in_front) > 0:
                     roll = -vertices_in_front[0] + 1
                 else:
-                    # This is the extreme case of a polyline which intersects
-                    # only at points and/or edges in the plane.
-                    # e.g. signs_of_verts = np.array([-1, -1, -1, 0, 0, -1, -1])
-                    vertices_in_plane, = np.where(signs_of_verts == 0)
-                    roll = -vertices_in_plane[0] + 1
+                    roll = 0
             working_v = np.roll(self.v, roll, axis=0)
         else:
             working_v = self.v

@@ -451,6 +451,9 @@ def test_reindexed():
 
     np.testing.assert_array_almost_equal(reindexed.v, expected.v)
     np.testing.assert_array_equal(original.segments[edge_mapping], reindexed.segments)
+    np.testing.assert_array_almost_equal(
+        original.reindexed(5, ret_edge_mapping=False).v, expected.v
+    )
 
     open_polyline = Polyline(
         np.array(
@@ -490,6 +493,13 @@ def test_intersect_plane():
     )
 
     np.testing.assert_array_equal(actual, expected)
+
+    intersection_points, edge_indices = polyline.intersect_plane(
+        Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y),
+        ret_edge_indices=True,
+    )
+    np.testing.assert_array_equal(intersection_points, expected)
+    np.testing.assert_array_equal(edge_indices, np.array([3, 5]))
 
 
 @pytest.mark.xfail
