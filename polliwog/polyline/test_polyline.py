@@ -505,6 +505,7 @@ def test_intersect_plane():
 @pytest.mark.xfail
 def test_intersect_plane_with_vertex_on_plane():
     # TODO: This isn't working correctly.
+    # https://github.com/lace/polliwog/issues/72
     polyline = Polyline(
         np.array(
             [
