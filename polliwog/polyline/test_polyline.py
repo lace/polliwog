@@ -451,6 +451,9 @@ def test_reindexed():
 
     np.testing.assert_array_almost_equal(reindexed.v, expected.v)
     np.testing.assert_array_equal(original.segments[edge_mapping], reindexed.segments)
+    np.testing.assert_array_almost_equal(
+        original.reindexed(5, ret_edge_mapping=False).v, expected.v
+    )
 
     open_polyline = Polyline(
         np.array(
@@ -479,6 +482,40 @@ def test_intersect_plane():
                 [1.0, 7.0, 0.0],
                 [1.0, 8.0, 0.0],
                 [0.0, 8.0, 0.0],
+            ]
+        ),
+        closed=True,
+    )
+
+    expected = np.array([[1.0, 7.5, 0.0], [0.0, 7.5, 0.0]])
+    actual = polyline.intersect_plane(
+        Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
+    )
+
+    np.testing.assert_array_equal(actual, expected)
+
+    intersection_points, edge_indices = polyline.intersect_plane(
+        Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y),
+        ret_edge_indices=True,
+    )
+    np.testing.assert_array_equal(intersection_points, expected)
+    np.testing.assert_array_equal(edge_indices, np.array([3, 5]))
+
+
+@pytest.mark.xfail
+def test_intersect_plane_with_vertex_on_plane():
+    # TODO: This isn't working correctly.
+    # https://github.com/lace/polliwog/issues/72
+    polyline = Polyline(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [1.0, 7.0, 0.0],
+                [1.0, 8.0, 0.0],
+                [0.0, 8.0, 0.0],
+                [0.0, 7.5, 0.0],
             ]
         ),
         closed=True,
@@ -542,45 +579,62 @@ def test_cut_by_plane_closed():
         np.array([[0.0, 0.0, 0.0], [5.0, 0.0, 0.0], [0.0, 2.0, 0.0], [5.0, 2.0, 0.0]]),
         closed=True,
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match="Polyline intersects the plane too many times"
+    ):
         zigzag.cut_by_plane(
             Plane(point_on_plane=np.array([2.5, 0.0, 0.0]), unit_normal=vg.basis.x)
         )
 
+    with pytest.raises(
+        ValueError, match="Polyline has no vertices in front of the plane"
+    ):
+        original.cut_by_plane(
+            Plane(point_on_plane=np.array([10.0, 0.0, 0.0]), unit_normal=vg.basis.x)
+        )
 
-# def test_cut_by_polyline_closed_on_vertex():
-#     # TODO: This isn't working right now.
-#     original = Polyline(
-#         np.array(
-#             [
-#                 [0.0, 0.0, 0.0],
-#                 [1.0, 0.0, 0.0],
-#                 [1.0, 1.0, 0.0],
-#                 [1.0, 7.0, 0.0],
-#                 [1.0, 8.0, 0.0],
-#                 [0.0, 8.0, 0.0],
-#             ]
-#         ),
-#         closed=True,
-#     )
-#     expected = Polyline(
-#         np.array(
-#             [
-#                 [0.0, 7.5, 0.0],
-#                 [0.0, 0.0, 0.0],
-#                 [1.0, 0.0, 0.0],
-#                 [1.0, 1.0, 0.0],
-#                 [1.0, 7.0, 0.0],
-#                 [1.0, 7.5, 0.0],
-#             ]
-#         ),
-#         closed=False,
-#     )
-#     actual = original.cut_by_plane(
-#         Plane(point_on_plane=np.array([0.0, 1.0, 0.0]), unit_normal=vg.basis.y)
-#     )
-#     np.testing.assert_array_almost_equal(actual.v, expected.v)
-#     assert actual.closed == False
+
+def test_cut_by_plane_closed_on_vertex():
+    original = Polyline(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [1.0, 7.0, 0.0],
+                [1.0, 8.0, 0.0],
+                [0.0, 8.0, 0.0],
+            ]
+        ),
+        closed=True,
+    )
+    expected = Polyline(
+        np.array(
+            [
+                [1.0, 1.0, 0.0],
+                [1.0, 7.0, 0.0],
+                [1.0, 8.0, 0.0],
+                [0.0, 8.0, 0.0],
+                [0.0, 1.0, 0.0],
+            ]
+        ),
+        closed=False,
+    )
+    actual = original.cut_by_plane(
+        Plane(point_on_plane=np.array([0.0, 1.0, 0.0]), unit_normal=vg.basis.y)
+    )
+    np.testing.assert_array_almost_equal(actual.v, expected.v)
+    assert actual.closed == False
+
+
+def test_cut_by_plane_closed_one_vertex():
+    original = Polyline(np.array([[0.0, 0.0, 0.0]]), closed=True)
+    with pytest.raises(
+        ValueError, match="Polyline has no vertices in front of the plane"
+    ):
+        original.cut_by_plane(
+            Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
+        )
 
 
 def test_cut_by_plane_open():
@@ -597,31 +651,28 @@ def test_cut_by_plane_open():
         closed=False,
     )
 
-    expected = Polyline(np.array([[1.0, 7.5, 0.0], [1.0, 8.0, 0.0]]), closed=False)
+    expected_vs = np.array([[1.0, 7.5, 0.0], [1.0, 8.0, 0.0]])
     actual = original.cut_by_plane(
         Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
     )
 
-    np.testing.assert_array_almost_equal(actual.v, expected.v)
+    np.testing.assert_array_almost_equal(actual.v, expected_vs)
     assert actual.closed == False
 
-    expected = Polyline(
-        np.array(
-            [
-                [0.0, 0.0, 0.0],
-                [1.0, 0.0, 0.0],
-                [1.0, 1.0, 0.0],
-                [1.0, 7.0, 0.0],
-                [1.0, 7.5, 0.0],
-            ]
-        ),
-        closed=False,
+    expected_vs = np.array(
+        [
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [1.0, 1.0, 0.0],
+            [1.0, 7.0, 0.0],
+            [1.0, 7.5, 0.0],
+        ]
     )
     actual = original.cut_by_plane(
         Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.neg_y)
     )
 
-    np.testing.assert_array_almost_equal(actual.v, expected.v)
+    np.testing.assert_array_almost_equal(actual.v, expected_vs)
     assert actual.closed == False
 
     with pytest.raises(ValueError):
@@ -629,13 +680,15 @@ def test_cut_by_plane_open():
             Plane(point_on_plane=np.array([0.0, 15.0, 0.0]), unit_normal=vg.basis.neg_y)
         )
 
-    with pytest.raises(ValueError):
-        original.cut_by_plane(
-            Plane(
-                point_on_plane=np.array([0.5, 0.0, 0.0]),
-                unit_normal=vg.normalize(np.array([1.0, -1.0, 0.0])),
-            )
+    actual = original.cut_by_plane(
+        Plane(
+            point_on_plane=np.array([0.5, 0.0, 0.0]),
+            unit_normal=vg.normalize(np.array([1.0, -1.0, 0.0])),
         )
+    )
+    expected_vs = np.array([[0.5, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.5, 0.0]])
+    np.testing.assert_array_almost_equal(actual.v, expected_vs)
+    assert actual.closed == False
 
 
 def test_apex():
