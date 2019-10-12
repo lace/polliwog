@@ -291,7 +291,10 @@ class Polyline(object):
         """
         Returns the points of intersection between the plane and any of the
         edges of `polyline`, which should be an instance of Polyline.
+
+        TODO: This doesn't correctly handle vertices which lie on the plane.
         """
+        # TODO: Refactor to use `..plane.intersections.intersect_segment_with_plane()`.
         # Identify edges with endpoints that are not on the same side of the plane
         signed_distances = plane.signed_distance(self.v)
         which_es = np.abs(np.sign(signed_distances)[self.e].sum(axis=1)) != 2
