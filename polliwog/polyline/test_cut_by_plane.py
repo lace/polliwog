@@ -1,5 +1,6 @@
 import numpy as np
 import vg
+import pytest
 from ..plane.plane import Plane
 from .cut_by_plane import cut_open_polyline_by_plane
 
@@ -18,9 +19,14 @@ def vertices_with_signs(signs):
     random_displacement_along_normal = (
         rand_nonzero(num_verts).reshape(-1, 1) * plane_normal
     )
-    return (
+    vertices = (
         random_points_on_plane + signs.reshape(-1, 1) * random_displacement_along_normal
     )
+    # Because of rounding, the random points don't necessarily return 0 for
+    # sign, so pick one that does.
+    vertices[signs == 0] = plane.reference_point
+    np.testing.assert_array_equal(plane.sign(vertices), signs)
+    return vertices
 
 
 def intersect_segment_with_plane(p1, p2):
@@ -39,8 +45,10 @@ def intersect_segment_with_plane(p1, p2):
 def test_open_starts_in_front_ends_in_back():
     signs = np.array([1, 1, 1, 1, 1, -1, -1])
     vertices = vertices_with_signs(signs)
+
     result = cut_open_polyline_by_plane(vertices, plane)
-    np.testing.assert_array_equal(
+
+    np.testing.assert_array_almost_equal(
         result,
         np.vstack(
             [
@@ -53,79 +61,208 @@ def test_open_starts_in_front_ends_in_back():
 
 def test_open_starts_in_front_ends_in_back_with_vertex_on_plane():
     signs = np.array([1, 1, 1, 0, -1, -1, -1, -1])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    result = cut_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_equal(result, vertices[signs >= 0])
 
 
 def test_open_starts_in_back_ends_in_front():
     signs = np.array([-1, -1, 1])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    result = cut_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_almost_equal(
+        result,
+        np.vstack(
+            [
+                [intersect_segment_with_plane(vertices[1], vertices[2])],
+                vertices[signs == 1],
+            ]
+        ),
+    )
 
 
 def test_open_starts_in_back_ends_in_front_with_vertex_on_plane():
     signs = np.array([-1, -1, -1, -1, -1, 0, 1, 1, 1])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    result = cut_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_equal(result, vertices[signs >= 0])
 
 
-def test_open_starts_on_plane():
+def test_open_starts_on_plane_ends_in_front():
     signs = np.array([0, 1, 1, 1, 1])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    result = cut_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_equal(result, vertices)
 
 
-def test_open_starts_on_plane_then_in_back():
+def test_open_starts_with_edges_along_plane_ends_in_front():
+    signs = np.array([0, 0, 1, 1, 1, 1])
+    vertices = vertices_with_signs(signs)
+
+    result = cut_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_equal(result, vertices[1:])
+
+
+def test_open_starts_on_plane_ends_in_back():
     signs = np.array([0, -1, -1, -1, -1])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    with pytest.raises(
+        ValueError, match="Polyline has no vertices in front of the plane"
+    ):
+        cut_open_polyline_by_plane(vertices, plane)
 
 
-def test_open_ends_on_plane():
+def test_open_starts_in_front_ends_on_plane():
     signs = np.array([1, 1, 1, 1, 0])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    result = cut_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_equal(result, vertices)
+
+
+def test_open_starts_in_front_ends_with_edges_along_plane():
+    signs = np.array([1, 1, 1, 1, 0, 0])
+    vertices = vertices_with_signs(signs)
+
+    result = cut_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_equal(result, vertices[:-1])
 
 
 def test_open_in_back_then_ends_on_plane():
     signs = np.array([-1, -1, -1, -1, 0])
-    pass
+    vertices = vertices_with_signs(signs)
 
-
-def test_open_starts_with_edges_in_plane():
-    signs = np.array([0, 0, 0, 1, 1, 1, 1, 1, 1])
-    pass
+    with pytest.raises(
+        ValueError, match="Polyline has no vertices in front of the plane"
+    ):
+        cut_open_polyline_by_plane(vertices, plane)
 
 
 def test_open_starts_in_front_then_along_plane_then_in_front_again():
     signs = np.array([1, 1, 0, 0, 1])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    with pytest.raises(
+        ValueError, match="Polyline intersects the plane too many times"
+    ):
+        cut_open_polyline_by_plane(vertices, plane)
+
+
+def test_open_starts_in_back_then_in_front_then_in_back_again():
+    signs = np.array([-1, -1, 1, 1, 1, -1, -1])
+    vertices = vertices_with_signs(signs)
+
+    result = cut_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_almost_equal(
+        result,
+        np.vstack(
+            [
+                [intersect_segment_with_plane(vertices[1], vertices[2])],
+                vertices[signs == 1],
+                [intersect_segment_with_plane(vertices[4], vertices[5])],
+            ]
+        ),
+    )
+
+
+def test_open_starts_in_back_then_along_plane_then_in_front_then_in_back_again():
+    signs = np.array([-1, -1, 0, 0, 1, 1, 1, -1, -1])
+    vertices = vertices_with_signs(signs)
+
+    result = cut_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_almost_equal(
+        result,
+        np.vstack(
+            [
+                vertices[3],
+                vertices[signs == 1],
+                [intersect_segment_with_plane(vertices[6], vertices[7])],
+            ]
+        ),
+    )
 
 
 def test_open_starts_in_front_then_along_plane_then_in_back():
     signs = np.array([1, 1, 0, 0, -1])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    result = cut_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_equal(result, vertices[0:3])
 
 
 def test_open_all_in_front():
     signs = np.array([1, 1, 1])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    with pytest.raises(
+        ValueError, match="Polyline lies entirely in front of the plane"
+    ):
+        cut_open_polyline_by_plane(vertices, plane)
 
 
 def test_open_all_in_back():
     signs = np.array([-1, -1, -1])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    with pytest.raises(
+        ValueError, match="Polyline has no vertices in front of the plane"
+    ):
+        cut_open_polyline_by_plane(vertices, plane)
 
 
 def test_open_all_in_plane():
     signs = np.array([0, 0])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    with pytest.raises(
+        ValueError, match="Polyline has no vertices in front of the plane"
+    ):
+        cut_open_polyline_by_plane(vertices, plane)
 
 
 def test_one_vert_in_front():
     signs = np.array([1])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    with pytest.raises(
+        ValueError,
+        match=r"Polyline does not intersect the plane \(note: adjacent doesn't count\)",
+    ):
+        cut_open_polyline_by_plane(vertices, plane)
 
 
 def test_one_vert_in_back():
     signs = np.array([-1])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    with pytest.raises(
+        ValueError,
+        match=r"Polyline does not intersect the plane \(note: adjacent doesn't count\)",
+    ):
+        cut_open_polyline_by_plane(vertices, plane)
 
 
 def test_one_vert_on_plane():
     signs = np.array([0])
-    pass
+    vertices = vertices_with_signs(signs)
+
+    with pytest.raises(
+        ValueError,
+        match=r"Polyline does not intersect the plane \(note: adjacent doesn't count\)",
+    ):
+        cut_open_polyline_by_plane(vertices, plane)
