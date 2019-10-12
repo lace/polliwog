@@ -275,3 +275,13 @@ def test_open_not_a_plane():
         ValueError, match="plane should be an instance of polliwog.Plane"
     ):
         cut_open_polyline_by_plane(vertices, not_a_plane)
+
+
+def test_open_no_points():
+    signs = np.array([])
+    vertices = vertices_with_signs(signs)
+
+    with pytest.raises(
+        ValueError, match="A plane can't intersect a polyline with no points"
+    ):
+        cut_open_polyline_by_plane(vertices, plane)

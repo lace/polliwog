@@ -578,9 +578,18 @@ def test_cut_by_plane_closed():
         np.array([[0.0, 0.0, 0.0], [5.0, 0.0, 0.0], [0.0, 2.0, 0.0], [5.0, 2.0, 0.0]]),
         closed=True,
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match="Polyline intersects the plane too many times"
+    ):
         zigzag.cut_by_plane(
             Plane(point_on_plane=np.array([2.5, 0.0, 0.0]), unit_normal=vg.basis.x)
+        )
+
+    with pytest.raises(
+        ValueError, match="Polyline has no vertices in front of the plane"
+    ):
+        original.cut_by_plane(
+            Plane(point_on_plane=np.array([10.0, 0.0, 0.0]), unit_normal=vg.basis.x)
         )
 
 
