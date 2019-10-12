@@ -53,11 +53,11 @@ def cut_open_polyline_by_plane(vertices, plane):
         else:
             last_vert = verts_in_front[-1]
             append = intersect_segment_with_plane(
-                start_points=np.array([last_vert]),
-                segment_vectors=np.array([adjacent_vertex - last_vert]),
-                points_on_plane=np.array([plane.reference_point]),
-                plane_normals=np.array([plane.normal]),
-            )[0]
+                start_points=last_vert,
+                segment_vectors=adjacent_vertex - last_vert,
+                points_on_plane=plane.reference_point,
+                plane_normals=plane.normal,
+            )
     else:
         append = np.zeros((0, 3))
 
