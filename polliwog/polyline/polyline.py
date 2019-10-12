@@ -380,31 +380,6 @@ class Polyline(object):
         signed_distances = plane.signed_distance(self.v)
         signs_of_verts = np.sign(signed_distances)
 
-        # # Handle an exception case that will cause a crash later on.
-        # if self.num_v == 1:
-        #     if signs_of_verts[0] == 0:
-        #         return Polyline(v=self.v, closed=False)
-        #     else:
-        #         raise ValueError("Plane does not intersect polyline")
-
-        # vs_to_drop = signs_of_verts < 1
-        # changes = find_changes(vs_to_drop, wrap=self.closed)
-        # num_changes = np.count_nonzero(changes)
-
-        # # Verify the plane properly can cut the polyline.
-        # expected_num_changes = 2 if self.closed else 1
-        # import pdb
-
-        # pdb.set_trace()
-        # if num_changes == 0:
-        #     raise ValueError("Plane does not intersect polyline")
-        # elif num_changes != expected_num_changes:
-        #     raise ValueError(
-        #         "Plane intersects polyline at {} points; expected {}".format(
-        #             num_changes, expected_num_changes
-        #         )
-        #     )
-
         signs_of_verts_by_edge = signs_of_verts[self.e]
 
         if self.closed:
