@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 import vg
-from .shape import columnize
+from .shape import columnize, check_shape_any
 
 
 def test_columnize_2d():
@@ -49,3 +49,28 @@ def test_columnize_3d():
 def test_columnize_invalid_shape():
     with pytest.raises(ValueError, match="shape should be a tuple"):
         columnize(vg.basis.x, "this is not a shape")
+
+
+def test_check_shape_any_errors():
+    with pytest.raises(ValueError, match="At least one shape is required"):
+        check_shape_any(np.zeros(9).reshape(-3, 3))
+
+
+def test_check_shape_any_message():
+    with pytest.raises(
+        ValueError,
+        match=r"^Expected an array with shape \(-1, 2\) or \(2,\); got \(3, 3\)$",
+    ):
+        check_shape_any(np.zeros(9).reshape(-3, 3), (-1, 2), (2,))
+
+    with pytest.raises(
+        ValueError,
+        match=r"^Expected coords to be an array with shape \(-1, 2\) or \(2,\); got \(3, 3\)$",
+    ):
+        check_shape_any(np.zeros(9).reshape(-3, 3), (-1, 2), (2,), name="coords")
+
+    with pytest.raises(
+        ValueError,
+        match=r"^Expected coords to be an array with shape \(-1, 2\) or \(2,\); got None$",
+    ):
+        check_shape_any(None, (-1, 2), (2,), name="coords")

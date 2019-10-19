@@ -29,7 +29,7 @@ def columnize(arr, shape=(-1, 3), name=None):
 def check_shape_any(arr, *shapes, **kwargs):
     if len(shapes) == 0:
         raise ValueError("At least one shape is required")
-    name = kwargs.get("name", "arr")
+    name = kwargs.get("name")
     for shape in shapes:
         try:
             vg.shape.check_value(arr, shape, name=name)
@@ -40,7 +40,7 @@ def check_shape_any(arr, *shapes, **kwargs):
     if name is None:
         preamble = "Expected an array"
     else:
-        preamble = "{} must be an array".format(name)
+        preamble = "Expected {} to be an array".format(name)
 
     shape_choices = ", ".join(
         shapes[:-2] + (" or ".join([str(shapes[-2]), str(shapes[-1])]),)
