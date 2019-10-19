@@ -156,6 +156,15 @@ class Polyline(object):
         segments = self.segments
         return segments[:, 1] - segments[:, 0]
 
+    @property
+    def bounding_box(self):
+        """
+        The bounding box which encompasses the entire polyline.
+        """
+        from ..box.box import Box
+
+        return Box.from_points(self.v)
+
     def flip(self):
         """
         Flip the polyline from end to end.

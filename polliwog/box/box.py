@@ -22,6 +22,11 @@ class Box(object):
         self.origin = origin
         self.shape = shape
 
+    @classmethod
+    def from_points(cls, points):
+        vg.shape.check(locals(), "points", (-1, 3))
+        return cls(np.min(points, axis=0), np.ptp(points, axis=0))
+
     @property
     def ranges(self):
         """
