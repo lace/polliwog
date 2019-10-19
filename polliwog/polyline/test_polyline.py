@@ -6,9 +6,7 @@ from .polyline import Polyline
 
 
 def test_join():
-    vs = np.array(
-        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
-    )
+    vs = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]])
     more_vs = np.array(
         [
             [0.0, 0.0, 0.0],
@@ -18,15 +16,20 @@ def test_join():
             [1.0, 3.0, 0.0],
         ]
     )
-    joined = Polyline.join(Polyline(vs, is_closed=False), Polyline(more_vs, is_closed=False))
+    joined = Polyline.join(
+        Polyline(vs, is_closed=False), Polyline(more_vs, is_closed=False)
+    )
     assert joined.is_closed == False
     np.testing.assert_array_equal(joined.v, np.vstack([vs, more_vs]))
 
     with pytest.raises(ValueError, match="Need at least one polyline to join"):
         Polyline.join()
 
-    with pytest.raises(ValueError, match="Expected input polylines to be open, not closed"):
+    with pytest.raises(
+        ValueError, match="Expected input polylines to be open, not closed"
+    ):
         Polyline.join(Polyline(vs, is_closed=False), Polyline(more_vs, is_closed=True))
+
 
 def test_repr():
     example_vs = np.array(
