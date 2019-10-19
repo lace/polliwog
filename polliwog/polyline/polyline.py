@@ -31,6 +31,20 @@ class Polyline(object):
         self.__dict__["is_closed"] = is_closed
         self.v = v
 
+    @classmethod
+    def join(cls, *polylines):
+        """
+
+        Join together a stack of open polylines end-to-end into one
+        contiguous polyline. The last vertex of the first polyline is
+        connected to the first vertex of the second polyline, and so on.
+        """
+        if len(polylines) == 0:
+            raise ValueError("Need at least one polyline to join")
+        if any([polyline.is_closed for polyline in polylines]):
+            raise ValueError("Expected input polylines to be open, not closed")
+        return cls(np.vstack([polyline.v for polyline in polylines]), is_closed=False)
+
     def __repr__(self):
         if self.v is not None and len(self.v) != 0:
             if self.is_closed:
