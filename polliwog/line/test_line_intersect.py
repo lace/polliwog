@@ -47,7 +47,6 @@ def test_line_intersect3_with_degenerate_input_p():
 def test_line_intersect3_with_degenerate_input_q():
     p0, q0 = np.array([[0.0, 1.0, 2.0], [0.0, 10.0, 20.0]])
     p1, q1 = np.array([[1.0, 2.0, 3.0], [0.0, 10.0, 20.0]])
-    result = line_intersect3(p0, q0, p1, q1)
     np.testing.assert_array_equal(line_intersect3(p0, q0, p1, q1), [0.0, 10.0, 20.0])
 
 
