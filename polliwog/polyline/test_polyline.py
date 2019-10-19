@@ -44,7 +44,7 @@ def test_bounding_box():
         np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]])
     ).bounding_box
     np.testing.assert_array_equal(bounding_box.origin, np.array([0.0, 0.0, 0.0]))
-    np.testing.assert_array_equal(bounding_box.shape, np.array([1.0, 2.0, 0.0]))
+    np.testing.assert_array_equal(bounding_box.size, np.array([1.0, 2.0, 0.0]))
 
 
 def test_update_is_closed():

@@ -54,7 +54,7 @@ def test_box_from_points():
         np.array([[1.0, 2.0, 3.0], [-3.0, 4.0, 5.0], [4.0, 0.0, -6.0]])
     )
     np.testing.assert_array_equal(box.origin, np.array([-3.0, 0.0, -6.0]))
-    np.testing.assert_array_equal(box.shape, np.array([7.0, 4.0, 11.0]))
+    np.testing.assert_array_equal(box.size, np.array([7.0, 4.0, 11.0]))
 
 
 def test_invalid_shape():
