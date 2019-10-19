@@ -19,21 +19,21 @@ class Polyline(object):
 
     """
 
-    def __init__(self, v, closed=False):
+    def __init__(self, v, is_closed=False):
         """
         v: np.array containing points in 3-space.
-        closed: True indicates a closed chain, which has an extra
+        is_closed: True indicates a closed chain, which has an extra
           segment connecting the last point back to the first
           point.
 
         """
         # Avoid invoking _update_edges before setting closed and v.
-        self.__dict__["closed"] = closed
+        self.__dict__["is_closed"] = is_closed
         self.v = v
 
     def __repr__(self):
         if self.v is not None and len(self.v) != 0:
-            if self.closed:
+            if self.is_closed:
                 return "<closed Polyline with {} verts>".format(len(self))
             else:
                 return "<open Polyline with {} verts>".format(len(self))
@@ -63,7 +63,7 @@ class Polyline(object):
 
         """
         v = None if self.v is None else np.copy(self.v)
-        return self.__class__(v, closed=self.closed)
+        return self.__class__(v, is_closed=self.is_closed)
 
     def to_dict(self, decimals=3):
         return {
@@ -77,11 +77,11 @@ class Polyline(object):
             return
 
         num_vertices = self.v.shape[0]
-        num_edges = num_vertices if self.closed else num_vertices - 1
+        num_edges = num_vertices if self.is_closed else num_vertices - 1
 
         edges = np.vstack([np.arange(num_edges), np.arange(num_edges) + 1]).T
 
-        if self.closed:
+        if self.is_closed:
             edges[-1][1] = 0
 
         edges.flags.writeable = False
@@ -103,19 +103,19 @@ class Polyline(object):
         self._update_edges()
 
     @setter_property
-    def closed(self, val):
+    def is_closed(self, val):
         """
         Update whether the polyline is closed or open.
 
         """
-        self.__dict__["closed"] = val
+        self.__dict__["is_closed"] = val
         self._update_edges()
 
     @property
     def e(self):
         """
         Return a np.array of edges. Derived automatically from self.v
-        and self.closed whenever those values are set.
+        and self.is_closed whenever those values are set.
 
         """
         return self.__dict__["e"]
@@ -170,11 +170,11 @@ class Polyline(object):
         ret_edge_mapping: if True, return an array that maps from old edge
             indices to new.
         """
-        if not self.closed:
+        if not self.is_closed:
             raise ValueError("Can't reindex an open polyline")
 
         result = Polyline(
-            v=np.append(self.v[index:], self.v[0:index], axis=0), closed=True
+            v=np.append(self.v[index:], self.v[0:index], axis=0), is_closed=True
         )
 
         if ret_edge_mapping:
@@ -245,7 +245,7 @@ class Polyline(object):
                     # any of the vertices (since the original end vertex is
                     # still at index 0).
                     num_segments_inserted[:-1]
-                    if self.closed
+                    if self.is_closed
                     else num_segments_inserted,
                 ]
             )
@@ -323,7 +323,7 @@ class Polyline(object):
         """
         from .cut_by_plane import cut_open_polyline_by_plane
 
-        if self.closed and self.num_v > 1:
+        if self.is_closed and self.num_v > 1:
             signed_distances = plane.signed_distance(self.v)
             signs_of_verts = np.sign(signed_distances)
             # For closed polylines, roll the edges so the ones in front of the
@@ -347,4 +347,4 @@ class Polyline(object):
             working_v = self.v
 
         new_v = cut_open_polyline_by_plane(working_v, plane)
-        return Polyline(v=new_v, closed=False)
+        return Polyline(v=new_v, is_closed=False)

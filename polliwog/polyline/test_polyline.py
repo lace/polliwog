@@ -9,10 +9,12 @@ def test_repr():
     example_vs = np.array(
         [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
     )
-    assert repr(Polyline(example_vs, closed=True)) == "<closed Polyline with 4 verts>"
-    assert repr(Polyline(example_vs, closed=False)) == "<open Polyline with 4 verts>"
     assert (
-        repr(Polyline(np.array([]).reshape(-1, 3), closed=False))
+        repr(Polyline(example_vs, is_closed=True)) == "<closed Polyline with 4 verts>"
+    )
+    assert repr(Polyline(example_vs, is_closed=False)) == "<open Polyline with 4 verts>"
+    assert (
+        repr(Polyline(np.array([]).reshape(-1, 3), is_closed=False))
         == "<Polyline with no verts>"
     )
 
@@ -30,33 +32,33 @@ def test_to_dict():
         ],
         "edges": [[0, 1], [1, 2], [2, 3], [3, 0]],
     }
-    actual_dict = Polyline(example_vs, closed=True).to_dict(decimals=3)
+    actual_dict = Polyline(example_vs, is_closed=True).to_dict(decimals=3)
     # TODO Is there a cleaner way to assert deep equal?
     assert set(actual_dict.keys()) == set(expected_dict.keys())
     np.testing.assert_array_equal(expected_dict["vertices"], actual_dict["vertices"])
     np.testing.assert_array_equal(expected_dict["edges"], actual_dict["edges"])
 
 
-def test_update_closed():
+def test_update_is_closed():
     example_vs = np.array(
         [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
     )
-    polyline = Polyline(example_vs, closed=False)
+    polyline = Polyline(example_vs, is_closed=False)
     assert polyline.num_e == 3
-    assert polyline.closed == False
-    polyline.closed = True
+    assert polyline.is_closed == False
+    polyline.is_closed = True
     assert polyline.num_e == 4
-    assert polyline.closed == True
+    assert polyline.is_closed == True
 
 
 def test_num_v_num_e():
     example_vs = np.array(
         [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
     )
-    closed_polyline = Polyline(example_vs, closed=True)
+    closed_polyline = Polyline(example_vs, is_closed=True)
     assert closed_polyline.num_v == 4
     assert closed_polyline.num_e == 4
-    open_polyline = Polyline(example_vs, closed=False)
+    open_polyline = Polyline(example_vs, is_closed=False)
     assert open_polyline.num_v == 4
     assert open_polyline.num_e == 3
 
@@ -78,13 +80,13 @@ def test_edges():
 
     expected_closed = np.array([[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]])
 
-    np.testing.assert_array_equal(Polyline(v, closed=True).e, expected_closed)
+    np.testing.assert_array_equal(Polyline(v, is_closed=True).e, expected_closed)
 
 
 def test_segments():
     polyline = Polyline(
         np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]),
-        closed=True,
+        is_closed=True,
     )
 
     expected = np.array(
@@ -102,7 +104,7 @@ def test_segments():
 def test_segment_vectors():
     polyline = Polyline(
         np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]),
-        closed=True,
+        is_closed=True,
     )
 
     expected = np.array(
@@ -116,7 +118,7 @@ def test_length_of_empty_polyline():
     polyline = Polyline(None)
     assert polyline.total_length == 0
 
-    polyline = Polyline(None, closed=True)
+    polyline = Polyline(None, is_closed=True)
     assert polyline.total_length == 0
 
 
@@ -312,7 +314,7 @@ def test_partition_by_length_closed():
                 [0.0, 8.0, 0.0],
             ]
         ),
-        closed=True,
+        is_closed=True,
     )
 
     expected = Polyline(
@@ -331,7 +333,7 @@ def test_partition_by_length_closed():
                 [0.0, 2.0, 0.0],
             ]
         ),
-        closed=True,
+        is_closed=True,
     )
 
     expected_indices = np.array([0, 1, 2, 5, 6, 7])
@@ -396,7 +398,7 @@ def test_flip():
                 [0.0, 8.0, 0.0],
             ]
         ),
-        closed=True,
+        is_closed=True,
     )
 
     expected = Polyline(
@@ -410,7 +412,7 @@ def test_flip():
                 [0.0, 0.0, 0.0],
             ]
         ),
-        closed=True,
+        is_closed=True,
     )
 
     original.flip()
@@ -430,7 +432,7 @@ def test_reindexed():
                 [0.0, 8.0, 0.0],
             ]
         ),
-        closed=True,
+        is_closed=True,
     )
 
     reindexed, edge_mapping = original.reindexed(5, ret_edge_mapping=True)
@@ -446,7 +448,7 @@ def test_reindexed():
                 [1.0, 8.0, 0.0],
             ]
         ),
-        closed=True,
+        is_closed=True,
     )
 
     np.testing.assert_array_almost_equal(reindexed.v, expected.v)
@@ -466,7 +468,7 @@ def test_reindexed():
                 [0.0, 8.0, 0.0],
             ]
         ),
-        closed=False,
+        is_closed=False,
     )
     with pytest.raises(ValueError):
         open_polyline.reindexed(5)
@@ -484,7 +486,7 @@ def test_intersect_plane():
                 [0.0, 8.0, 0.0],
             ]
         ),
-        closed=True,
+        is_closed=True,
     )
 
     expected = np.array([[1.0, 7.5, 0.0], [0.0, 7.5, 0.0]])
@@ -518,7 +520,7 @@ def test_intersect_plane_with_vertex_on_plane():
                 [0.0, 7.5, 0.0],
             ]
         ),
-        closed=True,
+        is_closed=True,
     )
 
     expected = np.array([[1.0, 7.5, 0.0], [0.0, 7.5, 0.0]])
@@ -541,19 +543,19 @@ def test_cut_by_plane_closed():
                 [0.0, 8.0, 0.0],
             ]
         ),
-        closed=True,
+        is_closed=True,
     )
 
     expected = Polyline(
         np.array([[1.0, 7.5, 0.0], [1.0, 8.0, 0.0], [0.0, 8.0, 0.0], [0.0, 7.5, 0.0]]),
-        closed=False,
+        is_closed=False,
     )
     actual = original.cut_by_plane(
         Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected.v)
-    assert actual.closed == False
+    assert actual.is_closed == False
 
     expected = Polyline(
         np.array(
@@ -566,18 +568,18 @@ def test_cut_by_plane_closed():
                 [1.0, 7.5, 0.0],
             ]
         ),
-        closed=False,
+        is_closed=False,
     )
     actual = original.cut_by_plane(
         Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.neg_y)
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected.v)
-    assert actual.closed == False
+    assert actual.is_closed == False
 
     zigzag = Polyline(
         np.array([[0.0, 0.0, 0.0], [5.0, 0.0, 0.0], [0.0, 2.0, 0.0], [5.0, 2.0, 0.0]]),
-        closed=True,
+        is_closed=True,
     )
     with pytest.raises(
         ValueError, match="Polyline intersects the plane too many times"
@@ -606,7 +608,7 @@ def test_cut_by_plane_closed_on_vertex():
                 [0.0, 8.0, 0.0],
             ]
         ),
-        closed=True,
+        is_closed=True,
     )
     expected = Polyline(
         np.array(
@@ -618,17 +620,17 @@ def test_cut_by_plane_closed_on_vertex():
                 [0.0, 1.0, 0.0],
             ]
         ),
-        closed=False,
+        is_closed=False,
     )
     actual = original.cut_by_plane(
         Plane(point_on_plane=np.array([0.0, 1.0, 0.0]), unit_normal=vg.basis.y)
     )
     np.testing.assert_array_almost_equal(actual.v, expected.v)
-    assert actual.closed == False
+    assert actual.is_closed == False
 
 
 def test_cut_by_plane_closed_one_vertex():
-    original = Polyline(np.array([[0.0, 0.0, 0.0]]), closed=True)
+    original = Polyline(np.array([[0.0, 0.0, 0.0]]), is_closed=True)
     with pytest.raises(
         ValueError, match="Polyline has no vertices in front of the plane"
     ):
@@ -648,7 +650,7 @@ def test_cut_by_plane_open():
                 [1.0, 8.0, 0.0],
             ]
         ),
-        closed=False,
+        is_closed=False,
     )
 
     expected_vs = np.array([[1.0, 7.5, 0.0], [1.0, 8.0, 0.0]])
@@ -657,7 +659,7 @@ def test_cut_by_plane_open():
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected_vs)
-    assert actual.closed == False
+    assert actual.is_closed == False
 
     expected_vs = np.array(
         [
@@ -673,7 +675,7 @@ def test_cut_by_plane_open():
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected_vs)
-    assert actual.closed == False
+    assert actual.is_closed == False
 
     with pytest.raises(ValueError):
         original.cut_by_plane(
@@ -688,7 +690,7 @@ def test_cut_by_plane_open():
     )
     expected_vs = np.array([[0.5, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.5, 0.0]])
     np.testing.assert_array_almost_equal(actual.v, expected_vs)
-    assert actual.closed == False
+    assert actual.is_closed == False
 
 
 def test_apex():
@@ -702,5 +704,5 @@ def test_apex():
         ]
     )
     np.testing.assert_array_equal(
-        Polyline(v, closed=False).apex(vg.basis.y), np.array([1.0, 3.0, 0.0])
+        Polyline(v, is_closed=False).apex(vg.basis.y), np.array([1.0, 3.0, 0.0])
     )
