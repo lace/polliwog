@@ -107,7 +107,7 @@ def test_signed_distances_for_diagonal_plane():
 def test_signed_distance_validation():
     with pytest.raises(
         ValueError,
-        match=r"points must be an array with shape \(3,\) or \(-1, 3\); got \(1, 1, 1\)",
+        match=r"Expected points to be an array with shape \(3,\) or \(-1, 3\); got \(1, 1, 1\)",
     ):
         signed_distance_to_plane(
             points=np.array([[[1.0]]]), plane_equations=coordinate_planes.xz.equation
@@ -179,7 +179,7 @@ def test_project_point_to_plane_vectorized_both():
 def test_project_point_to_plane_validation():
     with pytest.raises(
         ValueError,
-        match=r"points must be an array with shape \(3,\) or \(-1, 3\); got \(1, 1, 1\)",
+        match=r"Expected points to be an array with shape \(3,\) or \(-1, 3\); got \(1, 1, 1\)",
     ):
         project_point_to_plane(
             points=np.array([[[1.0]]]),
