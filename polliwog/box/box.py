@@ -8,19 +8,19 @@ class Box(object):
 
     """
 
-    def __init__(self, origin, shape):
+    def __init__(self, origin, size):
         """
         origin: The x, y, z coordinate of the origin.
-        shape: A sequence containing the width (dx), height (dy), and
+        size: A sequence containing the width (dx), height (dy), and
           depth (dz).
 
         """
         vg.shape.check(locals(), "origin", (3,))
-        vg.shape.check(locals(), "shape", (3,))
-        if any(np.less(shape, 0)):
+        vg.shape.check(locals(), "size", (3,))
+        if any(np.less(size, 0)):
             raise ValueError("Shape should be zero or positive")
         self.origin = origin
-        self.shape = shape
+        self.size = size
 
     @classmethod
     def from_points(cls, points):
@@ -33,7 +33,7 @@ class Box(object):
         Return ranges for each coordinate axis as a 3x2 numpy array.
 
         """
-        ranges = np.array([self.origin, self.origin + self.shape]).T
+        ranges = np.array([self.origin, self.origin + self.size]).T
         # ranges is almost, but not quite what we want, since it might
         # include mins which are greater than maxes, and vice versa.
         return np.vstack([ranges.min(axis=1), ranges.max(axis=1)]).T
@@ -52,55 +52,53 @@ class Box(object):
 
     @property
     def max_x(self):
-        return self.origin[0] + self.shape[0]
+        return self.origin[0] + self.size[0]
 
     @property
     def max_y(self):
-        return self.origin[1] + self.shape[1]
+        return self.origin[1] + self.size[1]
 
     @property
     def max_z(self):
-        return self.origin[2] + self.shape[2]
+        return self.origin[2] + self.size[2]
 
     @property
     def mid_x(self):
-        return self.origin[0] + self.shape[0] / 2
+        return self.origin[0] + self.size[0] / 2
 
     @property
     def mid_y(self):
-        return self.origin[1] + self.shape[1] / 2
+        return self.origin[1] + self.size[1] / 2
 
     @property
     def mid_z(self):
-        return self.origin[2] + self.shape[2] / 2
+        return self.origin[2] + self.size[2] / 2
 
     @property
     def width(self):
-        return self.shape[0]
+        return self.size[0]
 
     @property
     def height(self):
-        return self.shape[1]
+        return self.size[1]
 
     @property
     def depth(self):
-        return self.shape[2]
+        return self.size[2]
 
     @property
     def center_point(self):
-        return self.origin + 0.5 * self.shape
+        return self.origin + 0.5 * self.size
 
     @property
     def floor_point(self):
-        return self.origin + [0.5, 0.0, 0.5] * self.shape
+        return self.origin + [0.5, 0.0, 0.5] * self.size
 
     @property
     def volume(self):
-        return np.prod(self.shape)
+        return np.prod(self.size)
 
     @property
     def surface_area(self):
-        l, h, w = (
-            self.shape
-        )  # self.shape is a np.ndarray, which is a sequence. pylint: disable=unpacking-non-sequence
+        l, h, w = self.size
         return 2 * (w * l + h * l + h * w)
