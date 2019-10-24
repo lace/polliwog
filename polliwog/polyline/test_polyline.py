@@ -73,6 +73,13 @@ def test_bounding_box():
     np.testing.assert_array_equal(bounding_box.size, np.array([1.0, 2.0, 0.0]))
 
 
+def test_bounding_box_degnerate():
+    with pytest.raises:
+        Polyline(np.array([[0.0, 0.0, 0.0]])).bounding_box
+    np.testing.assert_array_equal(bounding_box.origin, np.array([0.0, 0.0, 0.0]))
+    np.testing.assert_array_equal(bounding_box.size, np.array([1.0, 2.0, 0.0]))
+
+
 def test_update_is_closed():
     example_vs = np.array(
         [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
@@ -449,9 +456,47 @@ def test_flip():
         is_closed=True,
     )
 
-    original.flip()
+    result = original.flip()
 
+    assert result is original
     np.testing.assert_array_almost_equal(original.v, expected.v)
+
+
+def test_oriented_along():
+    original = Polyline(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [1.0, 7.0, 0.0],
+                [1.0, 8.0, 0.0],
+                [0.0, 8.0, 0.0],
+            ]
+        ),
+        is_closed=False,
+    )
+
+    assert original.oriented_along(vg.basis.y) is original
+
+    np.testing.assert_array_almost_equal(
+        original.oriented_along(vg.basis.neg_y).v, np.flipud(original.v)
+    )
+
+    assert original.oriented_along(vg.basis.z) is original
+    assert original.oriented_along(vg.basis.neg_z) is original
+
+
+def test_oriented_along_closed():
+    with pytest.raises(ValueError, match=r"Can't reorient a closed polyline"):
+        Polyline(
+            np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]]), is_closed=True
+        ).oriented_along(vg.basis.y)
+
+
+def test_oriented_along_degenerate():
+    original = Polyline(np.array([[1.0, 2.0, 3.0]]), is_closed=False)
+    assert original.oriented_along(vg.basis.y) is original
 
 
 def test_reindexed():
