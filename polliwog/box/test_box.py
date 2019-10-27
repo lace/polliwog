@@ -56,6 +56,9 @@ def test_box_from_points():
     np.testing.assert_array_equal(box.origin, np.array([-3.0, 0.0, -6.0]))
     np.testing.assert_array_equal(box.size, np.array([7.0, 4.0, 11.0]))
 
+    with pytest.raises(ValueError, match="Need at least 1 point"):
+        Box.from_points(np.zeros((0, 3)))
+
 
 def test_invalid_shape():
     with pytest.raises(ValueError):
