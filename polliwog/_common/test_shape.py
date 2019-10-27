@@ -51,6 +51,15 @@ def test_columnize_invalid_shape():
         columnize(vg.basis.x, "this is not a shape")
 
 
+def test_check_shape_any_valid():
+    assert check_shape_any(np.zeros((3,)), (3,), (-1, 3), name="points") is None
+    assert check_shape_any(np.zeros((12, 3)), (3,), (-1, 3), name="points") is 12
+    assert check_shape_any(np.zeros((0, 3)), (3,), (-1, 3), name="points") is 0
+    assert check_shape_any(
+        np.zeros((5, 3, 3)), (-1, 3), (-1, -1, 3), name="points"
+    ) == (5, 3)
+
+
 def test_check_shape_any_errors():
     with pytest.raises(ValueError, match="At least one shape is required"):
         check_shape_any(np.zeros(9).reshape(-3, 3))
