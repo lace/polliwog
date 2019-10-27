@@ -190,7 +190,7 @@ def test_project_point_to_plane_validation():
 
     with pytest.raises(
         ValueError,
-        match=r"plane_equations must be an array with shape \(3, 4\); got \(2, 4\)",
+        match=r"^Expected plane_equations to be an array with shape \(4,\) or \(3, 4\); got \(2, 4\)$",
     ):
         project_point_to_plane(
             points=np.array([vg.basis.x, vg.basis.x, vg.basis.x]),
