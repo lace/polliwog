@@ -32,8 +32,7 @@ def check_shape_any(arr, *shapes, **kwargs):
     name = kwargs.get("name")
     for shape in shapes:
         try:
-            vg.shape.check_value(arr, shape, name=name)
-            return
+            return vg.shape.check_value(arr, shape, name=name)
         except ValueError:
             pass
 

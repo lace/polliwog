@@ -63,10 +63,10 @@ def signed_distance_to_plane(points, plane_equations):
     For convenience, can also be called with a single point and a single
     plane.
     """
-    check_shape_any(points, (3,), (-1, 3), name="points")
-    check_shape_any(plane_equations, (4,), (-1, 4), name="plane_equations")
-    if points.ndim == 2 and plane_equations.ndim == 2:
-        vg.shape.check(locals(), "plane_equations", (len(points), 4))
+    k = check_shape_any(points, (3,), (-1, 3), name="points")
+    check_shape_any(
+        plane_equations, (4,), (-1 if k is None else k, 4), name="plane_equations"
+    )
 
     normals, offsets = normal_and_offset_from_plane_equations(plane_equations)
     return vg.dot(points, normals) + offsets
@@ -76,10 +76,10 @@ def project_point_to_plane(points, plane_equations):
     """
     Project each point to the corresponding plane.
     """
-    check_shape_any(points, (3,), (-1, 3), name="points")
-    check_shape_any(plane_equations, (4,), (-1, 4), name="plane_equations")
-    if points.ndim == 2 and plane_equations.ndim == 2:
-        vg.shape.check(locals(), "plane_equations", (len(points), 4))
+    k = check_shape_any(points, (3,), (-1, 3), name="points")
+    check_shape_any(
+        plane_equations, (4,), (-1 if k is None else k, 4), name="plane_equations"
+    )
 
     # Translate the point back to the plane along the normal.
     signed_distance = signed_distance_to_plane(points, plane_equations)
