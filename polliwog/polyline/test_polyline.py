@@ -74,10 +74,11 @@ def test_bounding_box():
 
 
 def test_bounding_box_degnerate():
-    with pytest.raises:
-        Polyline(np.array([[0.0, 0.0, 0.0]])).bounding_box
+    bounding_box = Polyline(np.array([[0.0, 0.0, 0.0]])).bounding_box
     np.testing.assert_array_equal(bounding_box.origin, np.array([0.0, 0.0, 0.0]))
-    np.testing.assert_array_equal(bounding_box.size, np.array([1.0, 2.0, 0.0]))
+    np.testing.assert_array_equal(bounding_box.size, np.array([0.0, 0.0, 0.0]))
+
+    assert Polyline(np.zeros((0, 3))).bounding_box is None
 
 
 def test_update_is_closed():

@@ -205,7 +205,7 @@ class Polyline(object):
 
         extent = self.v[-1] - self.v[0]
         projected = vg.project(extent, onto=along)
-        if vg.scale_factor(projected, along, reverse=reverse) < 0:
+        if vg.scale_factor(projected, along) * (-1 if reverse else 1) < 0:
             return self.copy().flip()
         else:
             return self

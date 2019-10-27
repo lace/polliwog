@@ -24,7 +24,9 @@ class Box(object):
 
     @classmethod
     def from_points(cls, points):
-        vg.shape.check(locals(), "points", (-1, 3))
+        k = vg.shape.check(locals(), "points", (-1, 3))
+        if k == 0:
+            raise ValueError("Need at least 1 point")
         return cls(np.min(points, axis=0), np.ptp(points, axis=0))
 
     @property
