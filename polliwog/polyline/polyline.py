@@ -201,7 +201,7 @@ class Polyline(object):
         vg.shape.check(locals(), "along", (3,))
 
         if self.num_v < 2:
-            return
+            return self
 
         extent = self.v[-1] - self.v[0]
         projected = vg.project(extent, onto=along)
