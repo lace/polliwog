@@ -177,6 +177,9 @@ class Polyline(object):
         """
         from ..box.box import Box
 
+        if self.num_v == 0:
+            return None
+
         return Box.from_points(self.v)
 
     def flip(self):
@@ -184,6 +187,28 @@ class Polyline(object):
         Flip the polyline from end to end.
         """
         self.v = np.flipud(self.v)
+
+        return self
+
+    def oriented_along(self, along, reverse=False):
+        """
+        Flip the polyline, if necessary, so that it points (approximately)
+        along the second vector rather than (approximately) opposite it.
+        """
+        if self.is_closed:
+            raise ValueError("Can't reorient a closed polyline")
+
+        vg.shape.check(locals(), "along", (3,))
+
+        if self.num_v < 2:
+            return self
+
+        extent = self.v[-1] - self.v[0]
+        projected = vg.project(extent, onto=along)
+        if vg.scale_factor(projected, along) * (-1 if reverse else 1) < 0:
+            return self.copy().flip()
+        else:
+            return self
 
     def reindexed(self, index, ret_edge_mapping=False):
         """
