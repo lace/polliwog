@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.11.0 (Oct. 27, 2019)
+
+### BREAKING CHANGES
+
+- Polyline: Rename `closed` property to `is_closed`.
+- Box: Rename `shape` to `size`.
+- Rename `line_intersect()` to `line_intersect2()` and return None instead of
+  nan's.
+
+## New features
+
+- Polyline: Add `oriented_along()` method.
+- Polyline: Add `bounding_box` property.
+- Polyline: Add `join()` class method.
+
+## Bug fixes
+
+- Fix `check_shape_any()` error messages and add tests.
+
+## Other maintenance
+
+- Require `vg` 1.5+.
+- Omit tests from PyPI distribution.
+
 ## 0.10.0 (Oct. 12, 2019)
 
 - `Polyline.cut_by_plane()`: Handle vertices which lie in the plane.
