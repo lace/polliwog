@@ -10,53 +10,6 @@ def estimate_normal(planar_points):
     return normal
 
 
-def rotate_to_xz_plane(points, normal=None):
-    """
-    Rotates points to the x-z plane. If the initial center
-    of mass is not to within 1e-5 of the origin, we
-    translate it to the origin.
-
-    Returns (r, R, p0):
-
-        - r is the rotated image of points,
-        - R is the rotation matrix
-        - p0 is the translation factor (can be None)
-
-    """
-    import cv2
-    from .translation import translation
-
-    if points is None or not len(points):  # pylint: disable=len-as-condition
-        raise ValueError("Some points are required")
-
-    center = np.mean(points, axis=0)
-
-    if np.linalg.norm(center) > 1e-5:
-        translated, p0 = translation(points)
-    else:
-        translated, p0 = points, None
-
-    if not normal:
-        normal = estimate_normal(points)
-
-    e_2 = np.array([0.0, 1.0, 0.0])
-    theta = np.arccos(np.dot(e_2, normal))
-
-    if min(abs(theta - np.pi), abs(theta)) < 1e-5:
-        # cross product will degenerate
-        # to zero vector in this case
-        r_axis = np.array([1.0, 0.0, 0.0])
-    else:
-        r_axis = np.cross(normal, e_2)
-
-    r_axis /= np.linalg.norm(r_axis)
-
-    R = cv2.Rodrigues(theta * r_axis)[0]
-    rotated = np.dot(translated, R.T)
-
-    return (rotated, R, p0)
-
-
 def rotation_from_up_and_look(up, look):
     """
     Rotation matrix to rotate a mesh into a canonical reference frame. The
