@@ -38,17 +38,6 @@ def convert_44_to_33(matrix):
     return matrix[:3, :3]
 
 
-_unit_registry = None
-# Avoid creating more than one of these.
-def unit_registry():
-    from pint import UnitRegistry
-
-    global _unit_registry
-    if _unit_registry is None:
-        _unit_registry = UnitRegistry()
-    return _unit_registry
-
-
 class CompositeTransform(object):
     """
     Composite transform using homogeneous coordinates.
@@ -198,11 +187,10 @@ class CompositeTransform(object):
         - composite.scale(.01)
 
         """
-        ureg = unit_registry()
-        conversion = ureg.parse_expression(from_units).to(
-            ureg.parse_expression(to_units)
-        )
-        self.scale(conversion.magnitude)
+        import ounce
+
+        factor = ounce.factor(from_units, to_units)
+        self.scale(factor)
 
     def translate(self, vector):
         """
