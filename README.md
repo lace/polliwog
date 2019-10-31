@@ -27,10 +27,6 @@ The goals of this project are:
 [docs build]: https://polliwog.readthedocs.io/en/latest/
 [black]: https://black.readthedocs.io/en/stable/
 
-## TODO
-
-- [ ] Replace `_temporary.setter_property` with ??.
-
 ## Features
 
 Geometric operations, transforms, and primitives, in 2D and 3D.

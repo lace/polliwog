@@ -1,6 +1,5 @@
 import numpy as np
 import vg
-from .._temporary.decorators import setter_property
 
 
 class Polyline(object):
@@ -102,27 +101,33 @@ class Polyline(object):
 
         self.__dict__["e"] = edges
 
-    @setter_property
-    def v(
-        self, val
-    ):  # setter_property incorrectly triggers method-hidden. pylint: disable=method-hidden
+    @property
+    def v(self):
+        return self.__dict__["v"]
+
+    @v.setter
+    def v(self, new_v):
         """
         Update the vertices to a new array-like thing containing points
         in 3D space. Set to None for an empty polyline.
 
         """
-        if val is not None:
-            vg.shape.check_value(val, (-1, 3))
-        self.__dict__["v"] = val
+        if new_v is not None:
+            vg.shape.check_value(new_v, (-1, 3))
+        self.__dict__["v"] = new_v
         self._update_edges()
 
-    @setter_property
-    def is_closed(self, val):
+    @property
+    def is_closed(self):
+        return self.__dict__["is_closed"]
+
+    @is_closed.setter
+    def is_closed(self, new_is_closed):
         """
         Update whether the polyline is closed or open.
 
         """
-        self.__dict__["is_closed"] = val
+        self.__dict__["is_closed"] = new_is_closed
         self._update_edges()
 
     @property
