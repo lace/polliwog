@@ -1,4 +1,6 @@
-def find_rigid_transform(a, b, visualize=False):
+import vg
+
+def find_rigid_transform(a, b, compute_scale=False, fail_in_degenerate_cases=True):
     """
     Args:
         a: a 3xN array of vertex locations
@@ -8,18 +10,18 @@ def find_rigid_transform(a, b, visualize=False):
     Based on Arun et al, "Least-squares fitting of two 3-D point sets," 1987.
     See also Eggert et al, "Estimating 3-D rigid body transformations: a
     comparison of four major algorithms," 1997.
+
+    If compute_scale is True, also computes and returns: (s, R,T) such that s*(R.dot(a))+T ~= b
+
+    In noisy cases, when there is a reflection, this algorithm can fail. In those cases the
+    right thing to do is to try a less noise sensitive algorithm like RANSAC. But if you want
+    a result anyway, even knowing that it might not be right, set fail_in_degenerate_cases=True.
+
     """
     import numpy as np
-    import scipy.linalg
 
-    if a.shape[0] != 3:
-        if a.shape[1] == 3:
-            a = a.T
-    if b.shape[0] != 3:
-        if b.shape[1] == 3:
-            b = b.T
-    assert a.shape[0] == 3
-    assert b.shape[0] == 3
+    vg.shape.check(locals(), "a", (3, -1))
+    vg.shape.check(locals(), "b", (3, -1))
 
     a_mean = np.mean(a, axis=1)
     b_mean = np.mean(b, axis=1)
@@ -31,8 +33,8 @@ def find_rigid_transform(a, b, visualize=False):
     v = v.T
     R = v.dot(u.T)
 
-    if scipy.linalg.det(R) < 0:
-        if np.any(s == 0):  # This is only valid in the noiseless case; see the paper
+    if np.linalg.det(R) < 0:
+        if np.any(s == 0) or not fail_in_degenerate_cases:  # This is only valid in the noiseless case; see the paper
             v[:, 2] = -v[:, 2]
             R = v.dot(u.T)
         else:
@@ -40,23 +42,13 @@ def find_rigid_transform(a, b, visualize=False):
                 "find_rigid_transform found a reflection that it cannot recover from. Try RANSAC or something..."
             )
 
-    T = (b_mean - R.dot(a_mean)).reshape(-1, 1)
-
-    if visualize != False:
-        from lace.mesh import Mesh
-        from lace.meshviewer import MeshViewer
-
-        mv = MeshViewer() if visualize is True else visualize
-        a_T = R.dot(a) + T
-        mv.set_dynamic_meshes(
-            [
-                Mesh(v=a.T, f=[]).set_vertex_colors("red"),
-                Mesh(v=b.T, f=[]).set_vertex_colors("green"),
-                Mesh(v=a_T.T, f=[]).set_vertex_colors("orange"),
-            ]
-        )
-
-    return R, T
+    if compute_scale:
+        scale = np.sum(s)/(np.linalg.norm(a_centered)**2)
+        T = (b_mean - scale*(R.dot(a_mean))).reshape(-1, 1)
+        return scale, R, T
+    else:
+        T = (b_mean - R.dot(a_mean)).reshape(-1, 1)
+        return R, T
 
 
 def find_rigid_rotation(a, b, allow_scaling=False):
