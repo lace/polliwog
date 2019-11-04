@@ -1,5 +1,6 @@
 import vg
 
+
 def find_rigid_transform(a, b, compute_scale=False, fail_in_degenerate_cases=True):
     """
     Args:
@@ -34,7 +35,9 @@ def find_rigid_transform(a, b, compute_scale=False, fail_in_degenerate_cases=Tru
     R = v.dot(u.T)
 
     if np.linalg.det(R) < 0:
-        if np.any(s == 0) or not fail_in_degenerate_cases:  # This is only valid in the noiseless case; see the paper
+        if (
+            np.any(s == 0) or not fail_in_degenerate_cases
+        ):  # This is only valid in the noiseless case; see the paper
             v[:, 2] = -v[:, 2]
             R = v.dot(u.T)
         else:
@@ -43,8 +46,8 @@ def find_rigid_transform(a, b, compute_scale=False, fail_in_degenerate_cases=Tru
             )
 
     if compute_scale:
-        scale = np.sum(s)/(np.linalg.norm(a_centered)**2)
-        T = (b_mean - scale*(R.dot(a_mean))).reshape(-1, 1)
+        scale = np.sum(s) / (np.linalg.norm(a_centered) ** 2)
+        T = (b_mean - scale * (R.dot(a_mean))).reshape(-1, 1)
         return scale, R, T
     else:
         T = (b_mean - R.dot(a_mean)).reshape(-1, 1)
@@ -62,7 +65,6 @@ def find_rigid_rotation(a, b, allow_scaling=False):
     See link: http://en.wikipedia.org/wiki/Orthogonal_Procrustes_problem
     """
     import numpy as np
-    import scipy.linalg
 
     assert a.shape[0] == 3
     assert b.shape[0] == 3
@@ -77,12 +79,12 @@ def find_rigid_rotation(a, b, allow_scaling=False):
     v = v.T
     R = v.dot(u.T)
 
-    if scipy.linalg.det(R) < 0:
+    if np.linalg.det(R) < 0:
         v[:, 2] = -v[:, 2]
         R = v.dot(u.T)
 
     if allow_scaling:
-        scalefactor = scipy.linalg.norm(b) / scipy.linalg.norm(a)
+        scalefactor = np.linalg.norm(b) / np.linalg.norm(a)
         R = R * scalefactor
 
     return R
