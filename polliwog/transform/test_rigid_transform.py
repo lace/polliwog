@@ -1,4 +1,3 @@
-import pytest
 import numpy as np
 from .rigid_transform import find_rigid_transform, find_rigid_rotation
 from .rotation import euler
