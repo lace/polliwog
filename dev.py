@@ -8,7 +8,7 @@ from executor import execute
 def python_source_files():
     import glob
 
-    include_paths = glob.glob("*.py") + glob.glob("polliwog/**/*.py")  # + ["doc/"]
+    include_paths = glob.glob("*.py") + glob.glob("polliwog/**/*.py") + ["doc/"]
 
     # TODO: Use flake8; argh.
     exclude_paths = ["polliwog/__init__.py", "polliwog/transform/__init__.py"]
@@ -67,7 +67,7 @@ def black_check():
 @cli.command()
 def doc():
     execute("rm -rf build/ doc/build/ doc/api/")
-    execute("sphinx-build -b singlehtml doc doc/build")
+    execute("sphinx-build -W -b singlehtml doc doc/build")
 
 
 @cli.command()

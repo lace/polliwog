@@ -150,12 +150,12 @@ class Plane(object):
         plane or in the half-space in front of it (i.e. in the direction of
         the plane normal).
 
-        points: An array of points.
-        inverted: When `True`, invert the logic. Return the points that lie
-          behind the plane instead.
-        ret_indices: When `True`, return the indices instead of the points
-          themselves.
-
+        Args:
+            points (np.arraylikw): An array of points.
+            inverted (bool): When `True`, invert the logic. Return the points
+                that lie behind the plane instead.
+            ret_indices (bool): When `True`, return the indices instead of the
+                points themselves.
         """
         sign = self.sign(points)
 

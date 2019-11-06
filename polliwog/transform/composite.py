@@ -42,31 +42,22 @@ class CompositeTransform(object):
     """
     Composite transform using homogeneous coordinates.
 
-
-    Example usage
-    -------------
-
-        transform = CompositeTransform()
-        transform.scale(10)
-        transform.reorient(up=[0, 1, 0], look=[-1, 0, 0])
-        transform.translate([0, -2.5, 0])
-        transformed_scan = Mesh(v=transform(scan.v), f=scan.f)
-
-        ...
-
-        untransformed_alignment = Mesh(
+    Example:
+        >>> transform = CompositeTransform()
+        >>> transform.scale(10)
+        >>> transform.reorient(up=[0, 1, 0], look=[-1, 0, 0])
+        >>> transform.translate([0, -2.5, 0])
+        >>> transformed_scan = Mesh(v=transform(scan.v), f=scan.f)
+        >>> # ... magic happens here ...
+        >>> untransformed_alignment = Mesh(
             v=transform(alignment.v, reverse=True),
             f=alignment.f
         )
 
-    Backround
-    ---------
-
-    - Computer Graphics: Principles and Practice, Hughes, van Dam, McGuire,
-      Sklar, Foley
-
-    - http://gamedev.stackexchange.com/questions/72044/why-do-we-use-4x4-matrices-to-transform-things-in-3d
-
+    See also:
+        - Computer Graphics: Principles and Practice, Hughes, van Dam, McGuire,
+          Sklar, Foley
+        - http://gamedev.stackexchange.com/questions/72044/why-do-we-use-4x4-matrices-to-transform-things-in-3d
     """
 
     def __init__(self):
@@ -75,12 +66,15 @@ class CompositeTransform(object):
 
     def __call__(self, points, from_range=None, reverse=False):
         """
-        points: Points to transform, as a 3xn array.
-        range: The indices of the subset of the transformations to apply.
-          e.g. (0, 2), (2, 4). The default is to apply them all.
-        reverse: When `True` applies the selected transformations in reverse.
-          This has no effect on how range is interpreted, only whether the
-          selected transformations apply in the forward or reverse mode.
+        Args:
+            points (np.arraylike): Points to transform, as a 3xn array.
+            from_range (tuple): The indices of the subset of the
+                transformations to apply. e.g. `(0, 2)`, `(2, 4)`. When
+                `None`, which is the default, apply them all.
+            reverse (bool): When `True` applies the selected transformations
+                in reverse. This has no effect on how range is interpreted,
+                only whether the selected transformations apply in the forward
+                or reverse mode.
 
         """
         matrix = self.matrix_for(from_range=from_range, reverse=reverse)
@@ -152,20 +146,20 @@ class CompositeTransform(object):
         """
         Scale by the given factor.
 
-        factor: A float or int.
-
         Forward:
         [[  s_0, 0,   0,   0 ],
-         [  0,   s_1, 0,   0 ],
-         [  0,   0,   s_2, 0 ],
-         [  0,   0,   0,   1 ]]
+        [  0,   s_1, 0,   0 ],
+        [  0,   0,   s_2, 0 ],
+        [  0,   0,   0,   1 ]]
 
         Reverse:
         [[  1/s_0, 0,     0,     0 ],
-         [  0,     1/s_1, 0,     0 ],
-         [  0,     0,     1/s_2, 0 ],
-         [  0,     0,     0,     1 ]]
+        [  0,     1/s_1, 0,     0 ],
+        [  0,     0,     1/s_2, 0 ],
+        [  0,     0,     0,     1 ]]
 
+        Args:
+            factor (float): The scale factor.
         """
         if factor <= 0:
             raise ValueError("Scale factor should be greater than zero")
@@ -194,20 +188,22 @@ class CompositeTransform(object):
         """
         Translate by the vector provided.
 
-        vector: A 3x1 vector.
-
         Forward:
-        [[  1,  0,  0,  v_0 ],
-         [  0,  1,  0,  v_1 ],
-         [  0,  0,  1,  v_2 ],
-         [  0,  0,  0,  1   ]]
+
+            [[  1,  0,  0,  v_0 ],
+            [  0,  1,  0,  v_1 ],
+            [  0,  0,  1,  v_2 ],
+            [  0,  0,  0,  1   ]]
 
         Reverse:
-        [[  1,  0,  0,  -v_0 ],
-         [  0,  1,  0,  -v_1 ],
-         [  0,  0,  1,  -v_2 ],
-         [  0,  0,  0,  1    ]]
 
+            [[  1,  0,  0,  -v_0 ],
+            [  0,  1,  0,  -v_1 ],
+            [  0,  0,  1,  -v_2 ],
+            [  0,  0,  0,  1    ]]
+
+        Args:
+            vector (np.arraylike): A 3x1 vector.
         """
         vector = np.asarray(vector)
 
