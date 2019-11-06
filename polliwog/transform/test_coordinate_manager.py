@@ -1,4 +1,3 @@
-# pylint: disable=invalid-unary-operand-type
 import numpy as np
 import vg
 import pytest

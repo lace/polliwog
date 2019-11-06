@@ -14,18 +14,18 @@ def cut_open_polyline_by_plane(vertices, plane):
     signed_distances = plane.signed_distance(vertices)
     signs_of_vertices = np.sign(signed_distances)
 
-    transition_points, = (signs_of_vertices[:-1] != signs_of_vertices[1:]).nonzero()
+    (transition_points,) = (signs_of_vertices[:-1] != signs_of_vertices[1:]).nonzero()
     components = np.vsplit(vertices, transition_points + 1)
     component_signs = signs_of_vertices[np.concatenate([[0], transition_points + 1])]
 
-    components_in_front, = (component_signs == 1).nonzero()
+    (components_in_front,) = (component_signs == 1).nonzero()
     if len(components_in_front) == 0:
         raise ValueError("Polyline has no vertices in front of the plane")
     elif len(components_in_front) > 1:
         raise ValueError("Polyline intersects the plane too many times")
     elif len(components) < 2:
         raise ValueError("Polyline lies entirely in front of the plane")
-    component_in_front, = components_in_front
+    (component_in_front,) = components_in_front
     verts_in_front = components[component_in_front]
 
     # Prepend the plane intersection point with the previous component.

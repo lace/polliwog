@@ -17,7 +17,7 @@ def create_rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
     size: 3x1 array.
 
     """
-    from .arity import quads_to_tris
+    from .quad_faces import quads_to_tris
 
     lower_base_plane = np.array(
         [
@@ -79,9 +79,7 @@ def create_triangular_prism(p1, p2, p3, height, ret_unique_vertices_and_faces=Fa
     from ..plane.plane import Plane
 
     base_plane = Plane.from_points(p1, p2, p3)
-    lower_base_to_upper_base = (
-        height * -base_plane.normal
-    )  # pylint: disable=invalid-unary-operand-type
+    lower_base_to_upper_base = height * -base_plane.normal
     vertices = np.vstack(([p1, p2, p3], [p1, p2, p3] + lower_base_to_upper_base))
 
     faces = np.array(
