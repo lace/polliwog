@@ -47,12 +47,9 @@ class CompositeTransform(object):
         >>> transform.scale(10)
         >>> transform.reorient(up=[0, 1, 0], look=[-1, 0, 0])
         >>> transform.translate([0, -2.5, 0])
-        >>> transformed_scan = Mesh(v=transform(scan.v), f=scan.f)
-        >>> # ... magic happens here ...
-        >>> untransformed_alignment = Mesh(
-            v=transform(alignment.v, reverse=True),
-            f=alignment.f
-        )
+        >>> transformed_scan = transform(scan_v)
+        >>> # ... register the scan here ...
+        >>> untransformed_alignment = transform(alignment_v, reverse=True)
 
     See also:
         - Computer Graphics: Principles and Practice, Hughes, van Dam, McGuire,
