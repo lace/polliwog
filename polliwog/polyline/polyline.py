@@ -256,7 +256,7 @@ class Polyline(object):
         num_segments_needed = np.ceil(self.segment_lengths / max_length).astype(
             dtype=np.int64
         )
-        es_to_subdivide, = (num_segments_needed > 1).nonzero()
+        (es_to_subdivide,) = (num_segments_needed > 1).nonzero()
         vs_to_insert = [
             partition_segment(
                 self.v[self.e[old_e_index][0]],
@@ -386,11 +386,11 @@ class Polyline(object):
             # problem.
             if signs_of_verts[-1] == 1:
                 # e.g. signs_of_verts = np.array([1, -1, -1, 1, 1, 1, 1])
-                vertices_not_in_front, = np.where(signs_of_verts != 1)
+                (vertices_not_in_front,) = np.where(signs_of_verts != 1)
                 roll = -vertices_not_in_front[-1]
             else:
                 # e.g. signs_of_verts = np.array([-1, 1, 1, 1, 1, 1, -1, -1])
-                vertices_in_front, = np.where(signs_of_verts == 1)
+                (vertices_in_front,) = np.where(signs_of_verts == 1)
                 if len(vertices_in_front) > 0:
                     roll = -vertices_in_front[0] + 1
                 else:
