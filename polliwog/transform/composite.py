@@ -102,9 +102,7 @@ class CompositeTransform(object):
         from functools import reduce
 
         if from_range is not None:
-            start, stop = (
-                from_range
-            )  # from_range is defined as None, a non-sequence, but when it's not None, it's always a sequence. pylint: disable=unpacking-non-sequence
+            start, stop = from_range
             selected_transforms = self.transforms[start:stop]
         else:
             selected_transforms = self.transforms
@@ -116,7 +114,7 @@ class CompositeTransform(object):
             for forward_matrix, reverse_matrix in selected_transforms
         ]
 
-        if not len(matrices):  # pylint: disable=len-as-condition
+        if not len(matrices):
             return np.eye(4)
 
         matrix = reduce(np.dot, matrices)
