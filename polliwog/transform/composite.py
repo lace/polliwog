@@ -52,8 +52,9 @@ class CompositeTransform(object):
         >>> untransformed_alignment = transform(alignment_v, reverse=True)
 
     See also:
-        - Computer Graphics: Principles and Practice, Hughes, van Dam, McGuire,
-          Sklar, Foley
+
+        - *Computer Graphics: Principles and Practice*, Hughes, van Dam,
+          McGuire, Sklar, Foley
         - http://gamedev.stackexchange.com/questions/72044/why-do-we-use-4x4-matrices-to-transform-things-in-3d
     """
 
