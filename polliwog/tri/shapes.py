@@ -17,7 +17,7 @@ def create_rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
     size: 3x1 array.
 
     """
-    from .arity import quads_to_tris
+    from .quad_faces import quads_to_tris
 
     lower_base_plane = np.array(
         [
