@@ -21,23 +21,6 @@ def convert_33_to_44(matrix):
     return result
 
 
-def convert_44_to_33(matrix):
-    """
-    Transform from:
-        array([[1., 2., 3., 0.],
-               [2., 3., 4., 0.],
-               [5., 6., 7., 0.],
-               [0., 0., 0., 1.]])
-    to:
-        array([[1., 2., 3.],
-               [2., 3., 4.],
-               [5., 6., 7.]])
-
-    """
-    vg.shape.check(locals(), "matrix", (4, 4))
-    return matrix[:3, :3]
-
-
 class CompositeTransform(object):
     """
     Composite transform using homogeneous coordinates.
