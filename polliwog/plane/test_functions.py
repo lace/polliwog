@@ -19,6 +19,44 @@ def assert_plane_equation_satisfies_points(plane_equation, points):
     assert np.any(plane_equation_test) == False
 
 
+def test_plane_normal_from_points_single():
+    points = np.array([[3.0, 0.0, 0.0], [0.0, 3.0, 0.0], [0.0, 0.0, 3.0]])
+
+    np.testing.assert_allclose(
+        plane_normal_from_points(points), np.array([3 ** -0.5, 3 ** -0.5, 3 ** -0.5])
+    )
+
+    np.testing.assert_allclose(
+        plane_normal_from_points(points, normalize=False), np.array([9.0, 9.0, 9.0])
+    )
+
+
+def test_plane_normal_from_points_vectorized():
+    from ..tri.shapes import create_triangular_prism
+
+    p1 = np.array([3.0, 0.0, 0.0])
+    p2 = np.array([0.0, 3.0, 0.0])
+    p3 = np.array([0.0, 0.0, 3.0])
+    vertices = create_triangular_prism(p1, p2, p3, 1.0)
+
+    expected_normals = vg.normalize(
+        np.array(
+            [
+                [1.0, 1.0, 1.0],
+                [1.0, 1.0, -2.0],
+                [1.0, 1.0, -2.0],
+                [-2.0, 1.0, 1.0],
+                [-2.0, 1.0, 1.0],
+                [1.0, -2.0, 1.0],
+                [1.0, -2.0, 1.0],
+                [-1.0, -1.0, -1.0],
+            ]
+        )
+    )
+
+    np.testing.assert_allclose(plane_normal_from_points(vertices), expected_normals)
+
+
 def test_plane_equation_from_points():
     points = np.array([[1, 1, 1], [-1, 1, 0], [2, 0, 3]])
     equation = plane_equation_from_points(points)

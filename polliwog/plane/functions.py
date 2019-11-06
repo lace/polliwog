@@ -3,7 +3,7 @@ import vg
 from .._common.shape import columnize, check_shape_any
 
 
-def plane_normal_from_points(points):
+def plane_normal_from_points(points, normalize=True):
     """
     Given a set of three points, compute the normal of the plane which
     passes through them. Also works on stacked inputs (i.e. many sets
@@ -16,9 +16,12 @@ def plane_normal_from_points(points):
     p3s = points[:, 2]
     v1s = p2s - p1s
     v2s = p3s - p1s
-    unit_normals = vg.normalize(vg.cross(v1s, v2s))
+    normals = vg.cross(v1s, v2s)
 
-    return transform_result(unit_normals)
+    if normalize:
+        normals = vg.normalize(normals)
+
+    return transform_result(normals)
 
 
 def plane_equation_from_points(points):
