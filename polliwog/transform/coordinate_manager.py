@@ -1,3 +1,6 @@
+import vg
+
+
 class CoordinateManager(object):
     """
     Here's the idea:
@@ -21,10 +24,10 @@ class CoordinateManager(object):
         self.__dict__.update(
             {
                 # A map from tag names to indices into the transform stack.
-                "tags_to_indices": {},
+                "_tags_to_indices": {},
                 # Our currently set points, and the tag at which they belong.
-                "points_tag": None,
-                "points": None,
+                "_points_tag": None,
+                "_points": None,
                 # Our worthy collaborator.
                 "_transform": CompositeTransform(),
             }
@@ -65,64 +68,44 @@ class CoordinateManager(object):
         # with a value that is *one more than* the index of the state's last
         # transform. This is a little strange, but we need the extra zero
         # state. And it ends up playing nicely with array slicing.
-        self.tags_to_indices[name] = len(self._transform.transforms)
+        self._tags_to_indices[name] = len(self._transform.transforms)
 
-    def do_transform(self, points_or_mesh, from_tag, to_tag):
+    def do_transform(self, points, from_tag, to_tag):
         from copy import copy
 
-        if hasattr(points_or_mesh, "v"):
-            points = points_or_mesh.v
-            # Can't run the transform if there are no vertices.
-            if points is None:
-                return points_or_mesh
-        else:
-            points = points_or_mesh
-
         try:
-            from_index = self.tags_to_indices[from_tag]
-            to_index = self.tags_to_indices[to_tag]
+            from_index = self._tags_to_indices[from_tag]
+            to_index = self._tags_to_indices[to_tag]
         except KeyError as e:
             tag = e.args[0]
             raise KeyError("No such tag: {}".format(tag))
 
         if from_index == to_index:
-            result_points = points
+            return points
         elif from_index < to_index:
             from_range = from_index, to_index
-            result_points = self._transform(points, from_range=from_range)
+            return self._transform(points, from_range=from_range)
         else:
             from_range = to_index, from_index
-            result_points = self._transform(points, from_range=from_range, reverse=True)
+            return self._transform(points, from_range=from_range, reverse=True)
 
-        if hasattr(points_or_mesh, "v"):
-            # for lace or those object with copy method, invoke its own copy method
-            # otherwise just shallow copy
-            result_mesh = (
-                points_or_mesh.copy()
-                if hasattr(points_or_mesh, "copy")
-                else copy(points_or_mesh)
-            )
-            result_mesh.v = result_points
-
-            return result_mesh
-        else:
-            return result_points
-
-    def __setattr__(self, name, value):
+    def __setattr__(self, name, points):
         """
-        value: Either an nx3 array of points or an instance of Mesh.
-
+        value: An nx3 array of points or an instance of Mesh.
         """
-        if name not in self.tags_to_indices:
+        if name not in self._tags_to_indices:
             raise AttributeError("No such tag: %s" % name)
 
-        self.__dict__["points_tag"] = name
-        self.__dict__["points_or_mesh"] = value
+        vg.shape.check(locals(), "points", (-1, 3))
+
+        self.__dict__["_points_tag"] = name
+        self.__dict__["_points"] = points
 
     def __getattr__(self, name):
-        if self.points_tag is None:
-            raise ValueError("Must set a value before trying to read one")
+        from_tag = self._points_tag
+        if from_tag is None:
+            raise ValueError("Must set the points before trying to read them")
 
         return self.do_transform(
-            points_or_mesh=self.points_or_mesh, from_tag=self.points_tag, to_tag=name
+            points=self._points, from_tag=self._points_tag, to_tag=name
         )

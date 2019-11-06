@@ -42,22 +42,6 @@ def test_translate():
     np.testing.assert_array_equal(transformed_cube_v[6], [13.0, 10.0, 11.0])
 
 
-def test_translate_by_list():
-    transform = CompositeTransform()
-    transform.translate([8.0, 6.0, 7.0])
-
-    cube_v = create_default_cube_verts()
-
-    # Confidence check.
-    np.testing.assert_array_equal(cube_v[0], [1.0, 0.0, 0.0])
-    np.testing.assert_array_equal(cube_v[6], [5.0, 4.0, 4.0])
-
-    transformed_cube_v = transform(cube_v)
-
-    np.testing.assert_array_equal(transformed_cube_v[0], [9.0, 6.0, 7.0])
-    np.testing.assert_array_equal(transformed_cube_v[6], [13.0, 10.0, 11.0])
-
-
 def test_scale():
     transform = CompositeTransform()
     transform.scale(10.0)
@@ -170,9 +154,6 @@ def test_rotate():
     ways_to_rotate_around_y_a_quarter_turn = [
         np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]]),
         np.array([0, np.pi / 2, 0]),
-        np.array([[0, np.pi / 2, 0]]),
-        np.array([[0], [np.pi / 2], [0]]),
-        [0, np.pi / 2, 0],
     ]
     for rot in ways_to_rotate_around_y_a_quarter_turn:
         transform = CompositeTransform()
