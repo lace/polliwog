@@ -52,8 +52,9 @@ class CompositeTransform(object):
         >>> untransformed_alignment = transform(alignment_v, reverse=True)
 
     See also:
-        - Computer Graphics: Principles and Practice, Hughes, van Dam, McGuire,
-          Sklar, Foley
+
+        - *Computer Graphics: Principles and Practice*, Hughes, van Dam,
+          McGuire, Sklar, Foley
         - http://gamedev.stackexchange.com/questions/72044/why-do-we-use-4x4-matrices-to-transform-things-in-3d
     """
 
@@ -172,9 +173,11 @@ class CompositeTransform(object):
 
         These calls are equivalent:
 
-        - composite.convert_units(from_units='cm', to_units='m')
-        - composite.scale(.01)
+        >>> composite.convert_units(from_units='cm', to_units='m')
+        >>> composite.scale(.01)
 
+        Supports the length units from Ounce:
+        https://github.com/lace/ounce/blob/master/ounce/core.py#L26
         """
         import ounce
 

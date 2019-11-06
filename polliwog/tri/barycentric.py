@@ -24,11 +24,9 @@ def compute_barycentric_coordinates(vertices_of_tris, points):
         np.ndarray: Barycentric coordinates as `kx3`
 
     See Also:
-        https://en.wikipedia.org/wiki/Barycentric_coordinate_system
-
-    See Also:
-        Heidrich, Computing the Barycentric Coordinates of a Projected Point, JGT 05
-        at http://www.cs.ubc.ca/~heidrich/Papers/JGT.05.pdf
+        - https://en.wikipedia.org/wiki/Barycentric_coordinate_system
+        - Heidrich, "Computing the Barycentric Coordinates of a Projected
+          Point," JGT 05 (http://www.cs.ubc.ca/~heidrich/Papers/JGT.05.pdf)
     """
     k = vg.shape.check(locals(), "vertices_of_tris", (-1, 3, 3))
     vg.shape.check(locals(), "points", (k, 3))

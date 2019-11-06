@@ -76,6 +76,11 @@ def doc_open():
 
 
 @cli.command()
+def clean():
+    execute("find . -name '*.pyc' -or -name '__pycache__' -delete")
+
+
+@cli.command()
 def publish():
     execute("rm -rf dist/")
     execute("python setup.py sdist")
