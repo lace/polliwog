@@ -16,7 +16,7 @@ from .coordinate_planes import coordinate_planes
 def assert_plane_equation_satisfies_points(plane_equation, points):
     a, b, c, d = plane_equation
     plane_equation_test = [a * x + b * y + c * z + d for x, y, z in points]
-    assert np.any(plane_equation_test) is False
+    assert not np.any(plane_equation_test)
 
 
 def test_plane_equation_from_points():
