@@ -1,4 +1,5 @@
 -r requirements.txt
+-r requirements_doc.txt
 -r requirements_dev_common.txt
 
 black ==19.10b0
