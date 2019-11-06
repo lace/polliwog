@@ -102,9 +102,10 @@ class CompositeTransform(object):
         from functools import reduce
 
         if from_range is not None:
-            start, stop = (
-                from_range
-            )  # from_range is defined as None, a non-sequence, but when it's not None, it's always a sequence. pylint: disable=unpacking-non-sequence
+            (
+                start,
+                stop,
+            ) = from_range  # from_range is defined as None, a non-sequence, but when it's not None, it's always a sequence. pylint: disable=unpacking-non-sequence
             selected_transforms = self.transforms[start:stop]
         else:
             selected_transforms = self.transforms
@@ -145,8 +146,13 @@ class CompositeTransform(object):
         The new transformation is added to the end. Return its index.
 
         """
+        vg.shape.check(locals(), "forward", (3, 3))
         forward4 = convert_33_to_44(forward)
-        reverse4 = None if reverse is None else convert_33_to_44(reverse)
+        if reverse is None:
+            reverse4 = None
+        else:
+            vg.shape.check(locals(), "reverse", (3, 3))
+            reverse4 = convert_33_to_44(reverse)
         return self.append_transform4(forward4, reverse4)
 
     def scale(self, factor):
