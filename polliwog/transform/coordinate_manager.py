@@ -71,8 +71,6 @@ class CoordinateManager(object):
         self._tags_to_indices[name] = len(self._transform.transforms)
 
     def do_transform(self, points, from_tag, to_tag):
-        from copy import copy
-
         try:
             from_index = self._tags_to_indices[from_tag]
             to_index = self._tags_to_indices[to_tag]
