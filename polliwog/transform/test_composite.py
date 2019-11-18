@@ -1,7 +1,7 @@
 import numpy as np
 import vg
 import pytest
-from .composite import CompositeTransform, convert_44_to_33
+from .composite import CompositeTransform
 
 
 def create_cube_verts(origin, size):
@@ -231,19 +231,3 @@ def test_forward_reverse_equivalence():
     forward = transform.matrix_for(from_range=(0, 2))
     reverse = transform.matrix_for(from_range=(0, 2), reverse=True)
     np.testing.assert_allclose(reverse, np.linalg.inv(forward))
-
-
-def test_convert_44_to_33():
-    np.testing.assert_array_equal(
-        convert_44_to_33(
-            np.array(
-                [
-                    [1.0, 2.0, 3.0, 0.0],
-                    [2.0, 3.0, 4.0, 0.0],
-                    [5.0, 6.0, 7.0, 0.0],
-                    [0.0, 0.0, 0.0, 1.0],
-                ]
-            )
-        ),
-        np.array([[1.0, 2.0, 3.0], [2.0, 3.0, 4.0], [5.0, 6.0, 7.0]]),
-    )
