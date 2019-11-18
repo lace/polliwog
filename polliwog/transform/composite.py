@@ -107,9 +107,7 @@ class CompositeTransform(object):
             reverse = np.linalg.inv(forward)
 
         new_index = len(self.transforms)
-
         self.transforms.append((forward, reverse))
-
         return new_index
 
     def append_transform3(self, forward, reverse=None):
@@ -120,8 +118,14 @@ class CompositeTransform(object):
         The new transformation is added to the end. Return its index.
 
         """
-        args = (forward,) if reverse is None else (forward, reverse)
-        return self.append_transform4(*map(convert_33_to_44, args))
+        vg.shape.check(locals(), "forward", (3, 3))
+        forward4 = convert_33_to_44(forward)
+        if reverse is None:
+            reverse4 = None
+        else:
+            vg.shape.check(locals(), "reverse", (3, 3))
+            reverse4 = convert_33_to_44(reverse)
+        return self.append_transform4(forward4, reverse4)
 
     def scale(self, factor):
         """
@@ -167,7 +171,7 @@ class CompositeTransform(object):
         factor = ounce.factor(from_units, to_units)
         self.scale(factor)
 
-    def translate(self, vector):
+    def translate(self, translation):
         """
         Translate by the vector provided.
 
@@ -188,13 +192,13 @@ class CompositeTransform(object):
         Args:
             vector (np.arraylike): A 3x1 vector.
         """
-        vector = np.asarray(vector)
+        vg.shape.check(locals(), "translation", (3,))
 
         forward = np.eye(4)
-        forward[:, -1][:-1] = vector
+        forward[:, -1][:-1] = translation
 
         reverse = np.eye(4)
-        reverse[:, -1][:-1] = -vector
+        reverse[:, -1][:-1] = -translation
 
         return self.append_transform4(forward, reverse)
 
@@ -209,13 +213,17 @@ class CompositeTransform(object):
         # The inverse of a rotation matrix is its transpose.
         return self.append_transform3(forward3, forward3.T)
 
-    def rotate(self, rot):
+    def rotate(self, rotation):
         """
         Rotate by either an explicit matrix or a rodrigues vector
         """
         from .rodrigues import as_rotation_matrix
 
-        rot = np.asarray(rot)
-        rot = as_rotation_matrix(rot)
+        if rotation.shape == (3, 3):
+            forward3 = rotation
+        else:
+            vg.shape.check(locals(), "rotation", (3,))
+            forward3 = as_rotation_matrix(rotation)
+
         # The inverse of a rotation matrix is its transpose.
-        return self.append_transform3(rot, rot.T)
+        return self.append_transform3(forward3, forward3.T)
