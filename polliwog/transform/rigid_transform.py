@@ -42,7 +42,7 @@ def find_rigid_transform(a, b, visualize=False):
 
     T = (b_mean - R.dot(a_mean)).reshape(-1, 1)
 
-    if visualize != False:
+    if visualize is False:
         from lace.mesh import Mesh
         from lace.meshviewer import MeshViewer
 

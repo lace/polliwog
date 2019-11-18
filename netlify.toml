@@ -1,0 +1,4 @@
+[build]
+  base = "doc"
+  publish = "build"
+  command = "../dev.py doc"

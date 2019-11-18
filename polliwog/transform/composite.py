@@ -21,52 +21,24 @@ def convert_33_to_44(matrix):
     return result
 
 
-def convert_44_to_33(matrix):
-    """
-    Transform from:
-        array([[1., 2., 3., 0.],
-               [2., 3., 4., 0.],
-               [5., 6., 7., 0.],
-               [0., 0., 0., 1.]])
-    to:
-        array([[1., 2., 3.],
-               [2., 3., 4.],
-               [5., 6., 7.]])
-
-    """
-    vg.shape.check(locals(), "matrix", (4, 4))
-    return matrix[:3, :3]
-
-
 class CompositeTransform(object):
     """
     Composite transform using homogeneous coordinates.
 
+    Example:
+        >>> transform = CompositeTransform()
+        >>> transform.scale(10)
+        >>> transform.reorient(up=[0, 1, 0], look=[-1, 0, 0])
+        >>> transform.translate([0, -2.5, 0])
+        >>> transformed_scan = transform(scan_v)
+        >>> # ... register the scan here ...
+        >>> untransformed_alignment = transform(alignment_v, reverse=True)
 
-    Example usage
-    -------------
+    See also:
 
-        transform = CompositeTransform()
-        transform.scale(10)
-        transform.reorient(up=[0, 1, 0], look=[-1, 0, 0])
-        transform.translate([0, -2.5, 0])
-        transformed_scan = Mesh(v=transform(scan.v), f=scan.f)
-
-        ...
-
-        untransformed_alignment = Mesh(
-            v=transform(alignment.v, reverse=True),
-            f=alignment.f
-        )
-
-    Backround
-    ---------
-
-    - Computer Graphics: Principles and Practice, Hughes, van Dam, McGuire,
-      Sklar, Foley
-
-    - http://gamedev.stackexchange.com/questions/72044/why-do-we-use-4x4-matrices-to-transform-things-in-3d
-
+        - *Computer Graphics: Principles and Practice*, Hughes, van Dam,
+          McGuire, Sklar, Foley
+        - http://gamedev.stackexchange.com/questions/72044/why-do-we-use-4x4-matrices-to-transform-things-in-3d
     """
 
     def __init__(self):
@@ -75,12 +47,15 @@ class CompositeTransform(object):
 
     def __call__(self, points, from_range=None, reverse=False):
         """
-        points: Points to transform, as a 3xn array.
-        range: The indices of the subset of the transformations to apply.
-          e.g. (0, 2), (2, 4). The default is to apply them all.
-        reverse: When `True` applies the selected transformations in reverse.
-          This has no effect on how range is interpreted, only whether the
-          selected transformations apply in the forward or reverse mode.
+        Args:
+            points (np.arraylike): Points to transform, as a 3xn array.
+            from_range (tuple): The indices of the subset of the
+                transformations to apply. e.g. `(0, 2)`, `(2, 4)`. When
+                `None`, which is the default, apply them all.
+            reverse (bool): When `True` applies the selected transformations
+                in reverse. This has no effect on how range is interpreted,
+                only whether the selected transformations apply in the forward
+                or reverse mode.
 
         """
         matrix = self.matrix_for(from_range=from_range, reverse=reverse)
@@ -156,20 +131,20 @@ class CompositeTransform(object):
         """
         Scale by the given factor.
 
-        factor: A float or int.
-
         Forward:
         [[  s_0, 0,   0,   0 ],
-         [  0,   s_1, 0,   0 ],
-         [  0,   0,   s_2, 0 ],
-         [  0,   0,   0,   1 ]]
+        [  0,   s_1, 0,   0 ],
+        [  0,   0,   s_2, 0 ],
+        [  0,   0,   0,   1 ]]
 
         Reverse:
         [[  1/s_0, 0,     0,     0 ],
-         [  0,     1/s_1, 0,     0 ],
-         [  0,     0,     1/s_2, 0 ],
-         [  0,     0,     0,     1 ]]
+        [  0,     1/s_1, 0,     0 ],
+        [  0,     0,     1/s_2, 0 ],
+        [  0,     0,     0,     1 ]]
 
+        Args:
+            factor (float): The scale factor.
         """
         if factor <= 0:
             raise ValueError("Scale factor should be greater than zero")
@@ -185,9 +160,11 @@ class CompositeTransform(object):
 
         These calls are equivalent:
 
-        - composite.convert_units(from_units='cm', to_units='m')
-        - composite.scale(.01)
+        >>> composite.convert_units(from_units='cm', to_units='m')
+        >>> composite.scale(.01)
 
+        Supports the length units from Ounce:
+        https://github.com/lace/ounce/blob/master/ounce/core.py#L26
         """
         import ounce
 
@@ -198,20 +175,22 @@ class CompositeTransform(object):
         """
         Translate by the vector provided.
 
-        vector: A 3x1 vector.
-
         Forward:
-        [[  1,  0,  0,  v_0 ],
-         [  0,  1,  0,  v_1 ],
-         [  0,  0,  1,  v_2 ],
-         [  0,  0,  0,  1   ]]
+
+            [[  1,  0,  0,  v_0 ],
+            [  0,  1,  0,  v_1 ],
+            [  0,  0,  1,  v_2 ],
+            [  0,  0,  0,  1   ]]
 
         Reverse:
-        [[  1,  0,  0,  -v_0 ],
-         [  0,  1,  0,  -v_1 ],
-         [  0,  0,  1,  -v_2 ],
-         [  0,  0,  0,  1    ]]
 
+            [[  1,  0,  0,  -v_0 ],
+            [  0,  1,  0,  -v_1 ],
+            [  0,  0,  1,  -v_2 ],
+            [  0,  0,  0,  1    ]]
+
+        Args:
+            vector (np.arraylike): A 3x1 vector.
         """
         vg.shape.check(locals(), "translation", (3,))
 

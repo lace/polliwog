@@ -8,11 +8,8 @@ from executor import execute
 def python_source_files():
     import glob
 
-    include_paths = glob.glob("*.py") + glob.glob("polliwog/**/*.py")  # + ["doc/"]
-
-    # TODO: Use flake8; argh.
-    exclude_paths = ["polliwog/__init__.py", "polliwog/transform/__init__.py"]
-
+    include_paths = glob.glob("*.py") + glob.glob("polliwog/**/*.py") + ["doc/"]
+    exclude_paths = []
     return [x for x in include_paths if x not in exclude_paths]
 
 
@@ -51,7 +48,7 @@ def test_both():
 
 @cli.command()
 def lint():
-    execute("pyflakes", *python_source_files())
+    execute("flake8", *python_source_files())
 
 
 @cli.command()
@@ -67,12 +64,17 @@ def black_check():
 @cli.command()
 def doc():
     execute("rm -rf build/ doc/build/ doc/api/")
-    execute("sphinx-build -b singlehtml doc doc/build")
+    execute("sphinx-build -W -b singlehtml doc doc/build")
 
 
 @cli.command()
 def doc_open():
     execute("open doc/build/index.html")
+
+
+@cli.command()
+def clean():
+    execute("find . -name '*.pyc' -or -name '__pycache__' -delete")
 
 
 @cli.command()

@@ -64,12 +64,12 @@ jobs:
             . venv/bin/activate
             coveralls
 
-      # - run:
-      #     name: Run the doc build
-      #     when: always
-      #     command: |
-      #       . venv/bin/activate
-      #       ./dev.py doc
+      - run:
+          name: Run the doc build
+          when: always
+          command: |
+            . venv/bin/activate
+            ./dev.py doc
 
       - run:
           name: Check lint
