@@ -1,6 +1,6 @@
 import numpy as np
 import vg
-from .._common.shape import columnize, check_shape_any
+from .._common.shape import columnize
 
 
 def surface_normals(points, normalize=True):
