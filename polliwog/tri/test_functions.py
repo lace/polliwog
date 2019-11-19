@@ -2,9 +2,9 @@ import math
 import numpy as np
 import vg
 from .functions import (
-    surface_normals,
-    contains_coplanar_point,
     barycentric_coordinates_of_points,
+    contains_coplanar_point,
+    surface_normals,
 )
 
 

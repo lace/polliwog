@@ -1,5 +1,5 @@
 import numpy as np
-from ._array import find_repeats, find_changes
+from ._array import find_changes, find_repeats
 
 
 def test_find_repeats():

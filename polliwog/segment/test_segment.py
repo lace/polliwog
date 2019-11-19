@@ -1,10 +1,10 @@
-import pytest
 import numpy as np
+import pytest
 from .segment import (
+    closest_point_of_line_segment,
     partition,
     partition_segment,
     partition_segment_old,
-    closest_point_of_line_segment,
 )
 
 
