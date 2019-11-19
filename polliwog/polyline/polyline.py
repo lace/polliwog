@@ -215,7 +215,7 @@ class Polyline(object):
         else:
             return self
 
-    def reindexed(self, index, ret_edge_mapping=False):
+    def rolled(self, index, ret_edge_mapping=False):
         """
         Return a new Polyline which reindexes the callee polyline, which much
         be closed, so the vertex with the given index becomes vertex 0.
@@ -224,7 +224,7 @@ class Polyline(object):
             indices to new.
         """
         if not self.is_closed:
-            raise ValueError("Can't reindex an open polyline")
+            raise ValueError("Can't roll an open polyline")
 
         result = Polyline(
             v=np.append(self.v[index:], self.v[0:index], axis=0), is_closed=True
