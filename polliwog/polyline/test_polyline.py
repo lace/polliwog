@@ -516,7 +516,7 @@ def test_reindexed():
         is_closed=True,
     )
 
-    reindexed, edge_mapping = original.reindexed(5, ret_edge_mapping=True)
+    reindexed, edge_mapping = original.rolled(5, ret_edge_mapping=True)
 
     expected = Polyline(
         np.array(
@@ -535,7 +535,7 @@ def test_reindexed():
     np.testing.assert_array_almost_equal(reindexed.v, expected.v)
     np.testing.assert_array_equal(original.segments[edge_mapping], reindexed.segments)
     np.testing.assert_array_almost_equal(
-        original.reindexed(5, ret_edge_mapping=False).v, expected.v
+        original.rolled(5, ret_edge_mapping=False).v, expected.v
     )
 
     open_polyline = Polyline(
@@ -552,7 +552,7 @@ def test_reindexed():
         is_closed=False,
     )
     with pytest.raises(ValueError):
-        open_polyline.reindexed(5)
+        open_polyline.rolled(5)
 
 
 def test_intersect_plane():
