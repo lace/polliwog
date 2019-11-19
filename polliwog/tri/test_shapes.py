@@ -1,5 +1,5 @@
 import numpy as np
-from .shapes import create_rectangular_prism, create_cube, create_horizontal_plane
+from .shapes import create_cube, create_horizontal_plane, create_rectangular_prism
 
 
 def test_create_rectangular_prism():

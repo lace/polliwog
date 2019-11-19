@@ -3,7 +3,8 @@
 -r requirements_dev_common.txt
 
 black ==19.10b0
-flake8 >=3.7.7,<4.0
+flake8 ==3.7.9
+flake8-import-order ==0.18
 
 # For CI.
 coveralls ==1.8.2

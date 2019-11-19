@@ -1,8 +1,8 @@
 import numpy as np
-import vg
 import pytest
-from ..plane.plane import Plane
+import vg
 from .polyline import Polyline
+from ..plane.plane import Plane
 
 
 def test_join():
