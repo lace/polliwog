@@ -99,6 +99,7 @@ def test_num_v_num_e():
     )
     closed_polyline = Polyline(example_vs, is_closed=True)
     assert closed_polyline.num_v == 4
+    assert len(closed_polyline) == 4
     assert closed_polyline.num_e == 4
     open_polyline = Polyline(example_vs, is_closed=False)
     assert open_polyline.num_v == 4
