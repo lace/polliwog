@@ -24,7 +24,7 @@ def rotation_from_up_and_look(up, look):
     vg.shape.check(locals(), "up", (3,))
     vg.shape.check(locals(), "look", (3,))
 
-    up, look = [np.asarray(v, dtype=np.uint64) for v in (up, look)]
+    up, look = [np.asarray(vector, dtype=np.uint64) for vector in (up, look)]
 
     if np.linalg.norm(up) == 0:
         raise ValueError("Singular up")
