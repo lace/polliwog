@@ -8,7 +8,7 @@ from .functions import (
 )
 
 
-def test_plane_normal_from_points_single():
+def test_surface_normals_from_points_single():
     points = np.array([[3.0, 0.0, 0.0], [0.0, 3.0, 0.0], [0.0, 0.0, 3.0]])
 
     np.testing.assert_allclose(
@@ -20,7 +20,7 @@ def test_plane_normal_from_points_single():
     )
 
 
-def test_plane_normal_from_points_vectorized():
+def test_surface_normals_from_points_vectorized():
     from .shapes import create_triangular_prism
 
     p1 = np.array([3.0, 0.0, 0.0])
