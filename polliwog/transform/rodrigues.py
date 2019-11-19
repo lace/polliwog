@@ -25,7 +25,7 @@ def rodrigues(r, calculate_jacobian=False):
             c1 = 1.0 - c
             itheta = 1.0 if theta == 0.0 else 1.0 / theta
             r *= itheta
-            I = np.eye(3)
+            I = np.eye(3)  # noqa: E741 (FIXME)
             rrt = np.array([r * r[0], r * r[1], r * r[2]])
             _r_x_ = np.array([[0, -r[2], r[1]], [r[2], 0, -r[0]], [-r[1], r[0], 0]])
             r_out = c * I + c1 * rrt + s * _r_x_
@@ -44,7 +44,8 @@ def rodrigues(r, calculate_jacobian=False):
                         [0, -1, 0, 1, 0, 0, 0, 0, 0],
                     ]
                 )
-                I = np.array([I.flatten(), I.flatten(), I.flatten()])
+                # FIXME: Give this a more descriptive name.
+                I = np.array([I.flatten(), I.flatten(), I.flatten()])  # noqa: E741
                 ri = np.array([[r[0]], [r[1]], [r[2]]])
                 a0 = -s * ri
                 a1 = (s - 2 * c1 * itheta) * ri

@@ -45,23 +45,23 @@ class Polyline(object):
         return cls(np.vstack([polyline.v for polyline in polylines]), is_closed=False)
 
     def __repr__(self):
-        if self.v is not None and len(self.v) != 0:
+        if self.v is not None and self.num_v != 0:
             if self.is_closed:
-                return "<closed Polyline with {} verts>".format(len(self))
+                return "<closed Polyline with {} verts>".format(self.num_v)
             else:
-                return "<open Polyline with {} verts>".format(len(self))
+                return "<open Polyline with {} verts>".format(self.num_v)
         else:
             return "<Polyline with no verts>"
 
     def __len__(self):
-        return len(self.v)
+        return self.num_v
 
     @property
     def num_v(self):
         """
         Return the number of vertices in the polyline.
         """
-        return len(self)
+        return len(self.v)
 
     @property
     def num_e(self):
@@ -215,7 +215,7 @@ class Polyline(object):
         else:
             return self
 
-    def reindexed(self, index, ret_edge_mapping=False):
+    def rolled(self, index, ret_edge_mapping=False):
         """
         Return a new Polyline which reindexes the callee polyline, which much
         be closed, so the vertex with the given index becomes vertex 0.
@@ -224,7 +224,7 @@ class Polyline(object):
             indices to new.
         """
         if not self.is_closed:
-            raise ValueError("Can't reindex an open polyline")
+            raise ValueError("Can't roll an open polyline")
 
         result = Polyline(
             v=np.append(self.v[index:], self.v[0:index], axis=0), is_closed=True
@@ -232,7 +232,7 @@ class Polyline(object):
 
         if ret_edge_mapping:
             edge_mapping = np.append(
-                np.arange(index, len(self.v)), np.arange(0, index), axis=0
+                np.arange(index, self.num_v), np.arange(0, index), axis=0
             )
             return result, edge_mapping
         else:
@@ -319,7 +319,7 @@ class Polyline(object):
         Return an arrray that gives the new indices of the original vertices.
         """
         new_vs = self.v
-        indices_of_original_vertices = np.arange(len(self.v))
+        indices_of_original_vertices = np.arange(self.num_v)
         for offset, edge_to_subdivide in enumerate(edges):
             new_v = np.mean(self.segments[edge_to_subdivide], axis=0).reshape(-1, 3)
             old_v2_index = self.e[edge_to_subdivide][0] + 1

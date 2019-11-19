@@ -19,7 +19,7 @@ def test_join():
     joined = Polyline.join(
         Polyline(vs, is_closed=False), Polyline(more_vs, is_closed=False)
     )
-    assert joined.is_closed == False
+    assert joined.is_closed is False
     np.testing.assert_array_equal(joined.v, np.vstack([vs, more_vs]))
 
     with pytest.raises(ValueError, match="Need at least one polyline to join"):
@@ -87,10 +87,10 @@ def test_update_is_closed():
     )
     polyline = Polyline(example_vs, is_closed=False)
     assert polyline.num_e == 3
-    assert polyline.is_closed == False
+    assert polyline.is_closed is False
     polyline.is_closed = True
     assert polyline.num_e == 4
-    assert polyline.is_closed == True
+    assert polyline.is_closed is True
 
 
 def test_num_v_num_e():
@@ -99,6 +99,7 @@ def test_num_v_num_e():
     )
     closed_polyline = Polyline(example_vs, is_closed=True)
     assert closed_polyline.num_v == 4
+    assert len(closed_polyline) == 4
     assert closed_polyline.num_e == 4
     open_polyline = Polyline(example_vs, is_closed=False)
     assert open_polyline.num_v == 4
@@ -515,7 +516,7 @@ def test_reindexed():
         is_closed=True,
     )
 
-    reindexed, edge_mapping = original.reindexed(5, ret_edge_mapping=True)
+    reindexed, edge_mapping = original.rolled(5, ret_edge_mapping=True)
 
     expected = Polyline(
         np.array(
@@ -534,7 +535,7 @@ def test_reindexed():
     np.testing.assert_array_almost_equal(reindexed.v, expected.v)
     np.testing.assert_array_equal(original.segments[edge_mapping], reindexed.segments)
     np.testing.assert_array_almost_equal(
-        original.reindexed(5, ret_edge_mapping=False).v, expected.v
+        original.rolled(5, ret_edge_mapping=False).v, expected.v
     )
 
     open_polyline = Polyline(
@@ -551,7 +552,7 @@ def test_reindexed():
         is_closed=False,
     )
     with pytest.raises(ValueError):
-        open_polyline.reindexed(5)
+        open_polyline.rolled(5)
 
 
 def test_intersect_plane():
@@ -635,7 +636,7 @@ def test_cut_by_plane_closed():
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected.v)
-    assert actual.is_closed == False
+    assert actual.is_closed is False
 
     expected = Polyline(
         np.array(
@@ -655,7 +656,7 @@ def test_cut_by_plane_closed():
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected.v)
-    assert actual.is_closed == False
+    assert actual.is_closed is False
 
     zigzag = Polyline(
         np.array([[0.0, 0.0, 0.0], [5.0, 0.0, 0.0], [0.0, 2.0, 0.0], [5.0, 2.0, 0.0]]),
@@ -706,7 +707,7 @@ def test_cut_by_plane_closed_on_vertex():
         Plane(point_on_plane=np.array([0.0, 1.0, 0.0]), unit_normal=vg.basis.y)
     )
     np.testing.assert_array_almost_equal(actual.v, expected.v)
-    assert actual.is_closed == False
+    assert actual.is_closed is False
 
 
 def test_cut_by_plane_closed_one_vertex():
@@ -739,7 +740,7 @@ def test_cut_by_plane_open():
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected_vs)
-    assert actual.is_closed == False
+    assert actual.is_closed is False
 
     expected_vs = np.array(
         [
@@ -755,7 +756,7 @@ def test_cut_by_plane_open():
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected_vs)
-    assert actual.is_closed == False
+    assert actual.is_closed is False
 
     with pytest.raises(ValueError):
         original.cut_by_plane(
@@ -770,7 +771,7 @@ def test_cut_by_plane_open():
     )
     expected_vs = np.array([[0.5, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.5, 0.0]])
     np.testing.assert_array_almost_equal(actual.v, expected_vs)
-    assert actual.is_closed == False
+    assert actual.is_closed is False
 
 
 def test_apex():

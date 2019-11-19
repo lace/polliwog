@@ -29,7 +29,7 @@ def plane_equation_from_points(points):
     Given many sets of three points, return a stack of plane equations
     [`A`, `B`, `C`, `D`] which satisfy `Ax + By + Cz + D = 0`. Also
     works on three points to return a single plane equation.
-    
+
     These coefficients can be decomposed into the plane normal vector
     which is `[A, B, C]` and the offset `D`, either by the caller or
     by using `normal_and_offset_from_plane_equations()`.
