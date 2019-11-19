@@ -1,8 +1,61 @@
 import numpy as np
 import vg
+from .._common.shape import columnize
 
 
-def compute_barycentric_coordinates(vertices_of_tris, points):
+def surface_normals(points, normalize=True):
+    """
+    Compute the surface normal of a triangle. The direction of the normal
+    follows conventional counter-clockwise winding and the right-hand
+    rule.
+
+    Also works on stacked inputs (i.e. many sets of three points).
+    """
+    points, _, transform_result = columnize(points, (-1, 3, 3), name="points")
+
+    p1s = points[:, 0]
+    p2s = points[:, 1]
+    p3s = points[:, 2]
+    v1s = p2s - p1s
+    v2s = p3s - p1s
+    normals = vg.cross(v1s, v2s)
+
+    if normalize:
+        normals = vg.normalize(normals)
+
+    return transform_result(normals)
+
+
+def coplanar_points_are_on_same_side_of_line(a, b, p1, p2, atol=1e-8):
+    vg.shape.check(locals(), "a", (3,))
+    vg.shape.check(locals(), "b", (3,))
+    vg.shape.check(locals(), "p1", (3,))
+    vg.shape.check(locals(), "p2", (3,))
+
+    # Uses "same-side technique" from http://blackpawn.com/texts/pointinpoly/default.html
+    along_line = b - a
+    return vg.dot(vg.cross(along_line, p1 - a), vg.cross(along_line, p2 - a)) >= -atol
+
+
+def contains_coplanar_point(a, b, c, point, atol=1e-8):
+    """
+    Assuming `point` is coplanar with the triangle `ABC`, check if it lies
+    inside it.
+    """
+    vg.shape.check(locals(), "a", (3,))
+    vg.shape.check(locals(), "b", (3,))
+    vg.shape.check(locals(), "c", (3,))
+    vg.shape.check(locals(), "point", (3,))
+
+    # Uses "same-side technique" from http://blackpawn.com/texts/pointinpoly/default.html
+    return (
+        coplanar_points_are_on_same_side_of_line(b, c, point, a, atol=atol)
+        and coplanar_points_are_on_same_side_of_line(a, c, point, b, atol=atol)
+        and coplanar_points_are_on_same_side_of_line(a, b, point, c, atol=atol)
+    )
+
+
+def barycentric_coordinates_of_points(vertices_of_tris, points):
     """
     Compute barycentric coordinates for the projection of a set of points to a
     given set of triangles specfied by their vertices.
