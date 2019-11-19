@@ -104,34 +104,31 @@ def test_x():
     s2 = np.sqrt(2) / 2
     np.testing.assert_array_almost_equal(euler(0), np.eye(3))
     np.testing.assert_array_almost_equal(
-        euler(45), np.array([vg.basis.x, [0, s2, -s2], [0, s2, s2]])
+        euler(45), np.array([[1, 0, 0], [0, s2, -s2], [0, s2, s2]])
     )
     np.testing.assert_array_almost_equal(
-        euler(90), np.array([vg.basis.x, vg.basis.neg_z, vg.basis.y])
+        euler(90), np.array([[1, 0, 0], [0, 0, -1], [0, 1, 0]])
     )
     np.testing.assert_array_almost_equal(
-        euler(180), np.array([vg.basis.x, [0, -1, -0], vg.basis.neg_z])
+        euler(180), np.array([[1, 0, 0], [0, -1, -0], [0, 0, -1]])
     )
     np.testing.assert_array_almost_equal(
-        euler(270), np.array([vg.basis.x, vg.basis.z, vg.basis.neg_y])
+        euler(270), np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]])
     )
     np.testing.assert_array_almost_equal(euler(360), np.eye(3))
     np.testing.assert_array_almost_equal(euler(0 * np.pi, units="rad"), np.eye(3))
     np.testing.assert_array_almost_equal(
         euler(0.25 * np.pi, units="rad"),
-        np.array([vg.basis.x, [0, s2, -s2], [0, s2, s2]]),
+        np.array([[1, 0, 0], [0, s2, -s2], [0, s2, s2]]),
     )
     np.testing.assert_array_almost_equal(
-        euler(0.5 * np.pi, units="rad"),
-        np.array([vg.basis.x, vg.basis.neg_z, vg.basis.y]),
+        euler(0.5 * np.pi, units="rad"), np.array([[1, 0, 0], [0, 0, -1], [0, 1, 0]])
     )
     np.testing.assert_array_almost_equal(
-        euler(1 * np.pi, units="rad"),
-        np.array([vg.basis.x, [0, -1, -0], vg.basis.neg_z]),
+        euler(1 * np.pi, units="rad"), np.array([[1, 0, 0], [0, -1, -0], [0, 0, -1]])
     )
     np.testing.assert_array_almost_equal(
-        euler(1.5 * np.pi, units="rad"),
-        np.array([vg.basis.x, vg.basis.z, vg.basis.neg_y]),
+        euler(1.5 * np.pi, units="rad"), np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]])
     )
     np.testing.assert_array_almost_equal(euler(2 * np.pi, units="rad"), np.eye(3))
 
@@ -140,52 +137,52 @@ def test_y():
     s2 = np.sqrt(2) / 2
     np.testing.assert_array_almost_equal(euler([0, 0]), np.eye(3))
     np.testing.assert_array_almost_equal(
-        euler([0, 45]), np.array([[s2, 0, s2], vg.basis.y, [-s2, 0, s2]])
+        euler([0, 45]), np.array([[s2, 0, s2], [0, 1, 0], [-s2, 0, s2]])
     )
     np.testing.assert_array_almost_equal(
-        euler([0, 90]), np.array([vg.basis.z, vg.basis.y, vg.basis.neg_x])
+        euler([0, 90]), np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]])
     )
     np.testing.assert_array_almost_equal(
-        euler([0, 180]), np.array([vg.basis.neg_x, vg.basis.y, [-0, 0, -1]])
+        euler([0, 180]), np.array([[-1, 0, 0], [0, 1, 0], [-0, 0, -1]])
     )
     np.testing.assert_array_almost_equal(
-        euler([0, 270]), np.array([vg.basis.neg_z, vg.basis.y, vg.basis.x])
+        euler([0, 270]), np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]])
     )
     np.testing.assert_array_almost_equal(euler([0, 360]), np.eye(3))
     np.testing.assert_array_almost_equal(euler([0, 0 * np.pi], units="rad"), np.eye(3))
     np.testing.assert_array_almost_equal(
         euler([0, 0.25 * np.pi], units="rad"),
-        np.array([[s2, 0, s2], vg.basis.y, [-s2, 0, s2]]),
+        np.array([[s2, 0, s2], [0, 1, 0], [-s2, 0, s2]]),
     )
     np.testing.assert_array_almost_equal(
         euler([0, 0.5 * np.pi], units="rad"),
-        np.array([vg.basis.z, vg.basis.y, vg.basis.neg_x]),
+        np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]]),
     )
     np.testing.assert_array_almost_equal(
         euler([0, 1 * np.pi], units="rad"),
-        np.array([vg.basis.neg_x, vg.basis.y, [-0, 0, -1]]),
+        np.array([[-1, 0, 0], [0, 1, 0], [-0, 0, -1]]),
     )
     np.testing.assert_array_almost_equal(
         euler([0, 1.5 * np.pi], units="rad"),
-        np.array([vg.basis.neg_z, vg.basis.y, vg.basis.x]),
+        np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]]),
     )
     np.testing.assert_array_almost_equal(euler([0, 2 * np.pi], units="rad"), np.eye(3))
 
 
 def test_z():
     s2 = np.sqrt(2) / 2
-    np.testing.assert_array_almost_equal(euler(origin), np.eye(3))
+    np.testing.assert_array_almost_equal(euler([0, 0, 0]), np.eye(3))
     np.testing.assert_array_almost_equal(
-        euler([0, 0, 45]), np.array([[s2, -s2, 0], [s2, s2, 0], vg.basis.z])
+        euler([0, 0, 45]), np.array([[s2, -s2, 0], [s2, s2, 0], [0, 0, 1]])
     )
     np.testing.assert_array_almost_equal(
-        euler([0, 0, 90]), np.array([vg.basis.neg_y, vg.basis.x, vg.basis.z])
+        euler([0, 0, 90]), np.array([[0, -1, 0], [1, 0, 0], [0, 0, 1]])
     )
     np.testing.assert_array_almost_equal(
-        euler([0, 0, 180]), np.array([vg.basis.neg_x, vg.basis.neg_y, vg.basis.z])
+        euler([0, 0, 180]), np.array([[-1, 0, 0], [0, -1, 0], [0, 0, 1]])
     )
     np.testing.assert_array_almost_equal(
-        euler([0, 0, 270]), np.array([vg.basis.y, vg.basis.neg_x, vg.basis.z])
+        euler([0, 0, 270]), np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])
     )
     np.testing.assert_array_almost_equal(euler([0, 0, 360]), np.eye(3))
     np.testing.assert_array_almost_equal(
@@ -193,19 +190,19 @@ def test_z():
     )
     np.testing.assert_array_almost_equal(
         euler([0, 0, 0.25 * np.pi], units="rad"),
-        np.array([[s2, -s2, 0], [s2, s2, 0], vg.basis.z]),
+        np.array([[s2, -s2, 0], [s2, s2, 0], [0, 0, 1]]),
     )
     np.testing.assert_array_almost_equal(
         euler([0, 0, 0.5 * np.pi], units="rad"),
-        np.array([vg.basis.neg_y, vg.basis.x, vg.basis.z]),
+        np.array([[0, -1, 0], [1, 0, 0], [0, 0, 1]]),
     )
     np.testing.assert_array_almost_equal(
         euler([0, 0, 1 * np.pi], units="rad"),
-        np.array([vg.basis.neg_x, vg.basis.neg_y, vg.basis.z]),
+        np.array([[-1, 0, 0], [0, -1, 0], [0, 0, 1]]),
     )
     np.testing.assert_array_almost_equal(
         euler([0, 0, 1.5 * np.pi], units="rad"),
-        np.array([vg.basis.y, vg.basis.neg_x, vg.basis.z]),
+        np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]]),
     )
     np.testing.assert_array_almost_equal(
         euler([0, 0, 2 * np.pi], units="rad"), np.eye(3)
