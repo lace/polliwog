@@ -1,8 +1,9 @@
 import numpy as np
 import vg
+from .affine_transform import apply_affine_transform
 
 
-def convert_33_to_44(matrix):
+def _convert_33_to_44(matrix):
     """
     Transform from:
         array([[1., 2., 3.],
@@ -58,11 +59,12 @@ class CompositeTransform(object):
                 or reverse mode.
 
         """
-        matrix = self.matrix_for(from_range=from_range, reverse=reverse)
+        transform_matrix = self.transform_matrix_for(
+            from_range=from_range, reverse=reverse
+        )
+        return apply_affine_transform(points=points, transform_matrix=transform_matrix)
 
-        return vg.matrix.unpad(np.dot(matrix, vg.matrix.pad_with_ones(points).T).T)
-
-    def matrix_for(self, from_range=None, reverse=False):
+    def transform_matrix_for(self, from_range=None, reverse=False):
         """
         Return a 4x4 transformation matrix representation.
 
@@ -119,12 +121,12 @@ class CompositeTransform(object):
 
         """
         vg.shape.check(locals(), "forward", (3, 3))
-        forward4 = convert_33_to_44(forward)
+        forward4 = _convert_33_to_44(forward)
         if reverse is None:
             reverse4 = None
         else:
             vg.shape.check(locals(), "reverse", (3, 3))
-            reverse4 = convert_33_to_44(reverse)
+            reverse4 = _convert_33_to_44(reverse)
         return self.append_transform4(forward4, reverse4)
 
     def scale(self, factor):

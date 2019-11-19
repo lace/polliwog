@@ -205,10 +205,10 @@ def test_forward_reverse_equivalence():
     transform.scale(10.0)
     transform.rotate(np.array([7.0, 13.0, 5.0]))
 
-    forward = transform.matrix_for()
-    reverse = transform.matrix_for(reverse=True)
+    forward = transform.transform_matrix_for()
+    reverse = transform.transform_matrix_for(reverse=True)
     np.testing.assert_allclose(reverse, np.linalg.inv(forward))
 
-    forward = transform.matrix_for(from_range=(0, 2))
-    reverse = transform.matrix_for(from_range=(0, 2), reverse=True)
+    forward = transform.transform_matrix_for(from_range=(0, 2))
+    reverse = transform.transform_matrix_for(from_range=(0, 2), reverse=True)
     np.testing.assert_allclose(reverse, np.linalg.inv(forward))
