@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 from .affine_transform import apply_affine_transform
 
 scale_factor = np.array([3.0, 0.5, 2.0])
