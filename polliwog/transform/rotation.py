@@ -1,4 +1,5 @@
 import numpy as np
+import vg
 
 
 def estimate_normal(planar_points):
@@ -16,22 +17,22 @@ def rotation_from_up_and_look(up, look):
     result is a rotation matrix that will make up along +y and look along +z
     (i.e. facing towards a default opengl camera).
 
-    Note that if you're reorienting a mesh, you can use its `reorient` method
-    to accomplish this.
-
-    up: The foot-to-head direction.
-    look: The direction the eyes are facing, or the heel-to-toe direction.
+    up: The direction you want to become `+y`.
+    look: The direction you want to become `+z`.
 
     """
-    up, look = np.array(up, dtype=np.float64), np.array(look, dtype=np.float64)
+    vg.shape.check(locals(), "up", (3,))
+    vg.shape.check(locals(), "look", (3,))
+
     if np.linalg.norm(up) == 0:
         raise ValueError("Singular up")
     if np.linalg.norm(look) == 0:
         raise ValueError("Singular look")
+
     y = up / np.linalg.norm(up)
     z = look - np.dot(look, y) * y
     if np.linalg.norm(z) == 0:
-        raise ValueError("up and look are colinear")
+        raise ValueError("up and look are collinear")
     z = z / np.linalg.norm(z)
     x = np.cross(y, z)
     return np.array([x, y, z])
