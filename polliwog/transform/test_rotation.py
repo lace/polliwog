@@ -1,6 +1,6 @@
-import pytest
 import numpy as np
-from .rotation import rotation_from_up_and_look, euler
+import pytest
+from .rotation import euler, rotation_from_up_and_look
 
 
 def test_starting_with_canonical_reference_frame_gives_identity():

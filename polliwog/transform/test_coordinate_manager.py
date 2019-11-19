@@ -1,8 +1,8 @@
 import numpy as np
-import vg
 import pytest
-from .test_composite import create_cube_verts
+import vg
 from .coordinate_manager import CoordinateManager
+from .test_composite import create_cube_verts
 
 
 def perform_transform_test(apply_transform_fn, expected_v0, expected_v6):

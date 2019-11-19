@@ -1,6 +1,6 @@
 import numpy as np
-import vg
 import pytest
+import vg
 from .composite import CompositeTransform
 
 

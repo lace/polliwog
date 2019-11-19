@@ -1,6 +1,6 @@
 import numpy as np
 import vg
-from .._common.shape import columnize, check_shape_any
+from .._common.shape import check_shape_any, columnize
 
 
 def plane_normal_from_points(points):
