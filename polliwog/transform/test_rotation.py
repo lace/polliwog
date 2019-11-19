@@ -27,7 +27,7 @@ def test_raises_value_error_with_collinear_inputs():
 
 def test_normalizes_inputs():
     result = rotation_from_up_and_look(
-        up=np.zeros([0, 42, 0]), look=np.zeros([0, 0, 13])
+        up=np.array([0, 42, 0]), look=np.array([0, 0, 13])
     )
     np.testing.assert_array_almost_equal(result, np.eye(3))
 
@@ -71,27 +71,31 @@ def test_vary_look_alone():
 
 def test_vary_up_alone():
     np.testing.assert_array_almost_equal(
-        euler([0, 0, 45]), rotation_from_up_and_look(up=[1, 1, 0], look=vg.basis.z)
+        euler([0, 0, 45]),
+        rotation_from_up_and_look(up=np.array([1, 1, 0]), look=vg.basis.z),
     )
     np.testing.assert_array_almost_equal(
         euler([0, 0, 90]), rotation_from_up_and_look(up=vg.basis.x, look=vg.basis.z)
     )
     np.testing.assert_array_almost_equal(
-        euler([0, 0, 135]), rotation_from_up_and_look(up=[1, -1, 0], look=vg.basis.z)
+        euler([0, 0, 135]),
+        rotation_from_up_and_look(up=np.array([1, -1, 0]), look=vg.basis.z),
     )
     np.testing.assert_array_almost_equal(
         euler([0, 0, 180]),
         rotation_from_up_and_look(up=vg.basis.neg_y, look=vg.basis.z),
     )
     np.testing.assert_array_almost_equal(
-        euler([0, 0, 225]), rotation_from_up_and_look(up=[-1, -1, 0], look=vg.basis.z)
+        euler([0, 0, 225]),
+        rotation_from_up_and_look(up=np.array([-1, -1, 0]), look=vg.basis.z),
     )
     np.testing.assert_array_almost_equal(
         euler([0, 0, 270]),
         rotation_from_up_and_look(up=vg.basis.neg_x, look=vg.basis.z),
     )
     np.testing.assert_array_almost_equal(
-        euler([0, 0, 315]), rotation_from_up_and_look(up=[-1, 1, 0], look=vg.basis.z)
+        euler([0, 0, 315]),
+        rotation_from_up_and_look(up=np.array([-1, 1, 0]), look=vg.basis.z),
     )
 
 
