@@ -401,3 +401,49 @@ class Polyline(object):
 
         new_v = cut_open_polyline_by_plane(working_v, plane)
         return Polyline(v=new_v, is_closed=False)
+
+    def nearest(self, points, ret_segment_indices=False):
+        """
+        For the given query point or points, return the nearest point on the
+        polyline. With `ret_segment_indices=True`, also return the segment
+        indices of those points.
+        """
+        from .._common.shape import columnize
+        from ..segment.segment import closest_point_of_line_segment
+
+        points, _, transform_result = columnize(points, name="points")
+        num_points = len(points)
+
+        stacked_points = np.repeat(points, self.num_e, axis=0)
+        closest_points_of_segments = closest_point_of_line_segment(
+            points=stacked_points,
+            start_points=np.tile(self.segments[:, 0], (num_points, 1)),
+            segment_vectors=np.tile(self.segment_vectors, (num_points, 1)),
+        )
+        distance_to_closest_points_of_segments = vg.euclidean_distance(
+            stacked_points, closest_points_of_segments
+        )
+
+        closest_points_of_segments = closest_points_of_segments.reshape(
+            num_points, self.num_e, 3
+        )
+        distance_to_closest_points_of_segments = distance_to_closest_points_of_segments.reshape(
+            num_points, self.num_e
+        )
+
+        indices_of_nearest_segments = np.argmin(
+            distance_to_closest_points_of_segments, axis=1
+        )
+        closest_points_of_polyline = np.take_along_axis(
+            closest_points_of_segments,
+            indices_of_nearest_segments.reshape(num_points, 1, 1),
+            axis=1,
+        ).reshape(num_points, 3)
+
+        if ret_segment_indices:
+            return (
+                transform_result(closest_points_of_polyline),
+                transform_result(indices_of_nearest_segments),
+            )
+        else:
+            return transform_result(closest_points_of_polyline)
