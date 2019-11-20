@@ -787,3 +787,39 @@ def test_apex():
     np.testing.assert_array_equal(
         Polyline(v, is_closed=False).apex(vg.basis.y), np.array([1.0, 3.0, 0.0])
     )
+
+
+def test_nearest():
+    def as_3d(points_2d):
+        return np.hstack([points_2d, np.repeat(-2.5, len(points_2d)).reshape(-1, 1),])
+
+    chomper = Polyline(
+        v=as_3d(
+            np.array(
+                [
+                    [2, 4],
+                    [4, 3],
+                    [7, 2],
+                    [6, 6],
+                    [9, 5],
+                    [10, 9],
+                    [7, 7],
+                    [7, 8],
+                    [10, 9],
+                    [7, 10],
+                    [4, 10],
+                    [1, 8],
+                    [3, 8],
+                    [2, 9],
+                    [1, 8],
+                ]
+            )
+        ),
+        is_closed=True,
+    )
+
+    query_points = as_3d(np.array([[2.5, 7.5], [6, -7], [7, 3], [17, 8],]))
+
+    points, segment_indices = chomper.nearest(query_points, ret_segment_indices=True)
+
+    np.testing.assert_array_equal(segment_indices, np.array([11, 1, 2, 4]))

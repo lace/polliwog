@@ -401,3 +401,32 @@ class Polyline(object):
 
         new_v = cut_open_polyline_by_plane(working_v, plane)
         return Polyline(v=new_v, is_closed=False)
+
+    def nearest(self, points, ret_segment_indices=False):
+        """
+        For the given query point or points, return the nearest point on the
+        polyline. With `ret_segment_indices=True`, also return the segment
+        indices of those points.
+        """
+        from .._common.shape import columnize
+        from ..segment.segment import closest_point_of_line_segment
+
+        points, _, transform_result = columnize(points, name="points")
+        num_points = len(points)
+
+        segment_start_points = self.segments
+
+        stacked_points = np.repeat(points, self.num_e, axis=0)
+        closest_points = closest_point_of_line_segment(
+            points=stacked_points,
+            start_points=np.tile(self.segments[:, 0], (num_points, 1)),
+            segment_vectors=np.tile(self.segment_vectors, (num_points, 1)),
+        )
+        distance_to_closest_points = vg.euclidean_distance(
+            stacked_points, closest_points
+        )
+
+        closest_points = closest_points.reshape(num_points, self.num_e, 3)
+        distance_to_closest_points = distance_to_closest_points.reshape(
+            num_points, self.num_e, 3
+        )
