@@ -791,7 +791,7 @@ def test_apex():
 
 def test_polyline_nearest():
     def as_3d(points_2d):
-        return np.hstack([points_2d, np.repeat(-2.5, len(points_2d)).reshape(-1, 1),])
+        return np.hstack([points_2d, np.repeat(-2.5, len(points_2d)).reshape(-1, 1)])
 
     chomper = Polyline(
         v=as_3d(

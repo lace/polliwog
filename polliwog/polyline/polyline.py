@@ -414,8 +414,6 @@ class Polyline(object):
         points, _, transform_result = columnize(points, name="points")
         num_points = len(points)
 
-        segment_start_points = self.segments
-
         stacked_points = np.repeat(points, self.num_e, axis=0)
         closest_points_of_segments = closest_point_of_line_segment(
             points=stacked_points,
