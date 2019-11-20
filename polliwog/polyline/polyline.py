@@ -417,16 +417,35 @@ class Polyline(object):
         segment_start_points = self.segments
 
         stacked_points = np.repeat(points, self.num_e, axis=0)
-        closest_points = closest_point_of_line_segment(
+        closest_points_of_segments = closest_point_of_line_segment(
             points=stacked_points,
             start_points=np.tile(self.segments[:, 0], (num_points, 1)),
             segment_vectors=np.tile(self.segment_vectors, (num_points, 1)),
         )
-        distance_to_closest_points = vg.euclidean_distance(
-            stacked_points, closest_points
+        distance_to_closest_points_of_segments = vg.euclidean_distance(
+            stacked_points, closest_points_of_segments
         )
 
-        closest_points = closest_points.reshape(num_points, self.num_e, 3)
-        distance_to_closest_points = distance_to_closest_points.reshape(
+        closest_points_of_segments = closest_points_of_segments.reshape(
             num_points, self.num_e, 3
         )
+        distance_to_closest_points_of_segments = distance_to_closest_points_of_segments.reshape(
+            num_points, self.num_e
+        )
+
+        indices_of_nearest_segments = np.argmin(
+            distance_to_closest_points_of_segments, axis=1
+        )
+        closest_points_of_polyline = np.take_along_axis(
+            closest_points_of_segments,
+            indices_of_nearest_segments.reshape(num_points, 1, 1),
+            axis=1,
+        ).reshape(num_points, 3)
+
+        if ret_segment_indices:
+            return (
+                transform_result(closest_points_of_polyline),
+                transform_result(indices_of_nearest_segments),
+            )
+        else:
+            return transform_result(closest_points_of_polyline)

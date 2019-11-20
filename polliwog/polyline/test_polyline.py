@@ -789,7 +789,7 @@ def test_apex():
     )
 
 
-def test_nearest():
+def test_polyline_nearest():
     def as_3d(points_2d):
         return np.hstack([points_2d, np.repeat(-2.5, len(points_2d)).reshape(-1, 1),])
 
@@ -818,8 +818,26 @@ def test_nearest():
         is_closed=True,
     )
 
-    query_points = as_3d(np.array([[2.5, 7.5], [6, -7], [7, 3], [17, 8],]))
+    query_points = as_3d(np.array([[2.5, 7.5], [6, -7], [7, 3], [17, 8]]))
+    expected_segment_indices = np.array([11, 1, 2, 4])
+    # [115./17., 14./17.] seems right, could probably be verified using the
+    # formulas at https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+    expected_closest_points = as_3d(
+        np.array([[2.5, 8], [7, 2], [115.0 / 17.0, 50.0 / 17.0], [10, 9]])
+    )
 
     points, segment_indices = chomper.nearest(query_points, ret_segment_indices=True)
+    np.testing.assert_array_equal(segment_indices, expected_segment_indices)
+    np.testing.assert_array_almost_equal(points, expected_closest_points)
+    np.testing.assert_array_almost_equal(
+        chomper.nearest(query_points, ret_segment_indices=False),
+        expected_closest_points,
+    )
 
-    np.testing.assert_array_equal(segment_indices, np.array([11, 1, 2, 4]))
+    point, segment_index = chomper.nearest(query_points[0], ret_segment_indices=True)
+    assert segment_index == expected_segment_indices[0]
+    np.testing.assert_array_almost_equal(point, expected_closest_points[0])
+    np.testing.assert_array_almost_equal(
+        chomper.nearest(query_points[0], ret_segment_indices=False),
+        expected_closest_points[0],
+    )
