@@ -279,14 +279,10 @@ class Polyline(object):
         if not self.is_closed:
             raise ValueError("Can't roll an open polyline")
 
-        result = Polyline(
-            v=np.append(self.v[index:], self.v[0:index], axis=0), is_closed=True
-        )
+        result = Polyline(v=np.roll(self.v, -index, axis=0), is_closed=True)
 
         if ret_edge_mapping:
-            edge_mapping = np.append(
-                np.arange(index, self.num_v), np.arange(0, index), axis=0
-            )
+            edge_mapping = np.roll(np.arange(self.num_v), -index)
             return result, edge_mapping
         else:
             return result
