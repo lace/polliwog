@@ -248,13 +248,14 @@ class Polyline(object):
         """
         return Polyline(v=np.flipud(self.v), is_closed=self.is_closed)
 
-    def aligned_with(self, vector, reverse=False):
+    def aligned_with(self, vector):
         """
-        Flip the polyline, if necessary, so that it points approximately
-        along the given vector rather than approximately opposite it.
+        Flip the polyline if necessary, so it's aligned with the given
+        vector rather than against it. Works on open polylines and considers
+        only the two end vertices.
         """
         if self.is_closed:
-            raise ValueError("Can't reorient a closed polyline")
+            raise ValueError("Can't align a closed polyline")
 
         vg.shape.check(locals(), "vector", (3,))
 
@@ -263,7 +264,7 @@ class Polyline(object):
 
         extent = self.v[-1] - self.v[0]
         projected = vg.project(extent, onto=vector)
-        if vg.scale_factor(projected, vector) * (-1 if reverse else 1) < 0:
+        if vg.scale_factor(projected, vector) < 0:
             return self.flipped()
         else:
             return self
