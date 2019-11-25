@@ -109,9 +109,11 @@ def test_with_insertions():
             [1.0, 2.0, 0.0],
         ]
     )
+    expected_indices_of_original_vertices = np.array([0, 2, 3, 5])
+    expected_indices_of_inserted_points = np.array([1, 4])
 
     polyline = Polyline(v=original_points, is_closed=True,).with_insertions(
-        points=points_to_insert, before_indices=before_indices,
+        points=points_to_insert, indices=before_indices,
     )
     assert polyline.is_closed is True
     np.testing.assert_array_almost_equal(polyline.v, expected_v)
@@ -119,12 +121,32 @@ def test_with_insertions():
     polyline, indices_of_original_vertices, indices_of_inserted_points = Polyline(
         v=original_points, is_closed=False,
     ).with_insertions(
-        points=points_to_insert, before_indices=before_indices, ret_indices=True,
+        points=points_to_insert, indices=before_indices, ret_new_indices=True,
     )
     assert polyline.is_closed is False
     np.testing.assert_array_almost_equal(polyline.v, expected_v)
-    np.testing.assert_array_equal(indices_of_original_vertices, np.array([0, 2, 3, 5]))
-    np.testing.assert_array_equal(indices_of_inserted_points, np.array([1, 4]))
+    np.testing.assert_array_equal(
+        indices_of_original_vertices, expected_indices_of_original_vertices
+    )
+    np.testing.assert_array_equal(
+        indices_of_inserted_points, expected_indices_of_inserted_points
+    )
+
+    polyline, indices_of_original_vertices, indices_of_inserted_points = Polyline(
+        v=original_points, is_closed=False,
+    ).with_insertions(
+        points=np.flipud(points_to_insert),
+        indices=np.flip(before_indices),
+        ret_new_indices=True,
+    )
+    assert polyline.is_closed is False
+    np.testing.assert_array_almost_equal(polyline.v, expected_v)
+    np.testing.assert_array_equal(
+        indices_of_original_vertices, expected_indices_of_original_vertices
+    )
+    np.testing.assert_array_equal(
+        indices_of_inserted_points, np.flip(expected_indices_of_inserted_points)
+    )
 
 
 def test_update_is_closed():
@@ -932,3 +954,36 @@ def test_polyline_nearest():
         chomper.nearest(query_points[0], ret_segment_indices=False),
         expected_closest_points[0],
     )
+
+
+def test_slice_at_points():
+    points = np.array(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
+    )
+    start_point = np.array([0.5, 0.0, 0.0])
+    end_point = np.array([1.0, 1.5, 0.0])
+    sliced = Polyline(v=points, is_closed=False).sliced_at_points(
+        start_point, end_point
+    )
+    assert sliced.is_closed is False
+    np.testing.assert_array_equal(
+        sliced.v, np.array([start_point, [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], end_point]),
+    )
+
+    sliced = Polyline(v=points, is_closed=True).sliced_at_points(end_point, start_point)
+    assert sliced.is_closed is False
+    np.testing.assert_array_equal(
+        sliced.v, np.array([end_point, [1.0, 2.0, 0.0], [0.0, 0.0, 0.0], start_point]),
+    )
+
+    sliced = Polyline(v=points, is_closed=True).sliced_at_points(
+        end_point, np.array([0.0, 0.0, 0.0])
+    )
+    assert sliced.is_closed is False
+    np.testing.assert_array_equal(
+        sliced.v, np.array([end_point, [1.0, 2.0, 0.0], [0.0, 0.0, 0.0]])
+    )
+
+    sliced = Polyline(v=points).sliced_at_points(np.array([1.0, 1.0, 0.0]), end_point)
+    assert sliced.is_closed is False
+    np.testing.assert_array_equal(sliced.v, np.array([[1.0, 1.0, 0.0], end_point]))
