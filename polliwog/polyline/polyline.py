@@ -407,7 +407,7 @@ class Polyline(object):
         Take an slice of the given polyline starting at the `start` vertex
         index and ending just befeor reaching the `stop` vertex index. Always
         returns an open polyline.
-        
+
         When called on a closed polyline, the indies can wrap around the end.
         """
         if stop <= start:
