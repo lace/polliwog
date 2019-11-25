@@ -497,7 +497,7 @@ def test_with_segments_bisected():
     np.testing.assert_array_almost_equal(with_segments_bisected.v, expected.v)
     np.testing.assert_array_equal(with_segments_bisected.e, expected.e)
     np.testing.assert_array_equal(
-        indices_of_original_vertices, indices_of_original_vertices
+        indices_of_original_vertices, expected_indices_of_original_vertices
     )
     np.testing.assert_array_equal(
         with_segments_bisected.v[indices_of_original_vertices], original.v
