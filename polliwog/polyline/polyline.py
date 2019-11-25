@@ -368,9 +368,9 @@ class Polyline(object):
 
     def bisect_edges(self, edges):
         """
-        Cutting the given edges in half.
+        Cut the given segments in half.
 
-        Return an arrray that gives the new indices of the original vertices.
+        Return an array that gives the new indices of the original vertices.
         """
         new_vs = self.v
         indices_of_original_vertices = np.arange(self.num_v)
@@ -453,8 +453,7 @@ class Polyline(object):
         else:
             working_v = self.v
 
-        new_v = cut_open_polyline_by_plane(working_v, plane)
-        return Polyline(v=new_v, is_closed=False)
+        return Polyline(v=cut_open_polyline_by_plane(working_v, plane), is_closed=False)
 
     def sliced_at_indices(self, start, stop):
         """
