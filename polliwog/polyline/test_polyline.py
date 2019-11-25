@@ -798,6 +798,10 @@ def test_sliced_at_indices():
         np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]]),
     )
     np.testing.assert_array_almost_equal(
+        Polyline(v=example_vs, is_closed=False).sliced_at_indices(0, 2).v,
+        np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]]),
+    )
+    np.testing.assert_array_almost_equal(
         Polyline(v=example_vs, is_closed=True).sliced_at_indices(0, 0).v,
         np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]),
     )
@@ -821,6 +825,11 @@ def test_sliced_at_indices():
         Polyline(v=example_vs, is_closed=True).sliced_at_indices(3, 3).v,
         np.array([[1.0, 2.0, 0.0], [0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]),
     )
+    with pytest.raises(ValueError, match=r"For an open polyline, start index of slice should be less than stop index"):
+        np.testing.assert_array_almost_equal(
+            Polyline(v=example_vs, is_closed=False).sliced_at_indices(3, 3).v,
+            np.array([[1.0, 2.0, 0.0], [0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]),
+        )
 
 
 def test_polyline_nearest():
