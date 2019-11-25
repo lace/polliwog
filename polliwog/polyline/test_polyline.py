@@ -612,7 +612,7 @@ def test_intersect_plane_with_vertex_on_plane():
     np.testing.assert_array_equal(actual, expected)
 
 
-def test_cut_by_plane_closed():
+def test_sliced_by_plane_closed():
     original = Polyline(
         np.array(
             [
@@ -631,7 +631,7 @@ def test_cut_by_plane_closed():
         np.array([[1.0, 7.5, 0.0], [1.0, 8.0, 0.0], [0.0, 8.0, 0.0], [0.0, 7.5, 0.0]]),
         is_closed=False,
     )
-    actual = original.cut_by_plane(
+    actual = original.sliced_by_plane(
         Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
     )
 
@@ -651,7 +651,7 @@ def test_cut_by_plane_closed():
         ),
         is_closed=False,
     )
-    actual = original.cut_by_plane(
+    actual = original.sliced_by_plane(
         Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.neg_y)
     )
 
@@ -665,19 +665,19 @@ def test_cut_by_plane_closed():
     with pytest.raises(
         ValueError, match="Polyline intersects the plane too many times"
     ):
-        zigzag.cut_by_plane(
+        zigzag.sliced_by_plane(
             Plane(point_on_plane=np.array([2.5, 0.0, 0.0]), unit_normal=vg.basis.x)
         )
 
     with pytest.raises(
         ValueError, match="Polyline has no vertices in front of the plane"
     ):
-        original.cut_by_plane(
+        original.sliced_by_plane(
             Plane(point_on_plane=np.array([10.0, 0.0, 0.0]), unit_normal=vg.basis.x)
         )
 
 
-def test_cut_by_plane_closed_on_vertex():
+def test_sliced_by_plane_closed_on_vertex():
     original = Polyline(
         np.array(
             [
@@ -703,24 +703,24 @@ def test_cut_by_plane_closed_on_vertex():
         ),
         is_closed=False,
     )
-    actual = original.cut_by_plane(
+    actual = original.sliced_by_plane(
         Plane(point_on_plane=np.array([0.0, 1.0, 0.0]), unit_normal=vg.basis.y)
     )
     np.testing.assert_array_almost_equal(actual.v, expected.v)
     assert actual.is_closed is False
 
 
-def test_cut_by_plane_closed_one_vertex():
+def test_sliced_by_plane_closed_one_vertex():
     original = Polyline(np.array([[0.0, 0.0, 0.0]]), is_closed=True)
     with pytest.raises(
         ValueError, match="Polyline has no vertices in front of the plane"
     ):
-        original.cut_by_plane(
+        original.sliced_by_plane(
             Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
         )
 
 
-def test_cut_by_plane_open():
+def test_sliced_by_plane_open():
     original = Polyline(
         np.array(
             [
@@ -735,7 +735,7 @@ def test_cut_by_plane_open():
     )
 
     expected_vs = np.array([[1.0, 7.5, 0.0], [1.0, 8.0, 0.0]])
-    actual = original.cut_by_plane(
+    actual = original.sliced_by_plane(
         Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
     )
 
@@ -751,7 +751,7 @@ def test_cut_by_plane_open():
             [1.0, 7.5, 0.0],
         ]
     )
-    actual = original.cut_by_plane(
+    actual = original.sliced_by_plane(
         Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.neg_y)
     )
 
@@ -759,11 +759,11 @@ def test_cut_by_plane_open():
     assert actual.is_closed is False
 
     with pytest.raises(ValueError):
-        original.cut_by_plane(
+        original.sliced_by_plane(
             Plane(point_on_plane=np.array([0.0, 15.0, 0.0]), unit_normal=vg.basis.neg_y)
         )
 
-    actual = original.cut_by_plane(
+    actual = original.sliced_by_plane(
         Plane(
             point_on_plane=np.array([0.5, 0.0, 0.0]),
             unit_normal=vg.normalize(np.array([1.0, -1.0, 0.0])),
@@ -786,6 +786,40 @@ def test_apex():
     )
     np.testing.assert_array_equal(
         Polyline(v, is_closed=False).apex(vg.basis.y), np.array([1.0, 3.0, 0.0])
+    )
+
+
+def test_sliced_at_indices():
+    example_vs = np.array(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
+    )
+    np.testing.assert_array_almost_equal(
+        Polyline(v=example_vs, is_closed=True).sliced_at_indices(0, 2).v,
+        np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]]),
+    )
+    np.testing.assert_array_almost_equal(
+        Polyline(v=example_vs, is_closed=True).sliced_at_indices(0, 0).v,
+        np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]),
+    )
+    np.testing.assert_array_almost_equal(
+        Polyline(v=example_vs, is_closed=True).sliced_at_indices(3, 4).v,
+        np.array([[1.0, 2.0, 0.0]]),
+    )
+    np.testing.assert_array_almost_equal(
+        Polyline(v=example_vs, is_closed=True).sliced_at_indices(3, 0).v,
+        np.array([[1.0, 2.0, 0.0]]),
+    )
+    np.testing.assert_array_almost_equal(
+        Polyline(v=example_vs, is_closed=True).sliced_at_indices(3, 1).v,
+        np.array([[1.0, 2.0, 0.0], [0.0, 0.0, 0.0]]),
+    )
+    np.testing.assert_array_almost_equal(
+        Polyline(v=example_vs, is_closed=True).sliced_at_indices(3, 2).v,
+        np.array([[1.0, 2.0, 0.0], [0.0, 0.0, 0.0], [1.0, 0.0, 0.0]]),
+    )
+    np.testing.assert_array_almost_equal(
+        Polyline(v=example_vs, is_closed=True).sliced_at_indices(3, 3).v,
+        np.array([[1.0, 2.0, 0.0], [0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0]]),
     )
 
 
