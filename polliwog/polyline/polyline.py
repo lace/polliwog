@@ -242,31 +242,29 @@ class Polyline(object):
 
         return new_polyline, indices_of_original_vertices, indices_of_inserted_points
 
-    def flip(self):
+    def flipped(self):
         """
-        Flip the polyline from end to end.
+        Flip the polyline from end to end. Return a new polyline.
         """
-        self.v = np.flipud(self.v)
+        return Polyline(v=np.flipud(self.v), is_closed=self.is_closed)
 
-        return self
-
-    def oriented_along(self, along, reverse=False):
+    def aligned_with(self, vector, reverse=False):
         """
-        Flip the polyline, if necessary, so that it points (approximately)
-        along the second vector rather than (approximately) opposite it.
+        Flip the polyline, if necessary, so that it points approximately
+        along the given vector rather than approximately opposite it.
         """
         if self.is_closed:
             raise ValueError("Can't reorient a closed polyline")
 
-        vg.shape.check(locals(), "along", (3,))
+        vg.shape.check(locals(), "vector", (3,))
 
         if self.num_v < 2:
             return self
 
         extent = self.v[-1] - self.v[0]
-        projected = vg.project(extent, onto=along)
-        if vg.scale_factor(projected, along) * (-1 if reverse else 1) < 0:
-            return self.copy().flip()
+        projected = vg.project(extent, onto=vector)
+        if vg.scale_factor(projected, vector) * (-1 if reverse else 1) < 0:
+            return self.flipped()
         else:
             return self
 
