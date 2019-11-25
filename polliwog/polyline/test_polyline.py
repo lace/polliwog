@@ -475,7 +475,7 @@ def test_bisect_edges():
     np.testing.assert_array_equal(result.v[indices], original.v)
 
 
-def test_flip():
+def test_flipped():
     original = Polyline(
         np.array(
             [
@@ -490,27 +490,24 @@ def test_flip():
         is_closed=True,
     )
 
-    expected = Polyline(
-        np.array(
-            [
-                [0.0, 8.0, 0.0],
-                [1.0, 8.0, 0.0],
-                [1.0, 7.0, 0.0],
-                [1.0, 1.0, 0.0],
-                [1.0, 0.0, 0.0],
-                [0.0, 0.0, 0.0],
-            ]
-        ),
-        is_closed=True,
+    expected_v = np.array(
+        [
+            [0.0, 8.0, 0.0],
+            [1.0, 8.0, 0.0],
+            [1.0, 7.0, 0.0],
+            [1.0, 1.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+        ]
     )
 
-    result = original.flip()
+    flipped = original.flipped()
 
-    assert result is original
-    np.testing.assert_array_almost_equal(original.v, expected.v)
+    assert flipped is not original
+    np.testing.assert_array_almost_equal(flipped.v, expected_v)
 
 
-def test_oriented_along():
+def test_aligned_with():
     original = Polyline(
         np.array(
             [
@@ -525,26 +522,26 @@ def test_oriented_along():
         is_closed=False,
     )
 
-    assert original.oriented_along(vg.basis.y) is original
+    assert original.aligned_with(vg.basis.y) is original
 
     np.testing.assert_array_almost_equal(
-        original.oriented_along(vg.basis.neg_y).v, np.flipud(original.v)
+        original.aligned_with(vg.basis.neg_y).v, np.flipud(original.v)
     )
 
-    assert original.oriented_along(vg.basis.z) is original
-    assert original.oriented_along(vg.basis.neg_z) is original
+    assert original.aligned_with(vg.basis.z) is original
+    assert original.aligned_with(vg.basis.neg_z) is original
 
 
-def test_oriented_along_closed():
-    with pytest.raises(ValueError, match=r"Can't reorient a closed polyline"):
+def test_aligned_with_closed():
+    with pytest.raises(ValueError, match=r"Can't align a closed polyline"):
         Polyline(
             np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]]), is_closed=True
-        ).oriented_along(vg.basis.y)
+        ).aligned_with(vg.basis.y)
 
 
-def test_oriented_along_degenerate():
+def test_aligned_with_degenerate():
     original = Polyline(np.array([[1.0, 2.0, 3.0]]), is_closed=False)
-    assert original.oriented_along(vg.basis.y) is original
+    assert original.aligned_with(vg.basis.y) is original
 
 
 def test_reindexed():
