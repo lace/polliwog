@@ -17,9 +17,11 @@ def test_join():
         ]
     )
     joined = Polyline.join(
-        Polyline(vs, is_closed=False), Polyline(more_vs, is_closed=False)
+        Polyline(vs, is_closed=False),
+        Polyline(more_vs, is_closed=False),
+        is_closed=True,
     )
-    assert joined.is_closed is False
+    assert joined.is_closed is True
     np.testing.assert_array_equal(joined.v, np.vstack([vs, more_vs]))
 
     with pytest.raises(ValueError, match="Need at least one polyline to join"):
