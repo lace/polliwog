@@ -365,24 +365,18 @@ class Polyline(object):
         else:
             return self
 
-    def bisect_edges(self, edges):
+    def with_segments_bisected(self, segment_indices, ret_new_indices=False):
         """
-        Cut the given segments in half.
+        Return a new polyline with the given segments cut in half.
 
-        Return an array that gives the new indices of the original vertices.
+        With `ret_new_indices=True`, also returns the new indices of the
+        original vertices and the new indices of the inserted points.
         """
-        new_vs = self.v
-        indices_of_original_vertices = np.arange(self.num_v)
-        for offset, edge_to_subdivide in enumerate(edges):
-            new_v = np.mean(self.segments[edge_to_subdivide], axis=0).reshape(-1, 3)
-            old_v2_index = self.e[edge_to_subdivide][0] + 1
-            insert_at = offset + old_v2_index
-            new_vs = np.insert(new_vs, insert_at, new_v, axis=0)
-            indices_of_original_vertices[old_v2_index:] = (
-                indices_of_original_vertices[old_v2_index:] + 1
-            )
-        self.v = new_vs
-        return indices_of_original_vertices
+        return self.with_insertions(
+            points=np.mean(self.segments[segment_indices], axis=0),
+            indices=self.e[segment_indices][:, 1],
+            ret_new_indices=ret_new_indices,
+        )
 
     def apex(self, axis):
         """

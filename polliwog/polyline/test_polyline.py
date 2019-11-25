@@ -459,7 +459,7 @@ def test_partition_by_length_closed():
     np.testing.assert_array_equal(result.v[indices], original.v)
 
 
-def test_bisect_edges():
+def test_with_segments_bisected():
     original = Polyline(
         np.array(
             [
@@ -488,13 +488,20 @@ def test_bisect_edges():
 
     expected_indices_of_original_vertices = np.array([0, 1, 3, 5, 6])
 
-    result = original.copy()
-    indices = result.bisect_edges([1, 2])
+    (
+        with_segments_bisected,
+        indices_of_original_vertices,
+        indices_of_inserted_points,
+    ) = original.with_segments_bisected([1, 2], ret_new_indices=True)
 
-    np.testing.assert_array_almost_equal(result.v, expected.v)
-    np.testing.assert_array_equal(result.e, expected.e)
-    np.testing.assert_array_equal(indices, expected_indices_of_original_vertices)
-    np.testing.assert_array_equal(result.v[indices], original.v)
+    np.testing.assert_array_almost_equal(with_segments_bisected.v, expected.v)
+    np.testing.assert_array_equal(with_segments_bisected.e, expected.e)
+    np.testing.assert_array_equal(
+        indices_of_original_vertices, indices_of_original_vertices
+    )
+    np.testing.assert_array_equal(
+        with_segments_bisected.v[indices_of_original_vertices], original.v
+    )
 
 
 def test_flipped():
