@@ -364,14 +364,14 @@ class Polyline(object):
         else:
             return intersection_points
 
-    def cut_by_plane(self, plane):
+    def sliced_by_plane(self, plane):
         """
         Return a new Polyline which keeps only the part that is in front of the given
         plane.
 
         For open polylines, the plane must intersect the polyline exactly once.
 
-        For closed polylines, the plane must intersect the polylint exactly
+        For closed polylines, the plane must intersect the polyline exactly
         twice, leaving a single contiguous segment in front.
         """
         from .cut_by_plane import cut_open_polyline_by_plane
@@ -401,6 +401,26 @@ class Polyline(object):
 
         new_v = cut_open_polyline_by_plane(working_v, plane)
         return Polyline(v=new_v, is_closed=False)
+
+    def sliced_at_indices(self, start, stop):
+        """
+        Take an slice of the given polyline starting at the `start` vertex
+        index and ending just befeor reaching the `stop` vertex index. Always
+        returns an open polyline.
+
+        When called on a closed polyline, the indies can wrap around the end.
+        """
+        if stop <= start:
+            if self.is_closed:
+                num_to_keep = len(self.v) - start + stop
+                working_v = np.roll(self.v, -start, axis=0)[0:num_to_keep]
+            else:
+                raise ValueError(
+                    "For an open polyline, start index of slice should be less than stop index"
+                )
+        else:
+            working_v = self.v[start:stop]
+        return Polyline(v=working_v, is_closed=False)
 
     def nearest(self, points, ret_segment_indices=False):
         """
