@@ -187,6 +187,60 @@ class Polyline(object):
 
         return Box.from_points(self.v)
 
+    def index_of_vertex(self, point, atol=1e-08):
+        """
+        Return the index of the vertex with the given point. If there are
+        coincident vertices at that point, return the first one.
+        """
+        vg.shape.check(locals(), "point", (3,))
+
+        (matching_indices,) = (
+            np.isclose(self.v - point, 0, atol=atol).all(axis=1).nonzero()
+        )
+
+        try:
+            return matching_indices[0]
+        except IndexError:
+            raise ValueError("No matching vertex")
+
+    def with_insertions(self, points, before_indices, ret_indices=False):
+        """
+        Return a new polyline with the given points inserted before the given
+        indices.
+
+        With `ret_indices=True`, also returns the new indices of the inserted
+        points and the new indices of the original vertices.
+        """
+        k = vg.shape.check(locals(), "points", (-1, 3))
+        vg.shape.check(locals(), "before_indices", (k,))
+
+        new_polyline = Polyline(
+            v=np.insert(self.v, before_indices, points, axis=0),
+            is_closed=self.is_closed,
+        )
+
+        if not ret_indices:
+            return new_polyline
+
+        # Compute indices of original vertices.
+        old_num_v = self.num_v
+        stepwise_index_offsets = np.zeros(old_num_v, dtype=np.int64)
+        stepwise_index_offsets[before_indices[before_indices < old_num_v]] = 1
+        # This is pretty ugly. Could it be made clearer with `np.cumsum`?
+        cumulative_index_offsets = np.sum(
+            np.tril(np.broadcast_to(stepwise_index_offsets, (old_num_v, old_num_v))),
+            axis=1,
+        )
+        indices_of_original_vertices = np.arange(old_num_v) + cumulative_index_offsets
+        # This assertion tells us it's correct.
+        np.testing.assert_array_equal(
+            new_polyline.v[indices_of_original_vertices], self.v
+        )
+
+        indices_of_inserted_points = before_indices + np.arange(len(before_indices))
+
+        return new_polyline, indices_of_original_vertices, indices_of_inserted_points
+
     def flip(self):
         """
         Flip the polyline from end to end.
@@ -467,3 +521,43 @@ class Polyline(object):
             )
         else:
             return transform_result(closest_points_of_polyline)
+
+    def sliced_at_points(self, start_point, end_point, atol=1e-8):
+        """
+        Take a slice of the given polyline at the given start and end points.
+        These are expected to be on a vertex or on a segment. If on a segment
+        (or near to but not directly on a segment) a new point is inserted
+        at exactly the given point.
+        """
+        vg.shape.check(locals(), "start_point", (3,))
+        vg.shape.check(locals(), "end_point", (3,))
+
+        # Check if the start and end points intersect a vertex. If they do,
+        # great; if not, insert them.
+        try:
+            start_v_index = self.index_of_vertex(start_point)
+        except ValueError:
+            start_v_index = None
+        try:
+            end_v_index = self.index_of_vertex(end_point)
+        except ValueError:
+            end_v_index = None
+
+        if start_v_index is None or end_v_index is None:
+            nearest_points, segment_indices = self.nearest(
+                np.array([start_point, end_point])
+            )
+            at_indices = []
+            points_to_insert = []
+            if start_v_index is None:
+                start_v_index = segment_indices[0] + 1
+                at_indices.append(start_v_index)
+                points_to_insert.append(nearest_points[0])
+            if end_v_index is None:
+                end_v_index = segment_indices[1] + 1 + len(at_indices)
+                at_indices.append(end_v_index)
+                points_to_insert.append(nearest_points[1])
+
+        # Then slice at those points.
+
+        # if

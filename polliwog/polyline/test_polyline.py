@@ -81,6 +81,50 @@ def test_bounding_box_degnerate():
     assert Polyline(np.zeros((0, 3))).bounding_box is None
 
 
+def test_index_of_vertex():
+    polyline = Polyline(
+        np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]])
+    )
+    assert polyline.index_of_vertex(np.array([0.0, 0.0, 0.0])) == 0
+    assert polyline.index_of_vertex(np.array([1.0, 2.0, 0.0])) == 3
+    with pytest.raises(ValueError, match="No matching vertex"):
+        polyline.index_of_vertex(np.array([1.0, 2.0, 3.0]))
+
+
+def test_with_insertions():
+    original_points = np.array(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
+    )
+    points_to_insert = np.array([[0.5, 0.0, 0.0], [1.0, 1.5, 0.0]])
+    before_indices = np.array([1, 3])
+    expected_v = np.array(
+        [
+            [0.0, 0.0, 0.0],
+            [0.5, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [1.0, 1.0, 0.0],
+            [1.0, 1.5, 0.0],
+            [1.0, 2.0, 0.0],
+        ]
+    )
+
+    polyline = Polyline(v=original_points, is_closed=True,).with_insertions(
+        points=points_to_insert, before_indices=before_indices,
+    )
+    assert polyline.is_closed is True
+    np.testing.assert_array_almost_equal(polyline.v, expected_v)
+
+    polyline, indices_of_original_vertices, indices_of_inserted_points = Polyline(
+        v=original_points, is_closed=False,
+    ).with_insertions(
+        points=points_to_insert, before_indices=before_indices, ret_indices=True,
+    )
+    assert polyline.is_closed is False
+    np.testing.assert_array_almost_equal(polyline.v, expected_v)
+    np.testing.assert_array_equal(indices_of_original_vertices, np.array([0, 2, 3, 5]))
+    np.testing.assert_array_equal(indices_of_inserted_points, np.array([1, 4]))
+
+
 def test_update_is_closed():
     example_vs = np.array(
         [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
