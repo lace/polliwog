@@ -1,5 +1,56 @@
 # Changelog
 
+## 0.12.0 (Nov. 25, 2019)
+
+### BREAKING CHANGES
+
+- Require Python 3.
+- Polyline:
+    - Rename `flip()` to `flipped()`.
+    - Rename `oriented_along()` to `aligned_with()` and drop `reverse`
+      parameter.
+    - Rename `bisect_edges()` to `with_segments_bisected()`.
+    - Rename `cut_by_plane()` to `sliced_by_plane()`.
+    - Rename `reindexed()` to `rolled()`.
+- CompositeTransform:
+    - Require `np.array` inputs, not lists.
+    - Rename some arguments.
+    - Remove special support for `lace.mesh.Mesh`. This functionality can be
+      restored as a convenience function on Mesh itself.
+- `rotation_from_up_and_look()`: Require `np.array` input, not list.
+- Rename `tri.arity` to `tri.quad_faces`.
+- Remove `transform.translation()`.
+- Remove `transform.composite.convert_44_to_33()`. Make `convert_33_to_44()`
+  private for now.
+
+## New features
+
+- Polyline:
+    - Add `index_of_vertex()`.
+    - Add `with_insertions()`.
+    - Add `sliced_at_points()`.
+    - Add `sliced_at_indices()`.
+    - `join()`: Add `is_closed` parameter.
+- Add `transform.apply_affine_transform()`.
+
+## Other maintenance
+
+- Auto-generate documentation and start to improve them. They aren't 100% but
+  they're a good part of the way there:
+  https://polliwog.readthedocs.io/en/latest/
+- Consolidate duplicate implementations
+  `plane.functions.plane_normal_from_points` and
+  `tri.functions.surface_normals`.
+- Replace pyflakes with flake8.
+- Refactor some array shape validation code.
+- Remove `setter_property` decorator.
+- Remove `rotate_to_xz_plane()`.
+- Stop using `vg.matrix` which is being deprecated.
+- Replace pint with [ounce][].
+
+[ounce]: https://github.com/lace/ounce
+
+
 ## 0.11.0 (Oct. 27, 2019)
 
 ### BREAKING CHANGES
