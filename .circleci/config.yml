@@ -13,7 +13,7 @@ jobs:
             mkdir -p venv
             virtualenv venv
             . venv/bin/activate
-            set -o pipefail; pip install --upgrade -r requirements_dev_py3.txt | cat
+            set -o pipefail; pip install --upgrade -r requirements_dev.txt | cat
 
       - run:
           name: Show versions
@@ -62,7 +62,7 @@ jobs:
             mkdir -p venv
             virtualenv venv
             . venv/bin/activate
-            set -o pipefail; pip install --upgrade -r requirements_dev_py3.txt | cat
+            set -o pipefail; pip install --upgrade -r requirements_dev.txt | cat
 
       - run:
           name: Show versions
