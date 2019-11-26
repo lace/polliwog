@@ -18,6 +18,8 @@
     - Remove special support for `lace.mesh.Mesh`. This functionality can be
       restored as a convenience function on Mesh itself.
 - `rotation_from_up_and_look()`: Require `np.array` input, not list.
+- Consolidate `tri.barycentric`, `tri.contains`, and `tri.surface_normals`
+  into `tri.functions`.
 - Rename `tri.arity` to `tri.quad_faces`.
 - Remove `transform.translation()`.
 - Remove `transform.composite.convert_44_to_33()`. Make `convert_33_to_44()`
