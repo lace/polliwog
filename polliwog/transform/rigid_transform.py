@@ -6,8 +6,13 @@ def find_rigid_transform(a, b, compute_scale=False, fail_in_degenerate_cases=Tru
     Args:
         a: a 3xN array of vertex locations
         b: a 3xN array of vertex locations
+        a and b are in correspondence -- we find a transformation such that the first
+        point in a will be moved to the location of the first point in b, etc.
 
     Returns: (R,T) such that R.dot(a)+T ~= b
+        R is a 3x3 rotation matrix
+        T is a 3x1 translation vector
+
     Based on Arun et al, "Least-squares fitting of two 3-D point sets," 1987.
     See also Eggert et al, "Estimating 3-D rigid body transformations: a
     comparison of four major algorithms," 1997.
