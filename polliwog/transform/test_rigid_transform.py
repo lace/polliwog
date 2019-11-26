@@ -1,5 +1,5 @@
 import numpy as np
-from .rigid_transform import find_rigid_transform, find_rigid_rotation
+from .rigid_transform import find_rigid_rotation, find_rigid_transform
 from .rotation import euler
 from ..box.box import Box
 
