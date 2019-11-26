@@ -25,11 +25,9 @@ def columnize(arr, shape=(-1, 3), name=None):
         return arr.reshape(*shape), False, lambda x: x[0]
 
 
-# TODO: After dropping Python 2, make `name=None` a regular kwarg.
-def check_shape_any(arr, *shapes, **kwargs):
+def check_shape_any(arr, *shapes, name=None):
     if len(shapes) == 0:
         raise ValueError("At least one shape is required")
-    name = kwargs.get("name")
     for shape in shapes:
         try:
             return vg.shape.check_value(arr, shape, name=name)

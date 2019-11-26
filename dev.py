@@ -20,8 +20,7 @@ def cli():
 
 @cli.command()
 def init():
-    execute("pip2 install --upgrade -r requirements_dev_py2.txt")
-    execute("pip3 install --upgrade -r requirements_dev_py3.txt")
+    execute("pip3 install --upgrade -r requirements_dev.txt")
 
 
 @cli.command()
@@ -38,12 +37,6 @@ def coverage():
 def coverage_report():
     execute("coverage html")
     execute("open htmlcov/index.html")
-
-
-@cli.command()
-def test_both():
-    execute("python2 -m pytest")
-    execute("python3 -m pytest")
 
 
 @cli.command()
