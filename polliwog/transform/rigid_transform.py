@@ -57,3 +57,40 @@ def find_rigid_transform(a, b, visualize=False):
         )
 
     return R, T
+
+
+def find_rigid_rotation(a, b, allow_scaling=False):
+    """
+    Args:
+        a: a 3xN array of vertex locations
+        b: a 3xN array of vertex locations
+
+    Returns: R such that R.dot(a) ~= b
+
+    See link: http://en.wikipedia.org/wiki/Orthogonal_Procrustes_problem
+    """
+    import numpy as np
+    import scipy.linalg
+
+    assert a.shape[0] == 3
+    assert b.shape[0] == 3
+
+    if a.size == 3:
+        cx = np.cross(a.ravel(), b.ravel())
+        a = np.hstack([a.reshape(-1, 1), cx.reshape(-1, 1)])
+        b = np.hstack([b.reshape(-1, 1), cx.reshape(-1, 1)])
+
+    c = a.dot(b.T)
+    u, _, v = np.linalg.svd(c, full_matrices=False)
+    v = v.T
+    R = v.dot(u.T)
+
+    if scipy.linalg.det(R) < 0:
+        v[:, 2] = -v[:, 2]
+        R = v.dot(u.T)
+
+    if allow_scaling:
+        scalefactor = scipy.linalg.norm(b) / scipy.linalg.norm(a)
+        R = R * scalefactor
+
+    return R
