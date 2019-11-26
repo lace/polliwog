@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 import vg
-from .shape import columnize, check_shape_any
+from .shape import check_shape_any, columnize
 
 
 def test_columnize_2d():

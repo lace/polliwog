@@ -1,8 +1,9 @@
 import numpy as np
 import vg
+from .affine_transform import apply_affine_transform
 
 
-def convert_33_to_44(matrix):
+def _convert_33_to_44(matrix):
     """
     Transform from:
         array([[1., 2., 3.],
@@ -21,63 +22,24 @@ def convert_33_to_44(matrix):
     return result
 
 
-def convert_44_to_33(matrix):
-    """
-    Transform from:
-        array([[1., 2., 3., 0.],
-               [2., 3., 4., 0.],
-               [5., 6., 7., 0.],
-               [0., 0., 0., 1.]])
-    to:
-        array([[1., 2., 3.],
-               [2., 3., 4.],
-               [5., 6., 7.]])
-
-    """
-    vg.shape.check(locals(), "matrix", (4, 4))
-    return matrix[:3, :3]
-
-
-_unit_registry = None
-# Avoid creating more than one of these.
-def unit_registry():
-    from pint import UnitRegistry
-
-    global _unit_registry
-    if _unit_registry is None:
-        _unit_registry = UnitRegistry()
-    return _unit_registry
-
-
 class CompositeTransform(object):
     """
     Composite transform using homogeneous coordinates.
 
+    Example:
+        >>> transform = CompositeTransform()
+        >>> transform.scale(10)
+        >>> transform.reorient(up=[0, 1, 0], look=[-1, 0, 0])
+        >>> transform.translate([0, -2.5, 0])
+        >>> transformed_scan = transform(scan_v)
+        >>> # ... register the scan here ...
+        >>> untransformed_alignment = transform(alignment_v, reverse=True)
 
-    Example usage
-    -------------
+    See also:
 
-        transform = CompositeTransform()
-        transform.scale(10)
-        transform.reorient(up=[0, 1, 0], look=[-1, 0, 0])
-        transform.translate([0, -2.5, 0])
-        transformed_scan = Mesh(v=transform(scan.v), f=scan.f)
-
-        ...
-
-        untransformed_alignment = Mesh(
-            v=transform(alignment.v, reverse=True),
-            f=alignment.f
-        )
-
-    Backround
-    ---------
-
-    - Computer Graphics: Principles and Practice, Hughes, van Dam, McGuire,
-      Sklar, Foley
-
-    - http://gamedev.stackexchange.com/questions/72044/why-do-we-use-4x4-matrices-to-transform-things-in-3d
-
+        - *Computer Graphics: Principles and Practice*, Hughes, van Dam,
+          McGuire, Sklar, Foley
+        - http://gamedev.stackexchange.com/questions/72044/why-do-we-use-4x4-matrices-to-transform-things-in-3d
     """
 
     def __init__(self):
@@ -86,19 +48,23 @@ class CompositeTransform(object):
 
     def __call__(self, points, from_range=None, reverse=False):
         """
-        points: Points to transform, as a 3xn array.
-        range: The indices of the subset of the transformations to apply.
-          e.g. (0, 2), (2, 4). The default is to apply them all.
-        reverse: When `True` applies the selected transformations in reverse.
-          This has no effect on how range is interpreted, only whether the
-          selected transformations apply in the forward or reverse mode.
+        Args:
+            points (np.arraylike): Points to transform, as a 3xn array.
+            from_range (tuple): The indices of the subset of the
+                transformations to apply. e.g. `(0, 2)`, `(2, 4)`. When
+                `None`, which is the default, apply them all.
+            reverse (bool): When `True` applies the selected transformations
+                in reverse. This has no effect on how range is interpreted,
+                only whether the selected transformations apply in the forward
+                or reverse mode.
 
         """
-        matrix = self.matrix_for(from_range=from_range, reverse=reverse)
+        transform_matrix = self.transform_matrix_for(
+            from_range=from_range, reverse=reverse
+        )
+        return apply_affine_transform(points=points, transform_matrix=transform_matrix)
 
-        return vg.matrix.unpad(np.dot(matrix, vg.matrix.pad_with_ones(points).T).T)
-
-    def matrix_for(self, from_range=None, reverse=False):
+    def transform_matrix_for(self, from_range=None, reverse=False):
         """
         Return a 4x4 transformation matrix representation.
 
@@ -113,9 +79,7 @@ class CompositeTransform(object):
         from functools import reduce
 
         if from_range is not None:
-            start, stop = (
-                from_range
-            )  # from_range is defined as None, a non-sequence, but when it's not None, it's always a sequence. pylint: disable=unpacking-non-sequence
+            start, stop = from_range
             selected_transforms = self.transforms[start:stop]
         else:
             selected_transforms = self.transforms
@@ -127,7 +91,7 @@ class CompositeTransform(object):
             for forward_matrix, reverse_matrix in selected_transforms
         ]
 
-        if not len(matrices):  # pylint: disable=len-as-condition
+        if not len(matrices):
             return np.eye(4)
 
         matrix = reduce(np.dot, matrices)
@@ -145,9 +109,7 @@ class CompositeTransform(object):
             reverse = np.linalg.inv(forward)
 
         new_index = len(self.transforms)
-
         self.transforms.append((forward, reverse))
-
         return new_index
 
     def append_transform3(self, forward, reverse=None):
@@ -158,27 +120,33 @@ class CompositeTransform(object):
         The new transformation is added to the end. Return its index.
 
         """
-        args = (forward,) if reverse is None else (forward, reverse)
-        return self.append_transform4(*map(convert_33_to_44, args))
+        vg.shape.check(locals(), "forward", (3, 3))
+        forward4 = _convert_33_to_44(forward)
+        if reverse is None:
+            reverse4 = None
+        else:
+            vg.shape.check(locals(), "reverse", (3, 3))
+            reverse4 = _convert_33_to_44(reverse)
+        return self.append_transform4(forward4, reverse4)
 
     def scale(self, factor):
         """
         Scale by the given factor.
 
-        factor: A float or int.
-
         Forward:
         [[  s_0, 0,   0,   0 ],
-         [  0,   s_1, 0,   0 ],
-         [  0,   0,   s_2, 0 ],
-         [  0,   0,   0,   1 ]]
+        [  0,   s_1, 0,   0 ],
+        [  0,   0,   s_2, 0 ],
+        [  0,   0,   0,   1 ]]
 
         Reverse:
         [[  1/s_0, 0,     0,     0 ],
-         [  0,     1/s_1, 0,     0 ],
-         [  0,     0,     1/s_2, 0 ],
-         [  0,     0,     0,     1 ]]
+        [  0,     1/s_1, 0,     0 ],
+        [  0,     0,     1/s_2, 0 ],
+        [  0,     0,     0,     1 ]]
 
+        Args:
+            factor (float): The scale factor.
         """
         if factor <= 0:
             raise ValueError("Scale factor should be greater than zero")
@@ -194,42 +162,45 @@ class CompositeTransform(object):
 
         These calls are equivalent:
 
-        - composite.convert_units(from_units='cm', to_units='m')
-        - composite.scale(.01)
+        >>> composite.convert_units(from_units='cm', to_units='m')
+        >>> composite.scale(.01)
 
+        Supports the length units from Ounce:
+        https://github.com/lace/ounce/blob/master/ounce/core.py#L26
         """
-        ureg = unit_registry()
-        conversion = ureg.parse_expression(from_units).to(
-            ureg.parse_expression(to_units)
-        )
-        self.scale(conversion.magnitude)
+        import ounce
 
-    def translate(self, vector):
+        factor = ounce.factor(from_units, to_units)
+        self.scale(factor)
+
+    def translate(self, translation):
         """
         Translate by the vector provided.
 
-        vector: A 3x1 vector.
-
         Forward:
-        [[  1,  0,  0,  v_0 ],
-         [  0,  1,  0,  v_1 ],
-         [  0,  0,  1,  v_2 ],
-         [  0,  0,  0,  1   ]]
+
+            [[  1,  0,  0,  v_0 ],
+            [  0,  1,  0,  v_1 ],
+            [  0,  0,  1,  v_2 ],
+            [  0,  0,  0,  1   ]]
 
         Reverse:
-        [[  1,  0,  0,  -v_0 ],
-         [  0,  1,  0,  -v_1 ],
-         [  0,  0,  1,  -v_2 ],
-         [  0,  0,  0,  1    ]]
 
+            [[  1,  0,  0,  -v_0 ],
+            [  0,  1,  0,  -v_1 ],
+            [  0,  0,  1,  -v_2 ],
+            [  0,  0,  0,  1    ]]
+
+        Args:
+            vector (np.arraylike): A 3x1 vector.
         """
-        vector = np.asarray(vector)
+        vg.shape.check(locals(), "translation", (3,))
 
         forward = np.eye(4)
-        forward[:, -1][:-1] = vector
+        forward[:, -1][:-1] = translation
 
         reverse = np.eye(4)
-        reverse[:, -1][:-1] = -vector
+        reverse[:, -1][:-1] = -translation
 
         return self.append_transform4(forward, reverse)
 
@@ -244,13 +215,17 @@ class CompositeTransform(object):
         # The inverse of a rotation matrix is its transpose.
         return self.append_transform3(forward3, forward3.T)
 
-    def rotate(self, rot):
+    def rotate(self, rotation):
         """
         Rotate by either an explicit matrix or a rodrigues vector
         """
         from .rodrigues import as_rotation_matrix
 
-        rot = np.asarray(rot)
-        rot = as_rotation_matrix(rot)
+        if rotation.shape == (3, 3):
+            forward3 = rotation
+        else:
+            vg.shape.check(locals(), "rotation", (3,))
+            forward3 = as_rotation_matrix(rotation)
+
         # The inverse of a rotation matrix is its transpose.
-        return self.append_transform3(rot, rot.T)
+        return self.append_transform3(forward3, forward3.T)

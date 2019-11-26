@@ -1,7 +1,7 @@
 import numpy as np
-import vg
 import pytest
-from .composite import CompositeTransform, convert_44_to_33
+import vg
+from .composite import CompositeTransform
 
 
 def create_cube_verts(origin, size):
@@ -29,22 +29,6 @@ def create_default_cube_verts():
 def test_translate():
     transform = CompositeTransform()
     transform.translate(np.array([8.0, 6.0, 7.0]))
-
-    cube_v = create_default_cube_verts()
-
-    # Confidence check.
-    np.testing.assert_array_equal(cube_v[0], [1.0, 0.0, 0.0])
-    np.testing.assert_array_equal(cube_v[6], [5.0, 4.0, 4.0])
-
-    transformed_cube_v = transform(cube_v)
-
-    np.testing.assert_array_equal(transformed_cube_v[0], [9.0, 6.0, 7.0])
-    np.testing.assert_array_equal(transformed_cube_v[6], [13.0, 10.0, 11.0])
-
-
-def test_translate_by_list():
-    transform = CompositeTransform()
-    transform.translate([8.0, 6.0, 7.0])
 
     cube_v = create_default_cube_verts()
 
@@ -170,9 +154,6 @@ def test_rotate():
     ways_to_rotate_around_y_a_quarter_turn = [
         np.array([[0, 0, 1], [0, 1, 0], [-1, 0, 0]]),
         np.array([0, np.pi / 2, 0]),
-        np.array([[0, np.pi / 2, 0]]),
-        np.array([[0], [np.pi / 2], [0]]),
-        [0, np.pi / 2, 0],
     ]
     for rot in ways_to_rotate_around_y_a_quarter_turn:
         transform = CompositeTransform()
@@ -224,26 +205,10 @@ def test_forward_reverse_equivalence():
     transform.scale(10.0)
     transform.rotate(np.array([7.0, 13.0, 5.0]))
 
-    forward = transform.matrix_for()
-    reverse = transform.matrix_for(reverse=True)
+    forward = transform.transform_matrix_for()
+    reverse = transform.transform_matrix_for(reverse=True)
     np.testing.assert_allclose(reverse, np.linalg.inv(forward))
 
-    forward = transform.matrix_for(from_range=(0, 2))
-    reverse = transform.matrix_for(from_range=(0, 2), reverse=True)
+    forward = transform.transform_matrix_for(from_range=(0, 2))
+    reverse = transform.transform_matrix_for(from_range=(0, 2), reverse=True)
     np.testing.assert_allclose(reverse, np.linalg.inv(forward))
-
-
-def test_convert_44_to_33():
-    np.testing.assert_array_equal(
-        convert_44_to_33(
-            np.array(
-                [
-                    [1.0, 2.0, 3.0, 0.0],
-                    [2.0, 3.0, 4.0, 0.0],
-                    [5.0, 6.0, 7.0, 0.0],
-                    [0.0, 0.0, 0.0, 1.0],
-                ]
-            )
-        ),
-        np.array([[1.0, 2.0, 3.0], [2.0, 3.0, 4.0], [5.0, 6.0, 7.0]]),
-    )

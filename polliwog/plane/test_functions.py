@@ -1,22 +1,47 @@
 import math
 import numpy as np
-import vg
 import pytest
+import vg
+from .coordinate_planes import coordinate_planes
 from .functions import (
+    normal_and_offset_from_plane_equations,
     plane_equation_from_points,
     plane_normal_from_points,
-    normal_and_offset_from_plane_equations,
-    signed_distance_to_plane,
     project_point_to_plane,
+    signed_distance_to_plane,
 )
 from .plane import Plane
-from .coordinate_planes import coordinate_planes
 
 
 def assert_plane_equation_satisfies_points(plane_equation, points):
     a, b, c, d = plane_equation
     plane_equation_test = [a * x + b * y + c * z + d for x, y, z in points]
-    assert np.any(plane_equation_test) == False
+    assert not np.any(plane_equation_test)
+
+
+def test_plane_normal_from_points_parity():
+    from ..tri.functions import surface_normals
+    from ..tri.shapes import create_triangular_prism
+
+    points = np.array([[3.0, 0.0, 0.0], [0.0, 3.0, 0.0], [0.0, 0.0, 3.0]])
+
+    np.testing.assert_allclose(
+        plane_normal_from_points(points), surface_normals(points)
+    )
+
+    np.testing.assert_allclose(
+        plane_normal_from_points(points, normalize=False),
+        surface_normals(points, normalize=False),
+    )
+
+    p1 = np.array([3.0, 0.0, 0.0])
+    p2 = np.array([0.0, 3.0, 0.0])
+    p3 = np.array([0.0, 0.0, 3.0])
+    vertices = create_triangular_prism(p1, p2, p3, 1.0)
+
+    np.testing.assert_allclose(
+        plane_normal_from_points(vertices), surface_normals(vertices)
+    )
 
 
 def test_plane_equation_from_points():

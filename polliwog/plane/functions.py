@@ -1,24 +1,19 @@
 import numpy as np
 import vg
-from .._common.shape import columnize, check_shape_any
+from .._common.shape import check_shape_any, columnize
+from ..tri.functions import surface_normals
 
 
-def plane_normal_from_points(points):
+def plane_normal_from_points(points, normalize=True):
     """
     Given a set of three points, compute the normal of the plane which
     passes through them. Also works on stacked inputs (i.e. many sets
     of three points).
+
+    This is the same as `polliwog.tri.functions.surface_normals`, to
+    which this delegates.
     """
-    points, _, transform_result = columnize(points, (-1, 3, 3), name="points")
-
-    p1s = points[:, 0]
-    p2s = points[:, 1]
-    p3s = points[:, 2]
-    v1s = p2s - p1s
-    v2s = p3s - p1s
-    unit_normals = vg.normalize(vg.cross(v1s, v2s))
-
-    return transform_result(unit_normals)
+    return surface_normals(points=points, normalize=normalize)
 
 
 def plane_equation_from_points(points):
@@ -26,7 +21,7 @@ def plane_equation_from_points(points):
     Given many sets of three points, return a stack of plane equations
     [`A`, `B`, `C`, `D`] which satisfy `Ax + By + Cz + D = 0`. Also
     works on three points to return a single plane equation.
-    
+
     These coefficients can be decomposed into the plane normal vector
     which is `[A, B, C]` and the offset `D`, either by the caller or
     by using `normal_and_offset_from_plane_equations()`.

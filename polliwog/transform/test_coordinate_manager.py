@@ -1,9 +1,8 @@
-# pylint: disable=invalid-unary-operand-type
 import numpy as np
-import vg
 import pytest
-from .test_composite import create_cube_verts
+import vg
 from .coordinate_manager import CoordinateManager
+from .test_composite import create_cube_verts
 
 
 def perform_transform_test(apply_transform_fn, expected_v0, expected_v6):
@@ -103,64 +102,6 @@ def test_coordinate_manager_forward_with_attrs():
 
     source_v = coordinate_manager.source
     np.testing.assert_array_almost_equal(source_v, cube_v)
-
-
-def test_coordinate_manager_forward_on_mesh():
-    import sys
-
-    if sys.version_info >= (3, 3):
-        from unittest.mock import MagicMock
-    else:
-        from mock import MagicMock
-
-    cube_v = create_cube_verts([1.0, 0.0, 0.0], 4.0)
-    cube_floor_point = np.array([3.0, 0.0, 2.0])  # as lace.mesh.floor_point
-
-    # By default a magic mock will always have any attribute it's asked for;
-    # here we set the spec property so that it will not respond to having a copy method
-    # when the CoodinateManager looks for it.
-    cube = MagicMock(spec=["v", "other_thing"], v=cube_v, other_thing=np.array([-9.0]))
-
-    coordinate_manager = CoordinateManager()
-    coordinate_manager.tag_as("source")
-    coordinate_manager.translate(-cube_floor_point)
-    coordinate_manager.scale(2)
-    coordinate_manager.tag_as("floored_and_scaled")
-    coordinate_manager.translate(np.array([0.0, -4.0, 0.0]))
-    coordinate_manager.tag_as("centered_at_origin")
-
-    coordinate_manager.source = cube
-
-    # Confidence check.
-    np.testing.assert_array_almost_equal(cube.v[0], [1.0, 0.0, 0.0])
-    np.testing.assert_array_almost_equal(cube.v[6], [5.0, 4.0, 4.0])
-    np.testing.assert_array_equal(cube.other_thing, [-9.0])
-
-    floored_and_scaled = coordinate_manager.floored_and_scaled
-    np.testing.assert_array_almost_equal(floored_and_scaled.v[0], [-4.0, 0.0, -4.0])
-    np.testing.assert_array_almost_equal(floored_and_scaled.v[6], [4.0, 8.0, 4.0])
-    np.testing.assert_array_equal(floored_and_scaled.other_thing, [-9.0])
-
-
-def test_coordinate_manager_mesh_with_no_vs():
-    import sys
-
-    if sys.version_info >= (3, 3):
-        from unittest.mock import MagicMock
-    else:
-        from mock import MagicMock
-
-    cube = MagicMock(spec=["v"], v=None)
-
-    coordinate_manager = CoordinateManager()
-    coordinate_manager.tag_as("before")
-    coordinate_manager.scale(2)
-    coordinate_manager.tag_as("after")
-
-    coordinate_manager.before = cube
-    after = coordinate_manager.after
-
-    assert after.v is None
 
 
 def test_coordinate_manager_out_of_order():

@@ -1,0 +1,18 @@
+-r requirements.txt
+-r requirements_doc.txt
+
+# Used in dev.py.
+executor >= 21.0
+click >=7.0,<8.0
+
+# Unit tests.
+pytest ==4.5.0
+pytest-cov == 2.7.1
+
+# Lint and formatting.
+black ==19.10b0
+flake8 ==3.7.9
+flake8-import-order ==0.18
+
+# For CI.
+coveralls ==1.8.2

@@ -1,5 +1,5 @@
 import numpy as np
-from .arity import quads_to_tris
+from .quad_faces import quads_to_tris
 
 
 def test_quads_to_tris():
