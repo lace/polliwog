@@ -31,9 +31,8 @@ class Polyline(object):
         self.v = v
 
     @classmethod
-    def join(cls, *polylines):
+    def join(cls, *polylines, is_closed=False):
         """
-
         Join together a stack of open polylines end-to-end into one
         contiguous polyline. The last vertex of the first polyline is
         connected to the first vertex of the second polyline, and so on.
@@ -42,7 +41,9 @@ class Polyline(object):
             raise ValueError("Need at least one polyline to join")
         if any([polyline.is_closed for polyline in polylines]):
             raise ValueError("Expected input polylines to be open, not closed")
-        return cls(np.vstack([polyline.v for polyline in polylines]), is_closed=False)
+        return cls(
+            np.vstack([polyline.v for polyline in polylines]), is_closed=is_closed
+        )
 
     def __repr__(self):
         if self.v is not None and self.num_v != 0:
@@ -187,31 +188,83 @@ class Polyline(object):
 
         return Box.from_points(self.v)
 
-    def flip(self):
+    def index_of_vertex(self, point, atol=1e-08):
         """
-        Flip the polyline from end to end.
+        Return the index of the vertex with the given point. If there are
+        coincident vertices at that point, return the first one.
         """
-        self.v = np.flipud(self.v)
+        vg.shape.check(locals(), "point", (3,))
 
-        return self
+        (matching_indices,) = (
+            np.isclose(self.v - point, 0, atol=atol).all(axis=1).nonzero()
+        )
 
-    def oriented_along(self, along, reverse=False):
+        try:
+            return matching_indices[0]
+        except IndexError:
+            # `pass` before `raise` to avoid propagating the IndexError.
+            pass
+        raise ValueError("No matching vertex")
+
+    def with_insertions(self, points, indices, ret_new_indices=False):
         """
-        Flip the polyline, if necessary, so that it points (approximately)
-        along the second vector rather than (approximately) opposite it.
+        Return a new polyline with the given points inserted before the given
+        indices.
+
+        With `ret_new_indices=True`, also returns the new indices of the
+        original vertices and the new indices of the inserted points.
+        """
+        k = vg.shape.check(locals(), "points", (-1, 3))
+        vg.shape.check(locals(), "indices", (k,))
+
+        new_polyline = Polyline(
+            v=np.insert(self.v, indices, points, axis=0), is_closed=self.is_closed,
+        )
+
+        if not ret_new_indices:
+            return new_polyline
+
+        # Compute indices of original vertices.
+        old_num_v = self.num_v
+        stepwise_index_offsets = np.zeros(old_num_v, dtype=np.int64)
+        stepwise_index_offsets[indices[indices < old_num_v]] = 1
+        cumulative_index_offsets = np.cumsum(stepwise_index_offsets)
+        indices_of_original_vertices = np.arange(old_num_v) + cumulative_index_offsets
+
+        # Compute indices of inserted points. When more than one point is
+        # inserted, this will differ from `indices`.
+        # TODO: I think this will cause an IndexError when new points are
+        # inserted at the end. `indices + cumulative_index_offsets[indices - 1]`
+        # would work instead, but would produce an incorrect result for points
+        # inserted at the beginning.
+        indices_of_inserted_points = indices + cumulative_index_offsets[indices] - 1
+
+        return new_polyline, indices_of_original_vertices, indices_of_inserted_points
+
+    def flipped(self):
+        """
+        Flip the polyline from end to end. Return a new polyline.
+        """
+        return Polyline(v=np.flipud(self.v), is_closed=self.is_closed)
+
+    def aligned_with(self, vector):
+        """
+        Flip the polyline if necessary, so it's aligned with the given
+        vector rather than against it. Works on open polylines and considers
+        only the two end vertices.
         """
         if self.is_closed:
-            raise ValueError("Can't reorient a closed polyline")
+            raise ValueError("Can't align a closed polyline")
 
-        vg.shape.check(locals(), "along", (3,))
+        vg.shape.check(locals(), "vector", (3,))
 
         if self.num_v < 2:
             return self
 
         extent = self.v[-1] - self.v[0]
-        projected = vg.project(extent, onto=along)
-        if vg.scale_factor(projected, along) * (-1 if reverse else 1) < 0:
-            return self.copy().flip()
+        projected = vg.project(extent, onto=vector)
+        if vg.scale_factor(projected, vector) < 0:
+            return self.flipped()
         else:
             return self
 
@@ -226,14 +279,10 @@ class Polyline(object):
         if not self.is_closed:
             raise ValueError("Can't roll an open polyline")
 
-        result = Polyline(
-            v=np.append(self.v[index:], self.v[0:index], axis=0), is_closed=True
-        )
+        result = Polyline(v=np.roll(self.v, -index, axis=0), is_closed=True)
 
         if ret_edge_mapping:
-            edge_mapping = np.append(
-                np.arange(index, self.num_v), np.arange(0, index), axis=0
-            )
+            edge_mapping = np.roll(np.arange(self.num_v), -index)
             return result, edge_mapping
         else:
             return result
@@ -312,24 +361,18 @@ class Polyline(object):
         else:
             return self
 
-    def bisect_edges(self, edges):
+    def with_segments_bisected(self, segment_indices, ret_new_indices=False):
         """
-        Cutting the given edges in half.
+        Return a new polyline with the given segments cut in half.
 
-        Return an arrray that gives the new indices of the original vertices.
+        With `ret_new_indices=True`, also returns the new indices of the
+        original vertices and the new indices of the inserted points.
         """
-        new_vs = self.v
-        indices_of_original_vertices = np.arange(self.num_v)
-        for offset, edge_to_subdivide in enumerate(edges):
-            new_v = np.mean(self.segments[edge_to_subdivide], axis=0).reshape(-1, 3)
-            old_v2_index = self.e[edge_to_subdivide][0] + 1
-            insert_at = offset + old_v2_index
-            new_vs = np.insert(new_vs, insert_at, new_v, axis=0)
-            indices_of_original_vertices[old_v2_index:] = (
-                indices_of_original_vertices[old_v2_index:] + 1
-            )
-        self.v = new_vs
-        return indices_of_original_vertices
+        return self.with_insertions(
+            points=np.mean(self.segments[segment_indices], axis=0),
+            indices=self.e[segment_indices][:, 1],
+            ret_new_indices=ret_new_indices,
+        )
 
     def apex(self, axis):
         """
@@ -399,8 +442,7 @@ class Polyline(object):
         else:
             working_v = self.v
 
-        new_v = cut_open_polyline_by_plane(working_v, plane)
-        return Polyline(v=new_v, is_closed=False)
+        return Polyline(v=cut_open_polyline_by_plane(working_v, plane), is_closed=False)
 
     def sliced_at_indices(self, start, stop):
         """
@@ -467,3 +509,49 @@ class Polyline(object):
             )
         else:
             return transform_result(closest_points_of_polyline)
+
+    def sliced_at_points(self, start_point, end_point, atol=1e-8):
+        """
+        Take a slice of the given polyline at the given start and end points.
+        These are expected to be on a vertex or on a segment. If on a segment
+        (or near to but not directly on a segment) a new point is inserted
+        at exactly the given point.
+        """
+        vg.shape.check(locals(), "start_point", (3,))
+        vg.shape.check(locals(), "end_point", (3,))
+
+        working_polyline = self
+
+        try:
+            # Check if the start point intersects a vertex. If it does, great;
+            # if not, insert it.
+            start_v_index = working_polyline.index_of_vertex(start_point)
+        except ValueError:
+            nearest_point, segment_index = working_polyline.nearest(
+                start_point, ret_segment_indices=True
+            )
+            (_, start_v_index) = working_polyline.e[segment_index]
+            working_polyline = working_polyline.with_insertions(
+                points=nearest_point.reshape(-1, 3), indices=np.array([start_v_index]),
+            )
+
+        try:
+            end_v_index = working_polyline.index_of_vertex(end_point)
+        except ValueError:
+            nearest_point, segment_index = working_polyline.nearest(
+                end_point, ret_segment_indices=True
+            )
+            (_, end_v_index) = working_polyline.e[segment_index]
+            (
+                working_polyline,
+                indices_of_original_vertices,
+                _,
+            ) = working_polyline.with_insertions(
+                points=nearest_point.reshape(-1, 3),
+                indices=np.array([end_v_index]),
+                ret_new_indices=True,
+            )
+            start_v_index = indices_of_original_vertices[start_v_index]
+
+        # Then slice at those points.
+        return working_polyline.sliced_at_indices(start_v_index, end_v_index + 1)
