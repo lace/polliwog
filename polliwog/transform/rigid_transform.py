@@ -4,14 +4,14 @@ import vg
 def find_rigid_transform(a, b, compute_scale=False, fail_in_degenerate_cases=True):
     """
     Args:
-        a: a 3xN array of vertex locations
-        b: a 3xN array of vertex locations
+        a: a Nx3 array of vertex locations
+        b: a Nx3 array of vertex locations
         a and b are in correspondence -- we find a transformation such that the first
         point in a will be moved to the location of the first point in b, etc.
 
-    Returns: (R,T) such that R.dot(a)+T ~= b
+    Returns: (R,T) such that a.dot(R) + T ~= b
         R is a 3x3 rotation matrix
-        T is a 3x1 translation vector
+        T is a 1x3 translation vector
 
     Based on Arun et al, "Least-squares fitting of two 3-D point sets," 1987.
     See also Eggert et al, "Estimating 3-D rigid body transformations: a
@@ -26,8 +26,11 @@ def find_rigid_transform(a, b, compute_scale=False, fail_in_degenerate_cases=Tru
     """
     import numpy as np
 
-    vg.shape.check(locals(), "a", (3, -1))
-    vg.shape.check(locals(), "b", (3, -1))
+    vg.shape.check(locals(), "a", (-1, 3))
+    vg.shape.check(locals(), "b", (-1, 3))
+
+    a = a.T
+    b = b.T
 
     a_mean = np.mean(a, axis=1)
     b_mean = np.mean(b, axis=1)
@@ -52,27 +55,30 @@ def find_rigid_transform(a, b, compute_scale=False, fail_in_degenerate_cases=Tru
 
     if compute_scale:
         scale = np.sum(s) / (np.linalg.norm(a_centered) ** 2)
-        T = (b_mean - scale * (R.dot(a_mean))).reshape(-1, 1)
-        return scale, R, T
+        T = (b_mean - scale * (R.dot(a_mean))).reshape(1, 3)
+        return scale, R.T, T
     else:
-        T = (b_mean - R.dot(a_mean)).reshape(-1, 1)
-        return R, T
+        T = (b_mean - R.dot(a_mean)).reshape(1, 3)
+        return R.T, T
 
 
 def find_rigid_rotation(a, b, allow_scaling=False):
     """
     Args:
-        a: a 3xN array of vertex locations
-        b: a 3xN array of vertex locations
+        a: a Nx3 array of vertex locations
+        b: a Nx3 array of vertex locations
 
-    Returns: R such that R.dot(a) ~= b
+    Returns: R such that a.dot(R) ~= b
 
     See link: http://en.wikipedia.org/wiki/Orthogonal_Procrustes_problem
     """
     import numpy as np
 
-    assert a.shape[0] == 3
-    assert b.shape[0] == 3
+    assert a.shape[1] == 3
+    assert b.shape[1] == 3
+
+    a = a.T
+    b = b.T
 
     if a.size == 3:
         cx = np.cross(a.ravel(), b.ravel())
@@ -92,4 +98,4 @@ def find_rigid_rotation(a, b, allow_scaling=False):
         scalefactor = np.linalg.norm(b) / np.linalg.norm(a)
         R = R * scalefactor
 
-    return R
+    return R.T
