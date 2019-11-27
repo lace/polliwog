@@ -167,7 +167,7 @@ class Box(object):
     @property
     def v(self):
         """
-        Corners of the box as an 3xN array of points
+        Corners of the box as an Nx3 array of points
         """
         return np.array(
             [
@@ -180,4 +180,4 @@ class Box(object):
                 self.origin + np.array([self.size[0], 0, self.size[2]]),
                 self.origin + np.array([self.size[0], self.size[1], self.size[2]]),
             ]
-        ).T
+        )

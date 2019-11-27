@@ -5,8 +5,8 @@ from ..box.box import Box
 
 
 def test_rigid_transform_from_simple_translation():
-    a = Box(origin=np.array([0.0, 0.0, 0.0]), size=np.array([1.0, 1.0, 1.0])).v
-    b = Box(origin=np.array([1.0, 2.0, 3.0]), size=np.array([1.0, 1.0, 1.0])).v
+    a = Box(origin=np.array([0.0, 0.0, 0.0]), size=np.array([1.0, 1.0, 1.0])).v.T
+    b = Box(origin=np.array([1.0, 2.0, 3.0]), size=np.array([1.0, 1.0, 1.0])).v.T
     expected_R = np.eye(3)
     expected_t = np.array([[1.0, 2.0, 3.0]]).T
     R, t = find_rigid_transform(a, b)
@@ -15,7 +15,7 @@ def test_rigid_transform_from_simple_translation():
 
 
 def test_rigid_transform_from_simple_rotation():
-    a = Box(origin=np.array([0.0, 0.0, 0.0]), size=np.array([1.0, 1.0, 1.0])).v
+    a = Box(origin=np.array([0.0, 0.0, 0.0]), size=np.array([1.0, 1.0, 1.0])).v.T
     expected_R = euler([30, 15, 21])
     expected_t = np.array([[0, 0, 0]]).T
     b = expected_R.dot(a) + expected_t
@@ -25,7 +25,7 @@ def test_rigid_transform_from_simple_rotation():
 
 
 def test_rigid_transform_from_rotation_and_translation():
-    a = Box(origin=np.array([0.0, 0.0, 0.0]), size=np.array([1.0, 1.0, 1.0])).v
+    a = Box(origin=np.array([0.0, 0.0, 0.0]), size=np.array([1.0, 1.0, 1.0])).v.T
     expected_R = euler([30, 15, 21])
     expected_t = np.array([[1, 2, 3]]).T
     b = expected_R.dot(a) + expected_t
@@ -35,7 +35,7 @@ def test_rigid_transform_from_rotation_and_translation():
 
 
 def test_rigid_transform_from_rotation_translation_and_scale():
-    a = Box(origin=np.array([0.0, 0.0, 0.0]), size=np.array([1.0, 1.0, 1.0])).v
+    a = Box(origin=np.array([0.0, 0.0, 0.0]), size=np.array([1.0, 1.0, 1.0])).v.T
     expected_R = euler([30, 15, 21])
     expected_t = np.array([[1, 2, 3]]).T
     expected_scale = 1.7
@@ -47,7 +47,7 @@ def test_rigid_transform_from_rotation_translation_and_scale():
 
 
 def test_rigid_rotation():
-    a = Box(origin=np.array([0.0, 0.0, 0.0]), size=np.array([1.0, 1.0, 1.0])).v
+    a = Box(origin=np.array([0.0, 0.0, 0.0]), size=np.array([1.0, 1.0, 1.0])).v.T
     expected_R = euler([30, 15, 21])
     b = expected_R.dot(a)
     R = find_rigid_rotation(a, b)

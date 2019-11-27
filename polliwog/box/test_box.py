@@ -67,7 +67,7 @@ def test_invalid_shape():
 
 def test_v():
     box = create_box()
-    assert box.v.shape == (3, 8)
+    assert box.v.shape == (8, 3)
     expected = np.array(
         [
             [1.0, 2.0, 3.0],
@@ -79,5 +79,5 @@ def test_v():
             [4.0, 2.0, 8.0],
             [4.0, 3.0, 8.0],
         ]
-    ).T
+    )
     np.testing.assert_array_equal(box.v, expected)
