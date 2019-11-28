@@ -63,3 +63,21 @@ def test_box_from_points():
 def test_invalid_shape():
     with pytest.raises(ValueError):
         Box(np.array([1.0, 2.0, 3.0]), np.array([-1.0, 1.0, 1.0]))
+
+
+def test_v():
+    box = create_box()
+    assert box.v.shape == (8, 3)
+    expected = np.array(
+        [
+            [1.0, 2.0, 3.0],
+            [4.0, 2.0, 3.0],
+            [1.0, 3.0, 3.0],
+            [1.0, 2.0, 8.0],
+            [4.0, 3.0, 3.0],
+            [1.0, 3.0, 8.0],
+            [4.0, 2.0, 8.0],
+            [4.0, 3.0, 8.0],
+        ]
+    )
+    np.testing.assert_array_equal(box.v, expected)
