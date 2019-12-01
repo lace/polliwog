@@ -72,6 +72,16 @@ def test_contains_coplanar_point():
         contains_coplanar_point(a, b, c, np.array([2.0, 5.0, 0.0])) == False
     )  # noqa: E712
 
+    assert (
+        contains_coplanar_point(
+            np.array([0.06710189, 1.69908346, 0.06590126]),
+            np.array([0.05648619, 1.70207, 0.07402092]),
+            np.array([0.05969098, 1.69641423, 0.07268801]),
+            np.array([0.07534771, 1.6869296, 0.06190757]),
+        )
+        == False
+    )  # noqa: E712
+
 
 def test_barycentric():
     triangle = np.array([[-1.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, math.sqrt(2), 0.0]])
