@@ -163,3 +163,21 @@ class Box(object):
         """
         l, h, w = self.size
         return 2 * (w * l + h * l + h * w)
+
+    @property
+    def v(self):
+        """
+        Corners of the box as an Nx3 array of points
+        """
+        return np.array(
+            [
+                self.origin,
+                self.origin + np.array([self.size[0], 0, 0]),
+                self.origin + np.array([0, self.size[1], 0]),
+                self.origin + np.array([0, 0, self.size[2]]),
+                self.origin + np.array([self.size[0], self.size[1], 0]),
+                self.origin + np.array([0, self.size[1], self.size[2]]),
+                self.origin + np.array([self.size[0], 0, self.size[2]]),
+                self.origin + np.array([self.size[0], self.size[1], self.size[2]]),
+            ]
+        )
