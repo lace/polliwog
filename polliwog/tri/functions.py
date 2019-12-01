@@ -26,7 +26,7 @@ def surface_normals(points, normalize=True):
     return transform_result(normals)
 
 
-def coplanar_points_are_on_same_side_of_line(a, b, p1, p2, atol=1e-8):
+def coplanar_points_are_on_same_side_of_line(a, b, p1, p2):
     vg.shape.check(locals(), "a", (3,))
     vg.shape.check(locals(), "b", (3,))
     vg.shape.check(locals(), "p1", (3,))
@@ -34,10 +34,10 @@ def coplanar_points_are_on_same_side_of_line(a, b, p1, p2, atol=1e-8):
 
     # Uses "same-side technique" from http://blackpawn.com/texts/pointinpoly/default.html
     along_line = b - a
-    return vg.dot(vg.cross(along_line, p1 - a), vg.cross(along_line, p2 - a)) >= -atol
+    return vg.dot(vg.cross(along_line, p1 - a), vg.cross(along_line, p2 - a)) >= 0
 
 
-def contains_coplanar_point(a, b, c, point, atol=1e-8):
+def contains_coplanar_point(a, b, c, point):
     """
     Assuming `point` is coplanar with the triangle `ABC`, check if it lies
     inside it.
@@ -46,12 +46,13 @@ def contains_coplanar_point(a, b, c, point, atol=1e-8):
     vg.shape.check(locals(), "b", (3,))
     vg.shape.check(locals(), "c", (3,))
     vg.shape.check(locals(), "point", (3,))
+    import pdb; pdb.set_trace()
 
     # Uses "same-side technique" from http://blackpawn.com/texts/pointinpoly/default.html
     return (
-        coplanar_points_are_on_same_side_of_line(b, c, point, a, atol=atol)
-        and coplanar_points_are_on_same_side_of_line(a, c, point, b, atol=atol)
-        and coplanar_points_are_on_same_side_of_line(a, b, point, c, atol=atol)
+        coplanar_points_are_on_same_side_of_line(b, c, point, a)
+        and coplanar_points_are_on_same_side_of_line(a, c, point, b)
+        and coplanar_points_are_on_same_side_of_line(a, b, point, c)
     )
 
 
