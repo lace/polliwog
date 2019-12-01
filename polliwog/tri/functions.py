@@ -46,7 +46,6 @@ def contains_coplanar_point(a, b, c, point):
     vg.shape.check(locals(), "b", (3,))
     vg.shape.check(locals(), "c", (3,))
     vg.shape.check(locals(), "point", (3,))
-    import pdb; pdb.set_trace()
 
     # Uses "same-side technique" from http://blackpawn.com/texts/pointinpoly/default.html
     return (
