@@ -80,7 +80,7 @@ def test_contains_coplanar_point():
             np.array([0.07534771, 1.6869296, 0.06190757]),
         )
         == False
-    )
+    )  # noqa: E712
 
 
 def test_barycentric():
