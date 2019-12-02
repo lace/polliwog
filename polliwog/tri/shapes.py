@@ -31,7 +31,6 @@ def create_rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
             an `8x3` array of vertices and a `12x3` array of triangle faces.
             With `ret_unique_vertices_and_faces=False`, a `12x3x3` matrix of
             flattened triangle coordinates.
-        Barycentric coordinates as `kx3`
     """
     from .quad_faces import quads_to_tris
 
