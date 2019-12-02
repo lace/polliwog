@@ -51,6 +51,7 @@ def test_returns_unsigned_distances_for_xz_plane_at_origin():
     expected = np.array([502.0, 501.0])
 
     np.testing.assert_array_equal(expected, plane.distance(pts))
+    np.testing.assert_array_equal(expected[0], plane.distance(pts[0]))
 
 
 def test_returns_signed_distances_for_diagonal_plane():
@@ -103,10 +104,9 @@ def test_returns_sign_for_diagonal_plane():
 
     pts = np.array([[425.0, 425.0, 25.0], [-500.0, -500.0, 25.0]])
 
-    sign = plane.sign(pts)
-
     expected = np.array([1.0, -1.0])
-    np.testing.assert_array_equal(sign, expected)
+    np.testing.assert_array_equal(plane.sign(pts), expected)
+    np.testing.assert_array_equal(plane.sign(pts[0]), expected[0])
 
 
 def test_points_in_front():
