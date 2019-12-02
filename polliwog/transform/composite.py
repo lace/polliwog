@@ -1,25 +1,5 @@
 import numpy as np
 import vg
-from .affine_transform import apply_affine_transform
-
-
-def _convert_33_to_44(matrix):
-    """
-    Transform from:
-        array([[1., 2., 3.],
-               [2., 3., 4.],
-               [5., 6., 7.]])
-    to:
-        array([[1., 2., 3., 0.],
-               [2., 3., 4., 0.],
-               [5., 6., 7., 0.],
-               [0., 0., 0., 1.]])
-
-    """
-    vg.shape.check(locals(), "matrix", (3, 3))
-    result = np.pad(matrix, ((0, 1), (0, 1)), mode="constant")
-    result[3][3] = 1
-    return result
 
 
 class CompositeTransform(object):
@@ -59,6 +39,8 @@ class CompositeTransform(object):
                 or reverse mode.
 
         """
+        from .affine_transform import apply_affine_transform
+
         transform_matrix = self.transform_matrix_for(
             from_range=from_range, reverse=reverse
         )
@@ -97,7 +79,7 @@ class CompositeTransform(object):
         matrix = reduce(np.dot, matrices)
         return matrix if reverse else matrix.T
 
-    def append_transform4(self, forward, reverse=None):
+    def append_transform(self, forward, reverse=None):
         """
         Append an arbitrary transformation, defined by 4x4 forward and reverse
         matrices.
@@ -105,56 +87,27 @@ class CompositeTransform(object):
         The new transformation is added to the end. Return its index.
 
         """
+        vg.shape.check(locals(), "forward", (4, 4))
         if reverse is None:
             reverse = np.linalg.inv(forward)
+        else:
+            vg.shape.check(locals(), "reverse", (4, 4))
 
         new_index = len(self.transforms)
         self.transforms.append((forward, reverse))
         return new_index
 
-    def append_transform3(self, forward, reverse=None):
-        """
-        Append an arbitrary transformation, defined by 3x3 forward and reverse
-        matrices.
-
-        The new transformation is added to the end. Return its index.
-
-        """
-        vg.shape.check(locals(), "forward", (3, 3))
-        forward4 = _convert_33_to_44(forward)
-        if reverse is None:
-            reverse4 = None
-        else:
-            vg.shape.check(locals(), "reverse", (3, 3))
-            reverse4 = _convert_33_to_44(reverse)
-        return self.append_transform4(forward4, reverse4)
-
     def scale(self, factor):
         """
         Scale by the given factor.
 
-        Forward:
-        [[  s_0, 0,   0,   0 ],
-        [  0,   s_1, 0,   0 ],
-        [  0,   0,   s_2, 0 ],
-        [  0,   0,   0,   1 ]]
-
-        Reverse:
-        [[  1/s_0, 0,     0,     0 ],
-        [  0,     1/s_1, 0,     0 ],
-        [  0,     0,     1/s_2, 0 ],
-        [  0,     0,     0,     1 ]]
-
         Args:
             factor (float): The scale factor.
         """
-        if factor <= 0:
-            raise ValueError("Scale factor should be greater than zero")
+        from .affine_transform import transform_matrix_for_scale
 
-        forward3 = np.diag(np.repeat(factor, 3))
-        reverse3 = np.diag(np.repeat(1.0 / factor, 3))
-
-        return self.append_transform3(forward3, reverse3)
+        forward, inverse = transform_matrix_for_scale(factor, ret_inverse_matrix=True)
+        return self.append_transform(forward, inverse)
 
     def convert_units(self, from_units, to_units):
         """
@@ -171,61 +124,37 @@ class CompositeTransform(object):
         import ounce
 
         factor = ounce.factor(from_units, to_units)
-        self.scale(factor)
+        return self.scale(factor)
 
     def translate(self, translation):
         """
         Translate by the vector provided.
 
-        Forward:
-
-            [[  1,  0,  0,  v_0 ],
-            [  0,  1,  0,  v_1 ],
-            [  0,  0,  1,  v_2 ],
-            [  0,  0,  0,  1   ]]
-
-        Reverse:
-
-            [[  1,  0,  0,  -v_0 ],
-            [  0,  1,  0,  -v_1 ],
-            [  0,  0,  1,  -v_2 ],
-            [  0,  0,  0,  1    ]]
-
         Args:
             vector (np.arraylike): A 3x1 vector.
         """
-        vg.shape.check(locals(), "translation", (3,))
+        from .affine_transform import transform_matrix_for_translation
 
-        forward = np.eye(4)
-        forward[:, -1][:-1] = translation
-
-        reverse = np.eye(4)
-        reverse[:, -1][:-1] = -translation
-
-        return self.append_transform4(forward, reverse)
+        forward, inverse = transform_matrix_for_translation(
+            translation, ret_inverse_matrix=True
+        )
+        return self.append_transform(forward, inverse)
 
     def reorient(self, up, look):
         """
         Reorient using up and look.
-
         """
         from .rotation import rotation_from_up_and_look
 
-        forward3 = rotation_from_up_and_look(up, look)
-        # The inverse of a rotation matrix is its transpose.
-        return self.append_transform3(forward3, forward3.T)
+        return self.rotate(rotation_from_up_and_look(up, look))
 
     def rotate(self, rotation):
         """
-        Rotate by either an explicit matrix or a rodrigues vector
+        Rotate by the given 3x3 rotation matrix or a Rodrigues vector.
         """
-        from .rodrigues import as_rotation_matrix
+        from .affine_transform import transform_matrix_for_rotation
 
-        if rotation.shape == (3, 3):
-            forward3 = rotation
-        else:
-            vg.shape.check(locals(), "rotation", (3,))
-            forward3 = as_rotation_matrix(rotation)
-
-        # The inverse of a rotation matrix is its transpose.
-        return self.append_transform3(forward3, forward3.T)
+        forward, inverse = transform_matrix_for_rotation(
+            rotation, ret_inverse_matrix=True
+        )
+        return self.append_transform(forward, inverse)
