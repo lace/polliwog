@@ -181,3 +181,18 @@ class Box(object):
                 self.origin + np.array([self.size[0], self.size[1], self.size[2]]),
             ]
         )
+
+    def contains(self, point, atol=None):
+        """
+        Test whether the box contains the given point. When `atol` is
+        provided, returns True when point is within `atol` of the box.
+        """
+        vg.shape.check(locals(), "point", (3,))
+
+        if atol is None:
+            atol = 0.0
+        return np.all(
+            np.logical_and(
+                self.origin - atol <= point, point <= self.origin + self.size + atol
+            )
+        )
