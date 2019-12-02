@@ -69,40 +69,6 @@ def partition_segment(p1, p2, n_samples, endpoint=True):
     ] + p1
 
 
-def partition_segment_old(p1, p2, partition_size=5):
-    """
-    Deprecated. Please use partition_segment.
-
-    For two points in n-space, return an np.ndarray of partition points at equal widths
-    determined by 'partition_size' on the interior of the segment determined by p1 & p2.
-
-    Accomplished by partitioning the segment into 'partition_size' sub-intervals.
-
-    Partition order is oriented from p1 to p2.
-
-    Args:
-        p1, p2:
-            1 x N vectors
-
-        partition_size:
-            size of partition. should be > 1.
-    """
-
-    if not isinstance(partition_size, int):
-        raise TypeError("partition_size should be an int.")
-    elif partition_size < 2:
-        raise ValueError("partition_size should be bigger than 1.")
-
-    dist = np.linalg.norm(p1 - p2)
-
-    unit_direction = (p2 - p1) / dist
-    partition_width = dist / partition_size
-
-    domain = partition_width * np.arange(1, partition_size)
-
-    return p1 + unit_direction * domain[:, np.newaxis]
-
-
 def closest_point_of_line_segment(points, start_points, segment_vectors):
     # Adapted from public domain algorithm
     # https://gdbooks.gitbooks.io/3dcollisions/content/Chapter1/closest_point_on_line.html
