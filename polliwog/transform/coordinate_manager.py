@@ -33,11 +33,8 @@ class CoordinateManager(object):
             }
         )
 
-    def append_transform4(self, *args, **kwargs):
-        self._transform.append_transform4(*args, **kwargs)
-
-    def append_transform3(self, *args, **kwargs):
-        self._transform.append_transform3(*args, **kwargs)
+    def append_transform(self, *args, **kwargs):
+        self._transform.append_transform(*args, **kwargs)
 
     def scale(self, *args, **kwargs):
         self._transform.scale(*args, **kwargs)

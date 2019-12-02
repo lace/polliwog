@@ -2,66 +2,7 @@ import numpy as np
 import pytest
 import vg
 from .composite import CompositeTransform
-
-
-def create_cube_verts(origin, size):
-    # Create a cube. Since CompositeTransform just works on verticies,
-    # we don't need a full lace.mesh object.
-    origin = np.asarray(origin)
-    size = np.repeat(size, 3)
-    lower_base_plane = np.array(
-        [
-            # Lower base plane
-            origin,
-            origin + np.array([size[0], 0, 0]),
-            origin + np.array([size[0], 0, size[2]]),
-            origin + np.array([0, 0, size[2]]),
-        ]
-    )
-    upper_base_plane = lower_base_plane + np.array([0, size[1], 0])
-    return np.vstack([lower_base_plane, upper_base_plane])
-
-
-def create_default_cube_verts():
-    return create_cube_verts([1.0, 0.0, 0.0], 4.0)
-
-
-def test_translate():
-    transform = CompositeTransform()
-    transform.translate(np.array([8.0, 6.0, 7.0]))
-
-    cube_v = create_default_cube_verts()
-
-    # Confidence check.
-    np.testing.assert_array_equal(cube_v[0], [1.0, 0.0, 0.0])
-    np.testing.assert_array_equal(cube_v[6], [5.0, 4.0, 4.0])
-
-    transformed_cube_v = transform(cube_v)
-
-    np.testing.assert_array_equal(transformed_cube_v[0], [9.0, 6.0, 7.0])
-    np.testing.assert_array_equal(transformed_cube_v[6], [13.0, 10.0, 11.0])
-
-
-def test_scale():
-    transform = CompositeTransform()
-    transform.scale(10.0)
-
-    cube_v = create_default_cube_verts()
-
-    # Confidence check.
-    np.testing.assert_array_equal(cube_v[0], [1.0, 0.0, 0.0])
-    np.testing.assert_array_equal(cube_v[6], [5.0, 4.0, 4.0])
-
-    transformed_cube_v = transform(cube_v)
-
-    np.testing.assert_array_equal(transformed_cube_v[0], [10.0, 0.0, 0.0])
-    np.testing.assert_array_equal(transformed_cube_v[6], [50.0, 40.0, 40.0])
-
-
-def test_scale_error():
-    transform = CompositeTransform()
-    with pytest.raises(ValueError):
-        transform.scale(-1)
+from .test_affine_transform import create_default_cube_verts
 
 
 def test_convert_units():

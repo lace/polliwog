@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import vg
 from .coordinate_manager import CoordinateManager
-from .test_composite import create_cube_verts
+from .test_affine_transform import create_cube_verts
 
 
 def perform_transform_test(apply_transform_fn, expected_v0, expected_v6):
@@ -132,19 +132,10 @@ def test_coordinate_manager_invalid_tag():
 
 
 def test_coordinate_manager_custom_transform():
-    scale4 = np.array([[3, 0, 0, 0], [0, 3, 0, 0], [0, 0, 3, 0], [0, 0, 0, 1]])
+    scale = np.array([[3, 0, 0, 0], [0, 3, 0, 0], [0, 0, 3, 0], [0, 0, 0, 1]])
     perform_transform_test(
-        apply_transform_fn=lambda coordinate_manager: coordinate_manager.append_transform4(
-            scale4
-        ),
-        expected_v0=np.array([3.0, 0.0, 0.0]),
-        expected_v6=np.array([15.0, 12.0, 12.0]),
-    )
-
-    scale3 = np.array([[3, 0, 0], [0, 3, 0], [0, 0, 3]])
-    perform_transform_test(
-        apply_transform_fn=lambda coordinate_manager: coordinate_manager.append_transform3(
-            scale3
+        apply_transform_fn=lambda coordinate_manager: coordinate_manager.append_transform(
+            scale
         ),
         expected_v0=np.array([3.0, 0.0, 0.0]),
         expected_v6=np.array([15.0, 12.0, 12.0]),
