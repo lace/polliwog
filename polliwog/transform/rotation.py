@@ -2,15 +2,6 @@ import numpy as np
 import vg
 
 
-def estimate_normal(planar_points):
-    from sklearn.decomposition import PCA
-
-    pca = PCA(n_components=3)
-    normal = pca.fit(planar_points).components_[-1]
-    normal /= np.linalg.norm(normal)
-    return normal
-
-
 def rotation_from_up_and_look(up, look):
     """
     Rotation matrix to rotate a mesh into a canonical reference frame. The
