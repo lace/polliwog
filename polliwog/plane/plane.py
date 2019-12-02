@@ -187,12 +187,6 @@ class Plane(object):
         """
         return functions.project_point_to_plane(points, self.equation)
 
-    def polyline_xsection(self, polyline, ret_edge_indices=False):  # pragma: no cover
-        """
-        Deprecated.
-        """
-        return polyline.intersect_plane(self, ret_edge_indices=ret_edge_indices)
-
     def line_xsection(self, pt, ray):
         vg.shape.check(locals(), "pt", (3,))
         vg.shape.check(locals(), "ray", (3,))
