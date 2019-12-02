@@ -26,8 +26,8 @@ def find_rigid_transform(a, b, compute_scale=False, fail_in_degenerate_cases=Tru
     """
     import numpy as np
 
-    vg.shape.check(locals(), "a", (-1, 3))
-    vg.shape.check(locals(), "b", (-1, 3))
+    k = vg.shape.check(locals(), "a", (-1, 3))
+    vg.shape.check(locals(), "b", (k, 3))
 
     a = a.T
     b = b.T
@@ -74,8 +74,8 @@ def find_rigid_rotation(a, b, allow_scaling=False):
     """
     import numpy as np
 
-    assert a.shape[1] == 3
-    assert b.shape[1] == 3
+    k = vg.shape.check(locals(), "a", (-1, 3))
+    vg.shape.check(locals(), "b", (k, 3))
 
     a = a.T
     b = b.T
