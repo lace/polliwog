@@ -3,19 +3,17 @@ import vg
 
 class CoordinateManager(object):
     """
-    Here's the idea:
+    Example:
+        >>> coordinate_manager = CoordinateManager()
+        >>> coordinate_manager.tag_as('source')
+        >>> coordinate_manager.translate(-cube.floor_point)
+        >>> coordinate_manager.scale(2)
+        >>> coordinate_manager.tag_as('floored_and_scaled')
+        >>> coordinate_manager.translate(np.array([0., -4., 0.]))
+        >>> coordinate_manager.tag_as('centered_at_origin')
 
-        Example:
-            coordinate_manager = CoordinateManager()
-            coordinate_manager.tag_as('source')
-            coordinate_manager.translate(-cube.floor_point)
-            coordinate_manager.scale(2)
-            coordinate_manager.tag_as('floored_and_scaled')
-            coordinate_manager.translate(np.array([0., -4., 0.]))
-            coordinate_manager.tag_as('centered_at_origin')
-
-            coordinate_manager.source = cube
-            centered_mesh = coordinate_manager.centered_at_origin
+        >>> coordinate_manager.source = cube
+        >>> centered_mesh = coordinate_manager.centered_at_origin
     """
 
     def __init__(self):
