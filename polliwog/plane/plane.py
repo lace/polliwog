@@ -141,7 +141,6 @@ class Plane(object):
         the plane (away from the normal), and 0 for points on the plane.
 
         """
-        vg.shape.check(locals(), "points", (-1, 3))
         return np.sign(self.signed_distance(points))
 
     def points_in_front(self, points, inverted=False, ret_indices=False):
@@ -180,7 +179,6 @@ class Plane(object):
         return functions.signed_distance_to_plane(points, self.equation)
 
     def distance(self, points):
-        vg.shape.check(locals(), "points", (-1, 3))
         return np.absolute(self.signed_distance(points))
 
     def project_point(self, points):
