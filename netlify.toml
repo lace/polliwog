@@ -3,5 +3,5 @@
   publish = "build"
   command = "../dev.py doc"
   # By default changes in the module folders are not picked up.
-  ignore = "git diff --quiet HEAD^ HEAD . && git diff --quiet HEAD^ HEAD ../polliwog"
+  ignore = "(git diff --quiet HEAD^ HEAD .) && (git diff --quiet HEAD^ HEAD ../polliwog)"
 
