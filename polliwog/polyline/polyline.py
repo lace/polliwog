@@ -134,8 +134,8 @@ class Polyline(object):
     @property
     def e(self):
         """
-        Return the edges of the polyline -- i.e. an array containing a pair
-        of vertex indices for each edge. This is derived automatically from
+        Return the edges of the polyline: an array containing a pair of
+        vertex indices for each edge. This is derived automatically from
         `self.v` and `self.is_closed` whenever those values are set.
         """
         return self.__dict__["e"]
