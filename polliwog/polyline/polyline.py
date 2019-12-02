@@ -417,7 +417,7 @@ class Polyline(object):
         For closed polylines, the plane must intersect the polyline exactly
         twice, leaving a single contiguous segment in front.
         """
-        from .cut_by_plane import cut_open_polyline_by_plane
+        from ._slice_by_plane import slice_open_polyline_by_plane
 
         if self.is_closed and self.num_v > 1:
             signed_distances = plane.signed_distance(self.v)
@@ -442,7 +442,9 @@ class Polyline(object):
         else:
             working_v = self.v
 
-        return Polyline(v=cut_open_polyline_by_plane(working_v, plane), is_closed=False)
+        return Polyline(
+            v=slice_open_polyline_by_plane(working_v, plane), is_closed=False
+        )
 
     def sliced_at_indices(self, start, stop):
         """
