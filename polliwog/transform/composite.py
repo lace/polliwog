@@ -131,20 +131,6 @@ class CompositeTransform(object):
         """
         Translate by the vector provided.
 
-        Forward:
-
-            [[  1,  0,  0,  v_0 ],
-            [  0,  1,  0,  v_1 ],
-            [  0,  0,  1,  v_2 ],
-            [  0,  0,  0,  1   ]]
-
-        Reverse:
-
-            [[  1,  0,  0,  -v_0 ],
-            [  0,  1,  0,  -v_1 ],
-            [  0,  0,  1,  -v_2 ],
-            [  0,  0,  0,  1    ]]
-
         Args:
             vector (np.arraylike): A 3x1 vector.
         """
@@ -158,7 +144,6 @@ class CompositeTransform(object):
     def reorient(self, up, look):
         """
         Reorient using up and look.
-
         """
         from .rotation import rotation_from_up_and_look
 
