@@ -27,6 +27,19 @@ def surface_normals(points, normalize=True):
 
 
 def coplanar_points_are_on_same_side_of_line(a, b, p1, p2):
+    """
+    Test if the given points are on the same side of the given line.
+
+    Args:
+        a (np.arraylike): The first 3D point of interest.
+        b (np.arraylike): The second 3D point of interest.
+        p1 (np.arraylike): A first point which lies on the line of interest.
+        p2 (np.arraylike): A second point which lies on the line of interest.
+
+    Returns:
+        bool: `True` when `a` and `b` are on the same side of the line defined
+        by `p1` and `p2`.
+    """
     vg.shape.check(locals(), "a", (3,))
     vg.shape.check(locals(), "b", (3,))
     vg.shape.check(locals(), "p1", (3,))
