@@ -81,3 +81,11 @@ def test_v():
         ]
     )
     np.testing.assert_array_equal(box.v, expected)
+
+
+def test_contains():
+    box = create_box()
+    assert box.contains(np.array([1.1, 2.2, 3.3]))
+    assert box.contains(np.array([1.0, 2.0, 3.0]))
+    assert box.contains(np.array([0.99, 2.0, 3.0])) == False  # noqa: E712
+    assert box.contains(np.array([0.99, 2.0, 3.0]), atol=1e-2) == True  # noqa: E712
