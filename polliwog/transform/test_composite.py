@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 import vg
 from .composite import CompositeTransform
 from .test_affine_transform import create_default_cube_verts

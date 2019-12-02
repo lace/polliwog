@@ -1,6 +1,5 @@
 import numpy as np
 import vg
-from .affine_transform import apply_affine_transform, transform_matrix_for_rotation
 
 
 class CompositeTransform(object):

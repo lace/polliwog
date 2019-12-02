@@ -3,8 +3,8 @@ import pytest
 from .affine_transform import (
     apply_affine_transform,
     transform_matrix_for_rotation,
-    transform_matrix_for_translation,
     transform_matrix_for_scale,
+    transform_matrix_for_translation,
 )
 
 
