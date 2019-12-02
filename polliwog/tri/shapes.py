@@ -11,11 +11,28 @@ def _maybe_flatten(vertices, faces, ret_unique_vertices_and_faces):
 def create_rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
     """
     Return vertices (or unique verties and faces) of an axis-aligned
-    rectangular prism. One vertex is `origin`; the diametrically opposite
-    vertex is `origin + size`.
+    rectangular prism.
 
-    size: 3x1 array.
+    One vertex is `origin`; the diametrically opposite vertex is `origin +
+    size`.
 
+    Args:
+        origin (np.ndarray): A 3D point vector containing the point on the
+            prism with the minimum x, y, and z coords.
+        size (np.ndarray): A 3D vector specifying the prism's length, width,
+            and height, which should be positive.
+        ret_unique_vertices_and_faces (bool): When `True` return a vertex
+            array containing the unique vertices and an array of faces (i.e.
+            vertex indices). When `False`, return a flattened array of
+            triangle coordinates.
+
+    Returns:
+        object:
+
+        - With `ret_unique_vertices_and_faces=True`: a tuple containing
+          an `8x3` array of vertices and a `12x3` array of triangle faces.
+        - With `ret_unique_vertices_and_faces=False`: a `12x3x3` matrix of
+          flattened triangle coordinates.
     """
     from .quad_faces import quads_to_tris
 
@@ -73,8 +90,6 @@ def create_triangular_prism(p1, p2, p3, height, ret_unique_vertices_and_faces=Fa
     Return vertices (or unique verties and faces) of a triangular prism whose
     base is the triangle p1, p2, p3. If the vertices are oriented in a
     counterclockwise direction, the prism extends from behind them.
-
-    Imported from lace.
     """
     from ..plane.plane import Plane
 
