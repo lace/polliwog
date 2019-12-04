@@ -3,8 +3,8 @@ import numpy as np
 import vg
 from .functions import (
     barycentric_coordinates_of_points,
-    tri_contains_coplanar_point,
     surface_normals,
+    tri_contains_coplanar_point,
 )
 
 
