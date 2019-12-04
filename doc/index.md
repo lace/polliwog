@@ -135,6 +135,7 @@
 ```
 
 
+# Indices and tables
 
 ```eval_rst
 * :ref:`genindex`
