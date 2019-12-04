@@ -191,7 +191,8 @@ class Polyline(object):
     def index_of_vertex(self, point, atol=1e-08):
         """
         Return the index of the vertex with the given point. If there are
-        coincident vertices at that point, return the first one.
+        coincident vertices at that point, return the one at the lowest
+        index.
         """
         vg.shape.check(locals(), "point", (3,))
 

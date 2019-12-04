@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from .segment import (
+from .segment_functions import (
     closest_point_of_line_segment,
     partition,
     partition_segment,

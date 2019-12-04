@@ -1,5 +1,12 @@
 import numpy as np
 
+__all__ = [
+    "create_rectangular_prism",
+    "create_cube",
+    "create_triangular_prism",
+    "create_horizontal_plane",
+]
+
 
 def _maybe_flatten(vertices, faces, ret_unique_vertices_and_faces):
     if ret_unique_vertices_and_faces:

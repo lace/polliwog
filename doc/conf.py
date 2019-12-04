@@ -45,7 +45,6 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.autosummary",
-    "sphinxcontrib.apidoc",
     "recommonmark",
 ]
 
