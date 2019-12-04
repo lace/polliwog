@@ -248,6 +248,7 @@ class Plane(object):
         pts[~pt_is_valid] = np.nan
         return pts, pt_is_valid
 
+
 Plane.xy = Plane(point_on_plane=np.zeros(3), unit_normal=vg.basis.z)
 Plane.xy.__doc__ = "The `xy`-plane."
 Plane.xz = Plane(point_on_plane=np.zeros(3), unit_normal=vg.basis.y)
