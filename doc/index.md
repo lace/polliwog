@@ -27,6 +27,8 @@
 
 .. autoclass:: Plane
     :members:
+    :exclude-members: xy,xz,yz
+
 ```
 
 ### Named coordinate planes
@@ -34,19 +36,9 @@
 ```eval_rst
 .. py:currentmodule:: polliwog
 
-.. autodata:: coordinate_planes
-    :annotation:
-
-.. py:currentmodule:: polliwog.coordinate_planes
-
-.. automodule: polliwog.coordinate_planes
-
-.. data:: xy
-    :annotation: = <Plane of [0. 0. 1.] through [0. 0. 0.]>
-.. data:: xz
-    :annotation: = <Plane of [0. 1. 0.] through [0. 0. 0.]>
-.. data:: yz
-    :annotation: = <Plane of [1. 0. 0.] through [0. 0. 0.]>
+.. autodata:: polliwog.Plane.xy
+.. autodata:: polliwog.Plane.xz
+.. autodata:: polliwog.Plane.yz
 ```
 
 ### Plane functions

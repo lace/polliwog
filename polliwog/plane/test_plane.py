@@ -337,3 +337,9 @@ def test_line_segment_plane_intersections():
     intersections, is_intersecting = plane.line_segment_xsections(a, b)
     np.testing.assert_array_equal(intersections, expected)
     np.testing.assert_array_equal(is_intersecting, [False, False, True, True, False])
+
+
+def test_constants():
+    np.testing.assert_array_equal(Plane.xy.normal, vg.basis.z)
+    np.testing.assert_array_equal(Plane.xz.normal, vg.basis.y)
+    np.testing.assert_array_equal(Plane.yz.normal, vg.basis.x)

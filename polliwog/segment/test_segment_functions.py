@@ -2,28 +2,28 @@ import numpy as np
 import pytest
 from .segment_functions import (
     closest_point_of_line_segment,
-    partition,
-    partition_segment,
+    subdivide_segment,
+    subdivide_segments,
 )
 
 
-def test_partition_segment_raises_exception_for_invalid_partition_size_type():
+def test_subdivide_segment_raises_exception_for_invalid_partition_size_type():
     p1 = np.array([0.0, 0.0, 0.0])
     p2 = np.array([1.0, 0.0, 0.0])
 
     with pytest.raises(TypeError):
-        partition_segment(p1, p2, "foobar")
+        subdivide_segment(p1, p2, "foobar")
 
 
-def test_partition_segment_raises_exception_for_invalid_partition_size_value():
+def test_subdivide_segment_raises_exception_for_invalid_partition_size_value():
     p1 = np.array([0.0, 0.0, 0.0])
     p2 = np.array([1.0, 0.0, 0.0])
 
     with pytest.raises(ValueError):
-        partition_segment(p1, p2, 1)
+        subdivide_segment(p1, p2, 1)
 
 
-def test_partition_segment_returns_partition_for_odd_partition_size():
+def test_subdivide_segment_returns_partition_for_odd_partition_size():
     p1 = np.array([0.0, 0.0, 0.0])
     p2 = np.array([2.0, 0.0, 0.0])
 
@@ -40,11 +40,11 @@ def test_partition_segment_returns_partition_for_odd_partition_size():
     )
 
     np.testing.assert_array_almost_equal(
-        partition_segment(p1, p2, partition_size), expected_partition_points, decimal=7
+        subdivide_segment(p1, p2, partition_size), expected_partition_points, decimal=7
     )
 
 
-def test_partition_segment_returns_partition_points_for_even_partition_size():
+def test_subdivide_segment_returns_partition_points_for_even_partition_size():
     p1 = np.array([0.0, 0.0, 0.0])
     p2 = np.array([1.0, 0.0, 0.0])
 
@@ -62,11 +62,11 @@ def test_partition_segment_returns_partition_points_for_even_partition_size():
     )
 
     np.testing.assert_array_almost_equal(
-        partition_segment(p1, p2, partition_size), expected_partition_points, decimal=7
+        subdivide_segment(p1, p2, partition_size), expected_partition_points, decimal=7
     )
 
 
-def test_partition_segment_returns_partition_omitting_endpoint():
+def test_subdivide_segment_returns_partition_omitting_endpoint():
     p1 = np.array([0.0, 0.0, 0.0])
     p2 = np.array([1.0, 0.0, 0.0])
 
@@ -83,13 +83,13 @@ def test_partition_segment_returns_partition_omitting_endpoint():
     )
 
     np.testing.assert_array_almost_equal(
-        partition_segment(p1, p2, partition_size, endpoint=False),
+        subdivide_segment(p1, p2, partition_size, endpoint=False),
         expected_partition_points,
         decimal=7,
     )
 
 
-def test_partition_adds_points_for_equal_length_line_segments():
+def test_subdivide_segments_adds_points_for_equal_length_line_segments():
     v = np.array(
         [
             [0.0, 0.0, 0.0],
@@ -126,10 +126,10 @@ def test_partition_adds_points_for_equal_length_line_segments():
         ]
     )
 
-    np.testing.assert_array_almost_equal(partition(v), expected)
+    np.testing.assert_array_almost_equal(subdivide_segments(v), expected)
 
 
-def test_partition_adds_points_for_nonequal_arbitrarily_oriented_line():
+def test_subdivide_segments_adds_points_for_nonequal_arbitrarily_oriented_line():
     v = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 1.0], [2.0, 0.0, 1.0], [2.0, 2.0, 1.0]])
 
     expected = np.array(
@@ -153,7 +153,7 @@ def test_partition_adds_points_for_nonequal_arbitrarily_oriented_line():
         ]
     )
 
-    np.testing.assert_array_almost_equal(partition(v), expected)
+    np.testing.assert_array_almost_equal(subdivide_segments(v), expected)
 
 
 def test_closest_point_of_line_segment():

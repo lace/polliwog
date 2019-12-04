@@ -1,5 +1,5 @@
 from . import functions as _functions
 from .functions import *  # noqa: F401,F403
-from .line_intersect import line_intersect2, line_intersect3
+from .line_intersect import intersect_2d_lines, intersect_lines  # noqa: F401
 
-__all__ = _functions.__all__ + ["line_intersect2", "line_intersect3"]
+__all__ = ["intersect_lines", "intersect_2d_lines"] + _functions.__all__

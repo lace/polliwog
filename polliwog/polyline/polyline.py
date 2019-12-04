@@ -299,7 +299,7 @@ class Polyline(object):
 
         """
         import itertools
-        from ..segment.segment_functions import partition_segment
+        from ..segment.segment_functions import subdivide_segment
 
         old_num_e = self.num_e
         old_num_v = self.num_v
@@ -308,7 +308,7 @@ class Polyline(object):
         )
         (es_to_subdivide,) = (num_segments_needed > 1).nonzero()
         vs_to_insert = [
-            partition_segment(
+            subdivide_segment(
                 self.v[self.e[old_e_index][0]],
                 self.v[self.e[old_e_index][1]],
                 np.int(num_segments_needed[old_e_index]),

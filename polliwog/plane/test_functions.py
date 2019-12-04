@@ -2,7 +2,6 @@ import math
 import numpy as np
 import pytest
 import vg
-from .coordinate_planes import coordinate_planes
 from .functions import (
     normal_and_offset_from_plane_equations,
     plane_equation_from_points,
@@ -107,7 +106,7 @@ def test_signed_distances_for_xz_plane_at_origin():
     np.testing.assert_array_equal(
         signed_distance_to_plane(
             points=np.array([[500.0, 502.0, 503.0], [-500.0, -501.0, -503.0]]),
-            plane_equations=coordinate_planes.xz.equation,
+            plane_equations=Plane.xz.equation,
         ),
         np.array([502.0, -501.0]),
     )
@@ -135,7 +134,7 @@ def test_signed_distance_validation():
         match=r"Expected points to be an array with shape \(3,\) or \(-1, 3\); got \(1, 1, 1\)",
     ):
         signed_distance_to_plane(
-            points=np.array([[[1.0]]]), plane_equations=coordinate_planes.xz.equation
+            points=np.array([[[1.0]]]), plane_equations=Plane.xz.equation
         ),
 
 
