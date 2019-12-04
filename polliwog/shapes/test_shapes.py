@@ -1,5 +1,5 @@
 import numpy as np
-from .shapes import create_cube, create_horizontal_plane, create_rectangular_prism
+from .shapes import create_cube, create_rectangle, create_rectangular_prism
 
 
 def test_create_rectangular_prism():
@@ -59,12 +59,12 @@ def test_create_cube():
     np.testing.assert_array_equal(flattened_vertices[0], expected_first_triangle)
 
 
-def test_create_horizontal_plane():
+def test_create_rectangle():
     expected_vertices = np.array(
         [[1.0, 0.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.0, -1.0]]
     )
     expected_faces = np.array([[0, 1, 2], [3, 1, 0]])
 
-    vertices, faces = create_horizontal_plane(ret_unique_vertices_and_faces=True)
+    vertices, faces = create_rectangle(ret_unique_vertices_and_faces=True)
     np.testing.assert_array_equal(faces, expected_faces)
     np.testing.assert_array_equal(vertices, expected_vertices)

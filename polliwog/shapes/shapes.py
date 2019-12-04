@@ -4,7 +4,7 @@ __all__ = [
     "create_rectangular_prism",
     "create_cube",
     "create_triangular_prism",
-    "create_horizontal_plane",
+    "create_rectangle",
 ]
 
 
