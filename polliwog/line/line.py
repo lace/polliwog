@@ -1,6 +1,4 @@
-from __future__ import absolute_import, print_function
 import vg
-from .functions import project_to_line
 
 
 class Line:
@@ -32,15 +30,17 @@ class Line:
         """
         Find the intersection with another line.
         """
-        from .line_intersect import line_intersect3
+        from .line_intersect import intersect_lines
 
-        return line_intersect3(*(self.reference_points + other.reference_points))
+        return intersect_lines(*(self.reference_points + other.reference_points))
 
     def project(self, points):
         """
         Project a given point (or stack of points) to the plane.
         """
-        return project_to_line(
+        from .functions import project_point_to_line
+
+        return project_point_to_line(
             points=points,
             reference_points_of_lines=self.reference_point,
             vectors_along_lines=self.along,

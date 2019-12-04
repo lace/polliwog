@@ -1,32 +1,7 @@
 import numpy as np
 
 
-def line_intersect2(p0, q0, p1, q1):
-    """
-    Intersect two lines: (p0, q0) and (p1, q1). Each should be a 2D
-    point.
-    """
-    # Adapted from http://stackoverflow.com/a/26416320/893113
-    dy = q0[1] - p0[1]
-    dx = q0[0] - p0[0]
-    lhs0 = [-dy, dx]
-    rhs0 = p0[1] * dx - dy * p0[0]
-
-    dy = q1[1] - p1[1]
-    dx = q1[0] - p1[0]
-    lhs1 = [-dy, dx]
-    rhs1 = p1[1] * dx - dy * p1[0]
-
-    a = np.array([lhs0, lhs1])
-    b = np.array([rhs0, rhs1])
-
-    try:
-        return np.linalg.solve(a, b)
-    except np.linalg.LinAlgError:
-        return None
-
-
-def line_intersect3(p0, q0, p1, q1):
+def intersect_lines(p0, q0, p1, q1):
     """
     Intersect two lines in 3d: (p0, q0) and (p1, q1). Each should be a 3D
     point.
@@ -55,3 +30,28 @@ def line_intersect3(p0, q0, p1, q1):
     l = h_ / k_ * e  # noqa: E741 (FIXME)
     sign = -1 if np.all(h / h_ == k / k_) else +1
     return p0 + sign * l
+
+
+def intersect_2d_lines(p0, q0, p1, q1):
+    """
+    Intersect two lines: (p0, q0) and (p1, q1). Each should be a 2D
+    point.
+    """
+    # Adapted from http://stackoverflow.com/a/26416320/893113
+    dy = q0[1] - p0[1]
+    dx = q0[0] - p0[0]
+    lhs0 = [-dy, dx]
+    rhs0 = p0[1] * dx - dy * p0[0]
+
+    dy = q1[1] - p1[1]
+    dx = q1[0] - p1[0]
+    lhs1 = [-dy, dx]
+    rhs1 = p1[1] * dx - dy * p1[0]
+
+    a = np.array([lhs0, lhs1])
+    b = np.array([rhs0, rhs1])
+
+    try:
+        return np.linalg.solve(a, b)
+    except np.linalg.LinAlgError:
+        return None
