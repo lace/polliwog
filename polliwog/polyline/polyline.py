@@ -4,18 +4,15 @@ import vg
 
 class Polyline(object):
     """
-    Represent the geometry of a polygonal chain in 3-space. The
-    chain may be open or closed, and there are no constraints on the
-    geometry. For example, the chain may be simple or
-    self-intersecting, and the points need not be unique.
+    Represent the geometry of a polygonal chain in 3-space. The chain may be
+    open or closed.
 
-    Mutable by setting polyline.v or polyline.closed or calling
-    a method like polyline.partition_by_length().
+    There are no constraints on the geometry. For example, the chain may be
+    simple or self-intersecting, and the points need not be unique.
 
-    Note this class is distinct from lace.lines.Lines, which
-    allows arbitrary edges and enables visualization. To convert to
-    a Lines object, use the as_lines() method.
-
+    The methods do not mutate; they create new polylines which exhibit the
+    requested mutation. However, immutability is not enforced. If you wish
+    you can mutate a polyline by updating `polyline.v` or `polyline.is_closed`.
     """
 
     def __init__(self, v, is_closed=False):
