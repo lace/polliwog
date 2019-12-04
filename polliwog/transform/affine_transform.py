@@ -2,13 +2,21 @@ import numpy as np
 import vg
 from .._common.shape import columnize
 
+__all__ = [
+    "apply_affine_transform",
+    "transform_matrix_for_rotation",
+    "transform_matrix_for_translation",
+    "transform_matrix_for_scale",
+]
+
 
 def apply_affine_transform(points, transform_matrix):
     """
     Apply the given transformation matrix to the points using homogenous
     coordinates.
 
-    (This works on any transformation matrix, whether or not it is affine.)
+    Note:
+        This works on any transformation matrix, whether or not it is affine.
     """
     vg.shape.check(locals(), "transform_matrix", (4, 4))
     points, _, maybe_decolumnize = columnize(points, (-1, 3), name="points")

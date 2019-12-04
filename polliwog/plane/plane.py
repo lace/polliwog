@@ -7,9 +7,11 @@ class Plane(object):
     """
     A 2-D plane in 3-space (not a hyperplane).
 
-    Params:
-        - point_on_plane, plane_normal:
-            1 x 3 np.arrays
+    Args:
+        point_on_plane (np.arraylike): A reference point on the plane, as a
+            NumPy array with three coordinates.
+        unit_normal (np.arraylike): The plane normal vector, as a NumPy
+            array with three coordinates.
     """
 
     def __init__(self, point_on_plane, unit_normal):
@@ -70,27 +72,26 @@ class Plane(object):
     def fit_from_points(cls, points):
         """
         Fits a plane whose normal is orthgonal to the first two principal axes
-        of variation in the data and centered on the points' centroid.
+        of variation in the data and centered on their centroid.
         """
         vg.shape.check(locals(), "points", (-1, 3))
+
         eigval, eigvec = np.linalg.eig(np.cov(points.T))
         ordering = np.argsort(eigval)[::-1]
         normal = np.cross(eigvec[:, ordering[0]], eigvec[:, ordering[1]])
-        return cls(points.mean(axis=0), normal)
+
+        centroid = points.mean(axis=0)
+
+        return cls(centroid, normal)
 
     @property
     def equation(self):
         """
-        Returns parameters A, B, C, D as a 1 x 4 np.array, where
+        Returns parameters `A`, `B`, `C`, `D` as a 1x4 `np.array`, where
 
-            Ax + By + Cz + D = 0
+            `Ax + By + Cz + D = 0`
 
         defines the plane.
-
-        params:
-            - normalized:
-                Boolean, indicates whether or not the norm of the vector [A, B, C] is 1.
-                Useful when computing the distance from a point to the plane.
         """
         A, B, C = self._n
         D = -self._r0.dot(self._n)
@@ -172,9 +173,14 @@ class Plane(object):
         Returns the signed distances to the given points or the signed
         distance to a single point.
 
-        Params:
-            - points:
-                V x 3 np.array
+        Args:
+            points (np.arraylike): A 3D point or a `kx3` stack of points.
+
+        Returns:
+            depends:
+
+            - Given a single 3D point, the distance as a NumPy scalar.
+            - Given a `kx3` stack of points, an `k` array of distances.
         """
         return functions.signed_distance_to_plane(points, self.equation)
 

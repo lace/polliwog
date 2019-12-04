@@ -2,6 +2,13 @@ import numpy as np
 import vg
 from .._common.shape import columnize
 
+__all__ = [
+    "surface_normals",
+    "coplanar_points_are_on_same_side_of_line",
+    "contains_coplanar_point",
+    "barycentric_coordinates_of_points",
+]
+
 
 def surface_normals(points, normalize=True):
     """

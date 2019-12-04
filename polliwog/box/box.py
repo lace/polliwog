@@ -167,7 +167,7 @@ class Box(object):
     @property
     def v(self):
         """
-        Corners of the box as an Nx3 array of points
+        Corners of the box as an `8x3` array of coordinates.
         """
         return np.array(
             [
@@ -185,7 +185,8 @@ class Box(object):
     def contains(self, point, atol=None):
         """
         Test whether the box contains the given point. When `atol` is
-        provided, returns True when point is within `atol` of the box.
+        provided, returns `True` for points inside the box and points
+        whose coordinates are all within `atol` of the box boundary.
         """
         vg.shape.check(locals(), "point", (3,))
 

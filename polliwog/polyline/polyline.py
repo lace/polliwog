@@ -191,7 +191,8 @@ class Polyline(object):
     def index_of_vertex(self, point, atol=1e-08):
         """
         Return the index of the vertex with the given point. If there are
-        coincident vertices at that point, return the first one.
+        coincident vertices at that point, return the one at the lowest
+        index.
         """
         vg.shape.check(locals(), "point", (3,))
 
@@ -298,7 +299,7 @@ class Polyline(object):
 
         """
         import itertools
-        from ..segment.segment import partition_segment
+        from ..segment.segment_functions import partition_segment
 
         old_num_e = self.num_e
         old_num_v = self.num_v
@@ -473,7 +474,7 @@ class Polyline(object):
         indices of those points.
         """
         from .._common.shape import columnize
-        from ..segment.segment import closest_point_of_line_segment
+        from ..segment.segment_functions import closest_point_of_line_segment
 
         points, _, transform_result = columnize(points, name="points")
         num_points = len(points)

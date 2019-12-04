@@ -6,6 +6,10 @@ from .._common.shape import columnize
 def intersect_segment_with_plane(
     start_points, segment_vectors, points_on_plane, plane_normals
 ):
+    """
+    Check for intersections between a line segment and a plane, or pairwise
+    between a stack of line segments and a stack of planes.
+    """
     orig_shape = start_points.shape
     start_points, _, transform_result = columnize(
         start_points, (-1, 3), name="start_points"

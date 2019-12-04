@@ -32,6 +32,8 @@ def rotation_from_up_and_look(up, look):
 
 
 def euler(xyz, order="xyz", units="deg"):
+    """
+    """
     if not hasattr(xyz, "__iter__"):
         xyz = [xyz]
     if units == "deg":

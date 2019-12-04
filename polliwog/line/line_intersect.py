@@ -5,10 +5,8 @@ def line_intersect2(p0, q0, p1, q1):
     """
     Intersect two lines: (p0, q0) and (p1, q1). Each should be a 2D
     point.
-
-    Adapted from http://stackoverflow.com/a/26416320/893113
-
     """
+    # Adapted from http://stackoverflow.com/a/26416320/893113
     dy = q0[1] - p0[1]
     dx = q0[0] - p0[0]
     lhs0 = [-dy, dx]

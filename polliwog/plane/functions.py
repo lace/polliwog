@@ -3,6 +3,14 @@ import vg
 from .._common.shape import check_shape_any, columnize
 from ..tri.functions import surface_normals
 
+__all__ = [
+    "plane_normal_from_points",
+    "plane_equation_from_points",
+    "normal_and_offset_from_plane_equations",
+    "signed_distance_to_plane",
+    "project_point_to_plane",
+]
+
 
 def plane_normal_from_points(points, normalize=True):
     """

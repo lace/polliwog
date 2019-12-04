@@ -5,7 +5,7 @@ from .plane import Plane
 
 class _CoordinatePlanes(object):
     """
-    The planes  basis vectors.
+    The three cartesian coordinate planes.
     """
 
     @property

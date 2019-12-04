@@ -2,6 +2,8 @@ import numpy as np
 
 
 def rodrigues(r, calculate_jacobian=False):
+    """
+    """
     r = np.array(r, dtype=np.double)
     eps = np.finfo(np.double).eps
 
@@ -138,6 +140,8 @@ def rodrigues(r, calculate_jacobian=False):
 
 
 def as_rotation_matrix(r):
+    """
+    """
     if (
         np.all(r.shape == (3, 1))
         or np.all(r.shape == (1, 3))
