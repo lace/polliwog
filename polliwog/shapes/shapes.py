@@ -41,7 +41,7 @@ def create_rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
         - With `ret_unique_vertices_and_faces=False`: a `12x3x3` matrix of
           flattened triangle coordinates.
     """
-    from .quad_faces import quads_to_tris
+    from ..tri.quad_faces import quads_to_tris
 
     lower_base_plane = np.array(
         [
