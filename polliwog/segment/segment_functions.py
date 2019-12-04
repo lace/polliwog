@@ -2,7 +2,37 @@ import numpy as np
 import vg
 
 
-def partition(v, partition_size=5):
+def subdivide_segment(p1, p2, num_points, endpoint=True):
+    """
+    For two points in n-space, return an np.ndarray of equidistant partition
+    points along the segment determined by p1 & p2.
+
+    The total number of points returned will be n_samples. When n_samples is
+    2, returns the original points.
+
+    When endpoint is True, p2 is the last point. When false, p2 is excluded.
+
+    Partition order is oriented from p1 to p2.
+
+    Args:
+        p1, p2:
+            1 x N vectors
+
+        partition_size:
+            size of partition. should be >= 2.
+
+    """
+    if not isinstance(num_points, int):
+        raise TypeError("partition_size should be an int.")
+    elif num_points < 2:
+        raise ValueError("partition_size should be bigger than 1.")
+
+    return (p2 - p1) * np.linspace(0, 1, num=num_points, endpoint=endpoint)[
+        :, np.newaxis
+    ] + p1
+
+
+def subdivide_segments(v, num_subdivisions=5):
     """
 
     params:
@@ -26,50 +56,24 @@ def partition(v, partition_size=5):
     dists = np.sqrt(np.sum(sqdis, axis=1))
 
     unitds = diffs / dists[:, np.newaxis]
-    widths = dists / partition_size
+    widths = dists / num_subdivisions
 
-    domain = widths[:, np.newaxis] * np.arange(0, partition_size)
+    domain = widths[:, np.newaxis] * np.arange(0, num_subdivisions)
     domain = domain.flatten()[:, np.newaxis]
 
-    points = np.repeat(v[:-1], partition_size, axis=0)
-    unitds = np.repeat(unitds, partition_size, axis=0)
+    points = np.repeat(v[:-1], num_subdivisions, axis=0)
+    unitds = np.repeat(unitds, num_subdivisions, axis=0)
 
     filled = points + (unitds * domain)
 
     return np.vstack((filled, v[-1]))
 
 
-def partition_segment(p1, p2, n_samples, endpoint=True):
-    """
-    For two points in n-space, return an np.ndarray of equidistant partition
-    points along the segment determined by p1 & p2.
-
-    The total number of points returned will be n_samples. When n_samples is
-    2, returns the original points.
-
-    When endpoint is True, p2 is the last point. When false, p2 is excluded.
-
-    Partition order is oriented from p1 to p2.
-
-    Args:
-        p1, p2:
-            1 x N vectors
-
-        partition_size:
-            size of partition. should be >= 2.
-
-    """
-    if not isinstance(n_samples, int):
-        raise TypeError("partition_size should be an int.")
-    elif n_samples < 2:
-        raise ValueError("partition_size should be bigger than 1.")
-
-    return (p2 - p1) * np.linspace(0, 1, num=n_samples, endpoint=endpoint)[
-        :, np.newaxis
-    ] + p1
-
-
 def closest_point_of_line_segment(points, start_points, segment_vectors):
+    """
+    Compute pairwise the point on each line segment that is nearest to the
+    corresponding query point.
+    """
     # Adapted from public domain algorithm
     # https://gdbooks.gitbooks.io/3dcollisions/content/Chapter1/closest_point_on_line.html
     k = vg.shape.check(locals(), "points", (-1, 3))

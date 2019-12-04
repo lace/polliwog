@@ -1,11 +1,11 @@
 import numpy as np
 import vg
 from .._common.shape import columnize
+from ..line.functions import coplanar_points_are_on_same_side_of_line
 
 __all__ = [
     "surface_normals",
-    "coplanar_points_are_on_same_side_of_line",
-    "contains_coplanar_point",
+    "tri_contains_coplanar_point",
     "barycentric_coordinates_of_points",
 ]
 
@@ -33,31 +33,7 @@ def surface_normals(points, normalize=True):
     return transform_result(normals)
 
 
-def coplanar_points_are_on_same_side_of_line(a, b, p1, p2):
-    """
-    Test if the given points are on the same side of the given line.
-
-    Args:
-        a (np.arraylike): The first 3D point of interest.
-        b (np.arraylike): The second 3D point of interest.
-        p1 (np.arraylike): A first point which lies on the line of interest.
-        p2 (np.arraylike): A second point which lies on the line of interest.
-
-    Returns:
-        bool: `True` when `a` and `b` are on the same side of the line defined
-        by `p1` and `p2`.
-    """
-    vg.shape.check(locals(), "a", (3,))
-    vg.shape.check(locals(), "b", (3,))
-    vg.shape.check(locals(), "p1", (3,))
-    vg.shape.check(locals(), "p2", (3,))
-
-    # Uses "same-side technique" from http://blackpawn.com/texts/pointinpoly/default.html
-    along_line = b - a
-    return vg.dot(vg.cross(along_line, p1 - a), vg.cross(along_line, p2 - a)) >= 0
-
-
-def contains_coplanar_point(a, b, c, point):
+def tri_contains_coplanar_point(a, b, c, point):
     """
     Assuming `point` is coplanar with the triangle `ABC`, check if it lies
     inside it.
