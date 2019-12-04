@@ -6,7 +6,7 @@ class Polyline(object):
     """
     Represent the geometry of a polygonal chain in 3-space. The chain may be
     open or closed.
-    
+
     There are no constraints on the geometry. For example, the chain may be
     simple or self-intersecting, and the points need not be unique.
 
