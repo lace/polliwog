@@ -278,6 +278,26 @@ def test_line_plane_intersections():
     np.testing.assert_array_equal(is_intersecting, [False, False, True, True])
 
 
+def test_line_plane_intersections_coplanar_input():
+    # TODO Intersecting the x-z plane with a line that lies in the x-z plane
+    # returns non-intersecting. Is this desirable?
+
+    # x-z plane
+    normal = np.array([0.0, 1.0, 0.0])
+    sample = np.array([0.0, 0.0, 0.0])
+
+    plane = Plane(sample, normal)
+
+    # A line that lies in the x-z plane.
+    pts = np.array([[1.0, 0.0, -1.0]])
+    rays = np.array([[1.0, 0.0, 2.0]])
+
+    expected = np.array([[np.nan, np.nan, np.nan]])
+    intersections, is_intersecting = plane.line_xsections(pts, rays)
+    np.testing.assert_array_equal(intersections, expected)
+    np.testing.assert_array_equal(is_intersecting, [False])
+
+
 def test_line_segment_plane_intersection():
     # x-z plane
     normal = np.array([0.0, 1.0, 0.0])
