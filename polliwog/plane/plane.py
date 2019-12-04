@@ -175,7 +175,7 @@ class Plane(object):
 
         Args:
             points (np.arraylike): A 3D point or a `kx3` stack of points.
-        
+
         Returns:
             depends:
 
