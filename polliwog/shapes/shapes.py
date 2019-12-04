@@ -4,7 +4,7 @@ __all__ = [
     "create_rectangular_prism",
     "create_cube",
     "create_triangular_prism",
-    "create_horizontal_plane",
+    "create_rectangle",
 ]
 
 
@@ -17,11 +17,8 @@ def _maybe_flatten(vertices, faces, ret_unique_vertices_and_faces):
 
 def create_rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
     """
-    Return vertices (or unique verties and faces) of an axis-aligned
-    rectangular prism.
-
-    One vertex is `origin`; the diametrically opposite vertex is `origin +
-    size`.
+    Tesselate an axis-aligned rectangular prism. One vertex is `origin`. The
+    diametrically opposite vertex is `origin + size`.
 
     Args:
         origin (np.ndarray): A 3D point vector containing the point on the
@@ -78,12 +75,26 @@ def create_rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
 
 def create_cube(origin, size, ret_unique_vertices_and_faces=False):
     """
-    Return vertices (or unique verties and faces) with an axis-aligned cube.
-    One vertex is `origin`; the diametrically opposite vertex is `size` units
-    along +x, +y, and +z.
+    Tesselate an axis-aligned cube. One vertex is `origin`. The diametrically
+    opposite vertex is `size` units along `+x`, `+y`, and `+z`.
 
-    size: int or float.
+    Args:
+        origin (np.ndarray): A 3D point vector containing the point on the
+            prism with the minimum x, y, and z coords.
+        size (float): The length, width, and height of the cube, which should
+            be positive.
+        ret_unique_vertices_and_faces (bool): When `True` return a vertex
+            array containing the unique vertices and an array of faces (i.e.
+            vertex indices). When `False`, return a flattened array of
+            triangle coordinates.
 
+    Returns:
+        object:
+
+        - With `ret_unique_vertices_and_faces=True`: a tuple containing
+          an `8x3` array of vertices and a `12x3` array of triangle faces.
+        - With `ret_unique_vertices_and_faces=False`: a `12x3x3` matrix of
+          flattened triangle coordinates.
     """
     return create_rectangular_prism(
         origin,
@@ -94,9 +105,27 @@ def create_cube(origin, size, ret_unique_vertices_and_faces=False):
 
 def create_triangular_prism(p1, p2, p3, height, ret_unique_vertices_and_faces=False):
     """
-    Return vertices (or unique verties and faces) of a triangular prism whose
-    base is the triangle p1, p2, p3. If the vertices are oriented in a
-    counterclockwise direction, the prism extends from behind them.
+    Tesselate a triangular prism whose base is the triangle `p1`, `p2`, `p3`.
+    If the vertices are oriented in a counterclockwise direction, the prism
+    extends from behind them.
+
+    Args:
+        p1 (np.ndarray): A 3D point on the base of the prism.
+        p2 (np.ndarray): A 3D point on the base of the prism.
+        p3 (np.ndarray): A 3D point on the base of the prism.
+        height (float): The height of the prism, which should be positive.
+        ret_unique_vertices_and_faces (bool): When `True` return a vertex
+            array containing the unique vertices and an array of faces (i.e.
+            vertex indices). When `False`, return a flattened array of
+            triangle coordinates.
+
+    Returns:
+        object:
+
+        - With `ret_unique_vertices_and_faces=True`: a tuple containing
+          an `6x3` array of vertices and a `8x3` array of triangle faces.
+        - With `ret_unique_vertices_and_faces=False`: a `8x3x3` matrix of
+          flattened triangle coordinates.
     """
     from ..plane.plane import Plane
 
@@ -121,9 +150,23 @@ def create_triangular_prism(p1, p2, p3, height, ret_unique_vertices_and_faces=Fa
     return _maybe_flatten(vertices, faces, ret_unique_vertices_and_faces)
 
 
-def create_horizontal_plane(ret_unique_vertices_and_faces=False):
+def create_rectangle(ret_unique_vertices_and_faces=False):
     """
-    Creates a horizontal plane.
+    Create a rectangle.
+
+    Args:
+        ret_unique_vertices_and_faces (bool): When `True` return a vertex
+            array containing the unique vertices and an array of faces (i.e.
+            vertex indices). When `False`, return a flattened array of
+            triangle coordinates.
+
+    Returns:
+        object:
+
+        - With `ret_unique_vertices_and_faces=True`: a tuple containing
+          an `4x3` array of vertices and a `2x3` array of triangle faces.
+        - With `ret_unique_vertices_and_faces=False`: a `16x3x3` matrix of
+          flattened triangle coordinates.
     """
     vertices = np.array(
         [[1.0, 0.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.0, -1.0]]
