@@ -1,4 +1,4 @@
-__all__ = ["Polyline", "Plane", "Box", "Line", "coordinate_planes", "CompositeTransform",  "CoordinatManager"]
+__all__ = ["Polyline", "Plane", "Box", "Line", "coordinate_planes", "CompositeTransform",  "CoordinateManager"]
 
 from .package_version import __version__
 
