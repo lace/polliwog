@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.0.0-beta.1 (Dec. 5, 2019)
+
+### BREAKING CHANGES
+
+- Reorganize entire API into a few namespaces.
+- Attach named coordinate planes to Plane class.
+- Various API changes in CompositeTransform.
+- Remove `CompositeTransform.append_transform3()`.
+- Remove `partition_segment_old()`.
+- Remove `find_rigid_rotation()` and `find_rigid_transform()`. They are
+  being moved to [Entente][].
+- `cut_open_polyline_by_plane()` is now private.
+- Remove `estimate_normal()`.
+
+### New features
+
+- Break out affine transformations into their own functions.
+- Plane: `sign()` and `distance()` work with single query points.
+- Box: Add `contains()` method.
+
+### Bug fixes
+
+- Fix `contains_coplanar_point()`.
+
+## Other maintenance
+
+- Documentation on a single page, with sections.
+
 ## 0.12.0 (Nov. 25, 2019)
 
 ### BREAKING CHANGES
@@ -40,6 +68,7 @@
 - Auto-generate documentation and start to improve them. They aren't 100% but
   they're a good part of the way there:
   https://polliwog.readthedocs.io/en/latest/
+- Publish wheels for OS X.
 - Consolidate duplicate implementations
   `plane.functions.plane_normal_from_points` and
   `tri.functions.surface_normals`.
@@ -133,3 +162,5 @@
 ## 0.2.0 (Mar 28, 2019)
 
 Initial release.
+
+[entente]: https://github.com/lace/entente
