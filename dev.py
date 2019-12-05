@@ -73,7 +73,7 @@ def clean():
 @cli.command()
 def publish():
     execute("rm -rf dist/")
-    execute("python setup.py sdist bdist_wheel")
+    execute("python3 setup.py sdist bdist_wheel")
     execute("twine upload dist/*")
 
 
