@@ -25,12 +25,6 @@ def inflection_points(points, axis, span):
     vg.shape.check(locals(), "axis", (3,))
     vg.shape.check(locals(), "span", (3,))
 
-    from polliwog import Polyline
-
-    polyline = Polyline(v=points, is_closed=False)
-    polyline.partition_by_length(0.001)
-    points = polyline.v
-
     coords_on_span = points.dot(span)
     coords_on_axis = points.dot(axis)
 
