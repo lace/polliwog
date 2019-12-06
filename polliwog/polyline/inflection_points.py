@@ -25,6 +25,12 @@ def inflection_points(points, axis, span):
     vg.shape.check(locals(), "axis", (3,))
     vg.shape.check(locals(), "span", (3,))
 
+    from polliwog import Polyline
+
+    polyline = Polyline(v=points, is_closed=False)
+    polyline.partition_by_length(0.001)
+    points = polyline.v
+
     coords_on_span = points.dot(span)
     coords_on_axis = points.dot(axis)
 
@@ -44,58 +50,43 @@ def inflection_points(points, axis, span):
     return points[is_inflection_point]
 
 
-def inflection_points_2(points, axis, span):
+def point_of_max_acceleration(points, axis, span, span_spacing=None):
+    """
+    Find the point on a curve where the curve is maximally accelerating
+    in the direction specified by `axis`.
+    
+    `span` is the horizontal axis along which slices are taken, and
+    `span_spacing`, if provided, indices an upper bound on the size
+    of each slice.
+
+    For best results, slice the points first into a short section that
+    spans the area of interest.
+
+    Args:
+        points (np.arraylike): A stack of points, as `kx3`.
+        axis (np.arraylike): The vertical axis, as a 3D vector.
+        span (np.arraylike): The horizonal axis, as a 3D vector.
+        span_spacing (float): When provided, the maximum width of each
+            slice. For best results pass a value that is small relative to
+            the changes in the geometry. When `None`, the original points
+            are used.
+    """
+    from ..polyline.polyline import Polyline
+
     vg.shape.check(locals(), "points", (-1, 3))
     vg.shape.check(locals(), "axis", (3,))
     vg.shape.check(locals(), "span", (3,))
 
-    from polliwog import Polyline
+    if span_spacing is not None:
+        polyline = Polyline(v=points, is_closed=False)
+        polyline.partition_by_length(span_spacing)
+        points = polyline.v
 
-    polyline = Polyline(v=points, is_closed=False)
-    polyline.partition_by_length(.001)
-    points = polyline.v
-
-    # coords_on_span = points.dot(span)
-    # coords_on_axis = points.dot(axis)
-
-    # coords_on_span = vg.scalar_projection(points, span)
-    # coords_on_axis = vg.scalar_projection(points, axis)
-
-    coords_on_axis = points[:, 2]
-    # coords_on_span = np.ones(len(points))
-    coords_on_span = points[:, 1]
+    coords_on_span = points.dot(span)
+    coords_on_axis = points.dot(axis)
 
     finite_difference_1 = np.gradient(coords_on_axis, coords_on_span)
-    # finite_difference_1 = np.ediff1d(coords_on_axis, to_end=[0])/
-    # finite_difference_1 = np.ediff1d(coords_on_axis, to_end=[0])
     finite_difference_2 = np.gradient(finite_difference_1, coords_on_span)
 
-    # abs_difference_2 = np.abs(finite_difference_2)
-    # threshold = 0.8 * np.amax(abs_difference_2)
-    # (over_threshold,) = (abs_difference_2 > threshold).nonzero()
-
-    threshold = 0.8 * np.amax(finite_difference_2)
-    (over_threshold,) = (finite_difference_2 > threshold).nonzero()
-
-    import matplotlib.pyplot as plt
-
-    plt.figure(figsize=(len(points), 5), dpi=100)
-    # xs = np.arange(len(points))
-    xs = coords_on_span
-    # plt.plot(xs, points[:, 2], label='coords')
-    # plt.plot(xs, coords_on_axis, label='coords')
-    # plt.plot(xs, coords_on_span, label='coords')
-    # plt.plot(xs, coords_on_axis, label='coords')
-    # plt.plot(xs, coords_on_span/coords_on_axis, label='coords')
-    plt.plot(xs, finite_difference_1, label='finite1')
-    # plt.plot(xs, coords_on_span, label='coords')
-    plt.plot(xs, finite_difference_2, label='finite2')
-    # plt.plot(xs, finite_difference_2, labl=)
-    # plt.show()
-    # import pdb; pdb.set_trace()
-
     index = np.argmax(finite_difference_2)
-
-    # index = over_threshold[0] + 1
-
     return points[index]

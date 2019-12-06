@@ -13,7 +13,7 @@ def main():
     import numpy as np
     from polliwog import Plane
     import vg
-    from .inflection_points import inflection_points_2
+    from .inflection_points import point_of_max_acceleration
     from entente.landmarks._mesh import add_landmark_points
 
     np.set_printoptions(suppress=False)
@@ -22,18 +22,14 @@ def main():
 
     result_points = []
     for i, x_coord in enumerate(np.linspace(-15.0, 15.0, num=20)):
-    #     if i != 12:
-    #         continue
-    # # for x_coord in [-7, 7]:
         cut_plane = Plane(np.array([x_coord, 0.0, 0.0]), vg.basis.x)
         xss = mesh.intersect_plane(cut_plane)
         longest_xs = next(reversed(sorted(xss, key=lambda xs: xs.total_length)))
 
-        result = inflection_points_2(longest_xs.v, vg.basis.z, vg.basis.y)
+        result = point_of_max_acceleration(
+            longest_xs.v, vg.basis.z, vg.basis.y, span_spacing=0.001
+        )
         result_points.append(result)
-
-        # if i == 12:
-        #     result_points.append(result + 2.0 * vg.basis.z)
 
     add_landmark_points(mesh, result_points)
     mesh.write("with_inflection.dae")
