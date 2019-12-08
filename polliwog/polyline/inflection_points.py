@@ -44,7 +44,7 @@ def inflection_points(points, axis, span):
     return points[is_inflection_point]
 
 
-def point_of_max_acceleration(points, axis, span, span_spacing=None):
+def point_of_max_acceleration(points, axis, span, span_spacing=None, plot=False):
     """
     Find the point on a curve where the curve is maximally accelerating
     in the direction specified by `axis`.
@@ -82,5 +82,49 @@ def point_of_max_acceleration(points, axis, span, span_spacing=None):
     finite_difference_1 = np.gradient(coords_on_axis, coords_on_span)
     finite_difference_2 = np.gradient(finite_difference_1, coords_on_span)
 
-    index = np.argmax(finite_difference_2)
+    def moving_average(x, w):
+        return np.convolve(x, np.ones(w), 'valid') / w
+
+    window = 2000
+    moving_average_1 = moving_average(finite_difference_1, window)
+    (zero_crossings,) = np.where(np.diff(np.sign(moving_average_1)))
+    # index = zero_crossings[-1] - int(window / 2.0)
+
+    # When there are no zero crossings, this is probably because there is no
+    # inflection point, such as on the side of the bust. Use the first point
+    # instead.
+    try:
+        index = zero_crossings[-1]
+    except IndexError:
+        raise ValueError("No inflection point found")
+
+    if plot:
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+
+        sns.set(style="darkgrid")
+
+        # sns.relplot(data=np.hstack([xs, np.arange(len(xs))]))
+
+        fig, axs = plt.subplots(5)
+
+        xs = coords_on_span
+        axs[0].plot(xs, coords_on_axis, label='finite1')
+        axs[1].plot(xs, finite_difference_1, label='finite1')
+        axs[2].plot(xs, finite_difference_2, label='finite1')
+        axs[3].plot(xs, np.gradient(finite_difference_2, coords_on_span), label='finite1')
+        axs[4].plot(xs[:-window+1], moving_average_1, label='finite1')
+        # axs[5].plot(xs[:-window+1], moving_average(finite_difference_2, window), label='finite1')
+        axs[0].add_artist(plt.Circle((xs[index], coords_on_axis[index]), 0.1, fill=False, color='red'))
+        for coord in zero_crossings[-1:]:
+            axs[4].add_artist(plt.Circle((xs[coord], moving_average_1[coord]), 0.1, fill=False, color='red'))
+        plt.show()
+
+    # index = np.argmax(finite_difference_1)
+
+    # threshold = 0.8 * np.amax(finite_difference_1)
+    # (peaks,) = (finite_difference_2 > threshold).nonzero()
+    # index = int(np.average(peaks))
+
+
     return points[index]

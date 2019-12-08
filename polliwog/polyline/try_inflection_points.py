@@ -21,15 +21,23 @@ def main():
     mesh = load_front_torso_mesh()
 
     result_points = []
+    plot = True
     for i, x_coord in enumerate(np.linspace(-15.0, 15.0, num=20)):
+        if i != 12:
+            continue
         cut_plane = Plane(np.array([x_coord, 0.0, 0.0]), vg.basis.x)
         xss = mesh.intersect_plane(cut_plane)
-        longest_xs = next(reversed(sorted(xss, key=lambda xs: xs.total_length)))
+        longest_xs = next(reversed(sorted(xss, key=lambda xs: xs.total_length))).aligned_with(vg.basis.neg_y)
 
-        result = point_of_max_acceleration(
-            longest_xs.v, vg.basis.z, vg.basis.y, span_spacing=0.001
-        )
-        result_points.append(result)
+        axis = vg.normalize(np.array([0.0, -0.15, 1.0]))
+        try:
+            result = point_of_max_acceleration(
+                # longest_xs.v, axis, vg.perpendicular(axis, vg.basis.x), span_spacing=0.001, plot=False
+                longest_xs.v, vg.basis.z, vg.basis.y, span_spacing=0.001, plot=True
+            )
+            result_points.append(result)
+        except ValueError:
+            pass
 
     add_landmark_points(mesh, result_points)
     mesh.write("with_inflection.dae")
