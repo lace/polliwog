@@ -82,21 +82,39 @@ def point_of_max_acceleration(points, axis, span, span_spacing=None, plot=False)
     finite_difference_1 = np.gradient(coords_on_axis, coords_on_span)
     finite_difference_2 = np.gradient(finite_difference_1, coords_on_span)
 
-    def moving_average(x, w):
-        return np.convolve(x, np.ones(w), 'valid') / w
+    # def moving_average(x, w):
+    #     return np.convolve(x, np.ones(w), 'valid') / w
 
-    window = 2000
-    moving_average_1 = moving_average(finite_difference_1, window)
-    (zero_crossings,) = np.where(np.diff(np.sign(moving_average_1)))
+    # window = 2000
+    # moving_average_1 = moving_average(finite_difference_1, window)
+    # (zero_crossings,) = np.where(np.diff(np.sign(moving_average_1)))
     # index = zero_crossings[-1] - int(window / 2.0)
 
     # When there are no zero crossings, this is probably because there is no
     # inflection point, such as on the side of the bust. Use the first point
     # instead.
+    # try:
+    #     index = zero_crossings[zero_crossings < np.argmin(moving_average_1)][-1]
+    # except IndexError:
+    #     index = 0
+    #     # raise ValueError("No inflection point found")
+
+    # Do not choose a point where the first derivate of the next point is negative.
+    # valid_points = np.concatenate([(finite_difference_1 > 0)[1:], [False]])
+    valid_points = np.logical_and(
+        np.roll(finite_difference_1, 1) > 0,
+        np.roll(finite_difference_1, -1) > 0,
+    )
+    valid_points[0] = False
+    valid_points[-1] = False
+
     try:
-        index = zero_crossings[-1]
-    except IndexError:
-        raise ValueError("No inflection point found")
+        index = np.argmax(finite_difference_2[valid_points])
+    except:
+        # import pdb; pdb.set_trace()
+        plot = True
+        index = None
+    # index = np.argmax(finite_difference_2)
 
     if plot:
         import matplotlib.pyplot as plt
@@ -106,25 +124,35 @@ def point_of_max_acceleration(points, axis, span, span_spacing=None, plot=False)
 
         # sns.relplot(data=np.hstack([xs, np.arange(len(xs))]))
 
-        fig, axs = plt.subplots(5)
+        fig, axs = plt.subplots(3)
 
+        import pdb; pdb.set_trace()
         xs = coords_on_span
         axs[0].plot(xs, coords_on_axis, label='finite1')
+        axs[1].scatter(xs[valid_points], finite_difference_1[valid_points], label='finite1')
         axs[1].plot(xs, finite_difference_1, label='finite1')
         axs[2].plot(xs, finite_difference_2, label='finite1')
-        axs[3].plot(xs, np.gradient(finite_difference_2, coords_on_span), label='finite1')
-        axs[4].plot(xs[:-window+1], moving_average_1, label='finite1')
+        axs[2].scatter(xs[valid_points], finite_difference_2[valid_points], label='finite1')
+        # axs[3].plot(xs, np.gradient(finite_difference_2, coords_on_span), label='finite1')
+        # axs[1].plot(xs[:-window+1], moving_average_1, label='finite1')
         # axs[5].plot(xs[:-window+1], moving_average(finite_difference_2, window), label='finite1')
-        axs[0].add_artist(plt.Circle((xs[index], coords_on_axis[index]), 0.1, fill=False, color='red'))
-        for coord in zero_crossings[-1:]:
-            axs[4].add_artist(plt.Circle((xs[coord], moving_average_1[coord]), 0.1, fill=False, color='red'))
+        # axs[0].add_artist(plt.Circle((xs[index], coords_on_axis[index]), 0.1, fill=False, color='red'))
+        # for coord in zero_crossings:
+        #     axs[1].add_artist(plt.Circle((xs[coord], moving_average_1[coord]), 0.1, fill=False, color='red'))
+        # axs[2].plot(xs[int(window/2):-int(window/2)+1], np.gradient(moving_average_1, coords_on_span[int(window/2):-int(window/2)+1]), label='finite1')
+        # axs[3].plot(xs, finite_difference_1, label='finite1')
         plt.show()
 
-    # index = np.argmax(finite_difference_1)
+    # if plot:
+    #     return None
+
+    # import pdb; pdb.set_trace()
 
     # threshold = 0.8 * np.amax(finite_difference_1)
     # (peaks,) = (finite_difference_2 > threshold).nonzero()
     # index = int(np.average(peaks))
 
+    if index is None: return None
 
-    return points[index]
+    return points[valid_points][index]
+    # return points[index]

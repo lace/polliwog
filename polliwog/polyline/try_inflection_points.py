@@ -20,12 +20,23 @@ def main():
 
     mesh = load_front_torso_mesh()
 
+    mid_bust = np.average(mesh.v, axis=0)
+    mid_bust[2] = np.amin(mesh.v[:, 2]) + 3.0
+
+    to_left = vg.basis.x
+    to_center = vg.basis.z
+
     result_points = []
     plot = True
     for i, x_coord in enumerate(np.linspace(-15.0, 15.0, num=20)):
-        if i != 12:
-            continue
+    # for i, ratio in enumerate(np.linspace(0.0, 1.0, num=20)):
+        # if i != 12:
+        #     continue
+
+        # mid_bust_to_bust_line = ratio * to_center + (1 - ratio) * to_left
+        # cut_plane = Plane(mid_bust, vg.perpendicular(mid_bust_to_bust_line, vg.basis.y))
         cut_plane = Plane(np.array([x_coord, 0.0, 0.0]), vg.basis.x)
+
         xss = mesh.intersect_plane(cut_plane)
         longest_xs = next(reversed(sorted(xss, key=lambda xs: xs.total_length))).aligned_with(vg.basis.neg_y)
 
@@ -33,7 +44,7 @@ def main():
         try:
             result = point_of_max_acceleration(
                 # longest_xs.v, axis, vg.perpendicular(axis, vg.basis.x), span_spacing=0.001, plot=False
-                longest_xs.v, vg.basis.z, vg.basis.y, span_spacing=0.001, plot=True
+                longest_xs.v, vg.basis.z, vg.basis.y, span_spacing=0.001, plot=False
             )
             result_points.append(result)
         except ValueError:
