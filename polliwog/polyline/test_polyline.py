@@ -67,6 +67,19 @@ def test_to_dict():
     np.testing.assert_array_equal(expected_dict["edges"], actual_dict["edges"])
 
 
+def test_copy():
+    original_vs = np.array(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
+    )
+    polyline = Polyline(v=original_vs.copy(), is_closed=False)
+    copy_of_polyline = polyline.copy()
+    assert polyline is not copy_of_polyline
+    assert polyline.is_closed == copy_of_polyline.is_closed
+    np.testing.assert_array_equal(polyline.v, copy_of_polyline.v)
+    polyline.v[0] = np.array([2.0, 3.0, 4.0])
+    np.testing.assert_array_equal(copy_of_polyline.v, original_vs)
+
+
 def test_bounding_box():
     bounding_box = Polyline(
         np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]])
