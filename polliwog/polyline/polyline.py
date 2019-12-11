@@ -285,15 +285,16 @@ class Polyline(object):
         else:
             return result
 
-    def partition_by_length(self, max_length, ret_indices=False):
+    def subdivided_by_length(self, max_length, ret_indices=False):
         """
-        Subdivide each line segment longer than max_length with
-        equal-length segments, such that none of the new segments
-        are longer than max_length.
+        Subdivide each line segment longer than `max_length` with
+        equal-length segments, such that none of the new segments are longer
+        than `max_length`. Returns a new Polyline.
 
-        ret_indices: If True, return the indices of the original vertices.
-          Otherwise return self for chaining.
-
+        Args:
+            max_length (float): The maximum lenth of a segment.
+            ret_indices (bool): When `True`, also returns the indices of the
+                original vertices.
         """
         import itertools
         from ..segment.segment_functions import subdivide_segment
@@ -319,45 +320,45 @@ class Polyline(object):
         ]
 
         splits_of_original_vs = np.vsplit(self.v, es_to_subdivide + 1)
-        self.v = np.concatenate(
-            list(
-                itertools.chain(
-                    *zip(
-                        splits_of_original_vs,
-                        vs_to_insert + [np.empty((0, 3), dtype=np.float64)],
+        new_polyline = Polyline(
+            v=np.concatenate(
+                list(
+                    itertools.chain(
+                        *zip(
+                            splits_of_original_vs,
+                            vs_to_insert + [np.empty((0, 3), dtype=np.float64)],
+                        )
                     )
                 )
-            )
+            ),
+            is_closed=self.is_closed,
         )
 
-        if ret_indices:
-            # In a degenerate case, `partition_segment()` may return fewer than
-            # the requested number of indices. So, recompute the actual number of
-            # segments inserted.
-            num_segments_inserted = np.zeros(old_num_e, dtype=np.int64)
-            num_segments_inserted[es_to_subdivide] = [len(vs) for vs in vs_to_insert]
-            stepwise_index_offsets = np.concatenate(
-                [
-                    # The first vertex is never moved.
-                    np.zeros(1, dtype=np.int64),
-                    # In a closed polyline, the last edge goes back to vertex
-                    # 0. Subdivisions of that segment do not affect indexing of
-                    # any of the vertices (since the original end vertex is
-                    # still at index 0).
-                    num_segments_inserted[:-1]
-                    if self.is_closed
-                    else num_segments_inserted,
-                ]
-            )
-            cumulative_index_offsets = np.sum(
-                np.tril(
-                    np.broadcast_to(stepwise_index_offsets, (old_num_v, old_num_v))
-                ),
-                axis=1,
-            )
-            return np.arange(old_num_v) + cumulative_index_offsets
-        else:
-            return self
+        if not ret_indices:
+            return new_polyline
+
+        # In a degenerate case, `partition_segment()` may return fewer than
+        # the requested number of indices. So, recompute the actual number of
+        # segments inserted.
+        num_segments_inserted = np.zeros(old_num_e, dtype=np.int64)
+        num_segments_inserted[es_to_subdivide] = [len(vs) for vs in vs_to_insert]
+        stepwise_index_offsets = np.concatenate(
+            [
+                # The first vertex is never moved.
+                np.zeros(1, dtype=np.int64),
+                # In a closed polyline, the last edge goes back to vertex
+                # 0. Subdivisions of that segment do not affect indexing of
+                # any of the vertices (since the original end vertex is
+                # still at index 0).
+                num_segments_inserted[:-1] if self.is_closed else num_segments_inserted,
+            ]
+        )
+        cumulative_index_offsets = np.sum(
+            np.tril(np.broadcast_to(stepwise_index_offsets, (old_num_v, old_num_v))),
+            axis=1,
+        )
+        indices_of_original_vertices = np.arange(old_num_v) + cumulative_index_offsets
+        return new_polyline, indices_of_original_vertices
 
     def with_segments_bisected(self, segment_indices, ret_new_indices=False):
         """
