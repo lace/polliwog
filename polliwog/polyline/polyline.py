@@ -178,7 +178,7 @@ class Polyline(object):
         """
         The bounding box which encompasses the entire polyline.
         """
-        from ..box.box import Box
+        from ..box._box_object import Box
 
         if self.num_v == 0:
             return None

@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from .box import Box
+from ._box_object import Box
 
 
 def create_box():
