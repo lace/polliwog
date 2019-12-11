@@ -1,7 +1,7 @@
 import numpy as np
 import vg
-from ..plane.intersections import intersect_segment_with_plane
-from ..plane.plane import Plane
+from ..plane._plane_intersect import intersect_segment_with_plane
+from ..plane._plane_object import Plane
 
 
 def slice_open_polyline_by_plane(vertices, plane):

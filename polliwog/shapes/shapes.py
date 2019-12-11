@@ -127,7 +127,7 @@ def create_triangular_prism(p1, p2, p3, height, ret_unique_vertices_and_faces=Fa
         - With `ret_unique_vertices_and_faces=False`: a `8x3x3` matrix of
           flattened triangle coordinates.
     """
-    from ..plane.plane import Plane
+    from ..plane._plane_object import Plane
 
     base_plane = Plane.from_points(p1, p2, p3)
     lower_base_to_upper_base = height * -base_plane.normal
