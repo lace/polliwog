@@ -350,15 +350,11 @@ class Polyline(object):
                 # 0. Subdivisions of that segment do not affect indexing of
                 # any of the vertices (since the original end vertex is
                 # still at index 0).
-                num_segments_inserted[:-1]
-                if self.is_closed
-                else num_segments_inserted,
+                num_segments_inserted[:-1] if self.is_closed else num_segments_inserted,
             ]
         )
         cumulative_index_offsets = np.sum(
-            np.tril(
-                np.broadcast_to(stepwise_index_offsets, (old_num_v, old_num_v))
-            ),
+            np.tril(np.broadcast_to(stepwise_index_offsets, (old_num_v, old_num_v))),
             axis=1,
         )
         indices_of_original_vertices = np.arange(old_num_v) + cumulative_index_offsets
