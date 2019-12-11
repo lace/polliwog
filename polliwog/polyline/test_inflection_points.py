@@ -1,7 +1,7 @@
 from collections import namedtuple
 import numpy as np
 import vg
-from .inflection_points import inflection_points
+from ._inflection_points import inflection_points
 
 
 def generate_samples(fn, domain):

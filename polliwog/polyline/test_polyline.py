@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 import vg
-from .polyline import Polyline
+from ._polyline_object import Polyline
 from ..plane._plane_object import Plane
 
 
