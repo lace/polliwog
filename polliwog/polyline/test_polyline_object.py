@@ -66,6 +66,19 @@ def test_to_dict():
     np.testing.assert_array_equal(expected_dict["edges"], actual_dict["edges"])
 
 
+def test_copy():
+    original_vs = np.array(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
+    )
+    polyline = Polyline(v=original_vs.copy(), is_closed=False)
+    copy_of_polyline = polyline.copy()
+    assert polyline is not copy_of_polyline
+    assert polyline.is_closed == copy_of_polyline.is_closed
+    np.testing.assert_array_equal(polyline.v, copy_of_polyline.v)
+    polyline.v[0] = np.array([2.0, 3.0, 4.0])
+    np.testing.assert_array_equal(copy_of_polyline.v, original_vs)
+
+
 def test_bounding_box():
     bounding_box = Polyline(
         np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]])
@@ -232,7 +245,7 @@ def test_length_of_empty_polyline():
     assert polyline.total_length == 0
 
 
-def test_partition_by_length_noop():
+def test_subdivided_by_length_noop():
     original = Polyline(
         np.array(
             [
@@ -245,8 +258,7 @@ def test_partition_by_length_noop():
         )
     )
 
-    result = original.copy()
-    indices = result.partition_by_length(1.0, ret_indices=True)
+    result, indices = original.subdivided_by_length(1.0, ret_indices=True)
 
     expected_indices = np.array([0, 1, 2, 3, 4])
 
@@ -256,15 +268,14 @@ def test_partition_by_length_noop():
     np.testing.assert_array_equal(result.v[indices], original.v)
 
 
-def test_partition_by_length_degenerate():
+def test_subdivided_by_length_degenerate():
     """
     This covers a bug that arose from a numerical stability issue in
     measurement on EC2 / MKL.
     """
     original = Polyline(np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.0, 0.0]]))
 
-    result = original.copy()
-    indices = result.partition_by_length(1.0, ret_indices=True)
+    result, indices = original.subdivided_by_length(1.0, ret_indices=True)
 
     expected_indices = np.array([0, 1, 2])
 
@@ -274,7 +285,7 @@ def test_partition_by_length_degenerate():
     np.testing.assert_array_equal(result.v[indices], original.v)
 
 
-def test_partition_by_length_divide_by_two():
+def test_subdivided_by_length_divide_by_two():
     original = Polyline(
         np.array(
             [
@@ -306,17 +317,15 @@ def test_partition_by_length_divide_by_two():
     expected_indices = np.array([0, 2, 4, 6, 8])
 
     for max_length in (0.99, 0.75, 0.5):
-        result = original.copy()
-        indices = result.partition_by_length(max_length, ret_indices=True)
+        result, indices = original.subdivided_by_length(max_length, ret_indices=True)
 
         np.testing.assert_array_almost_equal(result.v, expected.v)
         np.testing.assert_array_equal(result.e, expected.e)
         np.testing.assert_array_equal(indices, expected_indices)
 
-        result_2 = original.copy()
-        ret = result_2.partition_by_length(max_length, ret_indices=False)
-        np.testing.assert_array_almost_equal(result.v, expected.v)
-        assert ret is result_2
+        result_2 = result.subdivided_by_length(max_length, ret_indices=False)
+        np.testing.assert_array_almost_equal(result_2.v, expected.v)
+        assert result_2 is not result
     np.testing.assert_array_equal(result.v[indices], original.v)
 
 
@@ -364,8 +373,7 @@ def test_partition_length_divide_by_five():
     expected_indices = np.array([0, 5, 10, 15, 20])
 
     for max_length in (0.2, 0.24):
-        result = original.copy()
-        indices = result.partition_by_length(max_length, ret_indices=True)
+        result, indices = original.subdivided_by_length(max_length, ret_indices=True)
 
         np.testing.assert_array_almost_equal(result.v, expected.v)
         np.testing.assert_array_equal(result.e, expected.e)
@@ -373,7 +381,7 @@ def test_partition_length_divide_by_five():
     np.testing.assert_array_equal(result.v[indices], original.v)
 
 
-def test_partition_by_length_divide_some_leave_some():
+def test_subdivided_by_length_divide_some_leave_some():
     original = Polyline(
         np.array(
             [
@@ -403,8 +411,7 @@ def test_partition_by_length_divide_some_leave_some():
     expected_indices = np.array([0, 1, 2, 5, 6])
 
     for max_length in (2.0, 2.99):
-        result = original.copy()
-        indices = result.partition_by_length(max_length, ret_indices=True)
+        result, indices = original.subdivided_by_length(max_length, ret_indices=True)
 
         np.testing.assert_array_almost_equal(result.v, expected.v)
         np.testing.assert_array_equal(result.e, expected.e)
@@ -412,7 +419,7 @@ def test_partition_by_length_divide_some_leave_some():
     np.testing.assert_array_equal(result.v[indices], original.v)
 
 
-def test_partition_by_length_closed():
+def test_subdivided_by_length_closed():
     original = Polyline(
         np.array(
             [
@@ -449,8 +456,7 @@ def test_partition_by_length_closed():
     expected_indices = np.array([0, 1, 2, 5, 6, 7])
 
     for max_length in (2.0, 2.5, 2.6):
-        result = original.copy()
-        indices = result.partition_by_length(max_length, ret_indices=True)
+        result, indices = original.subdivided_by_length(max_length, ret_indices=True)
 
         np.testing.assert_array_almost_equal(result.v, expected.v)
         np.testing.assert_array_equal(result.e, expected.e)
