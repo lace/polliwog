@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import vg
 from ._slice_by_plane import slice_open_polyline_by_plane
-from ..plane._plane_object import Plane
+from .. import Plane
 
 point_on_plane = np.array([1.0, 2.0, 3.0])
 plane_normal = vg.normalize(np.array([3.0, 4.0, 5.0]))
@@ -30,7 +30,7 @@ def vertices_with_signs(signs):
 
 
 def intersect_segment_with_plane(p1, p2):
-    from ..plane._plane_intersect import (
+    from ..plane import (
         intersect_segment_with_plane as _intersect_segment_with_plane,
     )
 

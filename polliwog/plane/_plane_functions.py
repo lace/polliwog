@@ -1,7 +1,6 @@
 import numpy as np
 import vg
 from .._common.shape import check_shape_any, columnize
-from ..tri.functions import surface_normals
 
 __all__ = [
     "plane_normal_from_points",
@@ -21,6 +20,8 @@ def plane_normal_from_points(points, normalize=True):
     This is the same as `polliwog.tri.functions.surface_normals`, to
     which this delegates.
     """
+    from ..tri import surface_normals
+
     return surface_normals(points=points, normalize=normalize)
 
 

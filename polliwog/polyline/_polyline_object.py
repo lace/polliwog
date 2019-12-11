@@ -178,7 +178,7 @@ class Polyline(object):
         """
         The bounding box which encompasses the entire polyline.
         """
-        from ..box._box_object import Box
+        from .. import Box
 
         if self.num_v == 0:
             return None
@@ -296,7 +296,7 @@ class Polyline(object):
 
         """
         import itertools
-        from ..segment.segment_functions import subdivide_segment
+        from ..segment import subdivide_segment
 
         old_num_e = self.num_e
         old_num_v = self.num_v
@@ -471,7 +471,7 @@ class Polyline(object):
         indices of those points.
         """
         from .._common.shape import columnize
-        from ..segment.segment_functions import closest_point_of_line_segment
+        from ..segment import closest_point_of_line_segment
 
         points, _, transform_result = columnize(points, name="points")
         num_points = len(points)
