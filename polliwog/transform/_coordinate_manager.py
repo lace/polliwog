@@ -1,5 +1,5 @@
 import vg
-
+from ._composite_transform import CompositeTransform
 
 class CoordinateManager(object):
     """
@@ -17,8 +17,6 @@ class CoordinateManager(object):
     """
 
     def __init__(self):
-        from .composite import CompositeTransform
-
         self.__dict__.update(
             {
                 # A map from tag names to indices into the transform stack.

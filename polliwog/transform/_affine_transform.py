@@ -55,7 +55,7 @@ def transform_matrix_for_rotation(rotation, ret_inverse_matrix=False):
     With `ret_inverse_matrix=True`, also returns a matrix which provides
     the reverse transform.
     """
-    from .rodrigues import as_rotation_matrix
+    from ._rodrigues import as_rotation_matrix
 
     if rotation.shape == (3, 3):
         forward3 = rotation
