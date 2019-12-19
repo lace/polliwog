@@ -123,7 +123,6 @@ def rotation_matrix_to_rodrigues_vector(r, calculate_jacobian=False):
                 and ((r[1, 2] > 0) != (ry * rz > 0))
             ):
                 rz = -rz
-
             r_out = np.array([[rx, ry, rz]]).T
             theta /= np.linalg.norm(r_out)
             r_out *= theta
