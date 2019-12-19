@@ -9,11 +9,13 @@ try:
     import cv2
 except ImportError:
     print(
-        "Error: This script requires opencv, which is not a runtime or dev dependency and needs to be installed separately."
+        "Error: This script requires opencv, "
+        "which is not a runtime or dev dependency "
+        "and needs to be installed separately."
     )
-    raise
-sys.path.append("../..")
-from polliwog.transform.rotation import euler
+    exit(-1)
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+from polliwog.transform.rotation import euler  # noqa: E402 Needs to happen after the modification of sys.path
 
 
 THINGS_TO_TEST = [
@@ -34,6 +36,7 @@ THINGS_TO_TEST = [
 ]
 
 
+@click.command()
 def main():
     print("Building Rodrigues test assets")
     print(f"OpenCV Version: {cv2.__version__}")

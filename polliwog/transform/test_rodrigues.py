@@ -1,6 +1,6 @@
 import os
-import pytest
 import numpy as np
+import pytest
 from .rodrigues import (
     rodrigues,
     rodrigues_vector_to_rotation_matrix,
