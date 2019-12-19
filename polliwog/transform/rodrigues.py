@@ -39,7 +39,7 @@ def rodrigues_vector_to_rotation_matrix(r, calculate_jacobian=False):
         c1 = 1.0 - c
         itheta = 1.0 if theta == 0.0 else 1.0 / theta
         r *= itheta
-        I = np.eye(3)  # noqa: E741 I is the least ambiguous variable name for an identity matrix
+        I = np.eye(3)  # noqa: E741 I is an identity matrix
         rrt = np.array([r * r[0], r * r[1], r * r[2]])
         _r_x_ = np.array([[0, -r[2], r[1]], [r[2], 0, -r[0]], [-r[1], r[0], 0]])
         r_out = c * I + c1 * rrt + s * _r_x_

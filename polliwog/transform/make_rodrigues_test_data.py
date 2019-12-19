@@ -14,8 +14,10 @@ except ImportError:
         "and needs to be installed separately."
     )
     exit(-1)
-sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-from polliwog.transform.rotation import euler  # noqa: E402 Needs to happen after the modification of sys.path
+sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
+from polliwog.transform.rotation import (
+    euler,
+)  # noqa: E402 Needs to happen after the modification of sys.path
 
 
 THINGS_TO_TEST = [
