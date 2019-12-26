@@ -3,6 +3,7 @@ import numpy as np
 import pytest
 import vg
 from .functions import (
+    mirror_point_across_plane,
     normal_and_offset_from_plane_equations,
     plane_equation_from_points,
     plane_normal_from_points,
@@ -229,3 +230,15 @@ def test_project_point_to_plane_validation():
                 ]
             ),
         )
+
+
+def test_mirror_point_across_plane_vectorized_points():
+    np.testing.assert_array_equal(
+        mirror_point_across_plane(
+            points=np.array([[10, 20, -5], [2, 7, 203]]),
+            plane_equations=Plane(
+                point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+            ).equation,
+        ),
+        np.array([[10, 0, -5], [2, 13, 203]]),
+    )
