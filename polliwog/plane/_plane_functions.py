@@ -1,3 +1,4 @@
+import numbers
 import numpy as np
 import vg
 from .._common.shape import check_shape_any, columnize
@@ -76,6 +77,32 @@ def signed_distance_to_plane(points, plane_equations):
     return vg.dot(points, normals) + offsets
 
 
+def translate_points_along_plane_normal(points, plane_equations, factor):
+    """
+    Translate each point along the plane normal. The distance translated
+    is specified in terms of its initial distance from the plane.
+
+    Args:
+        factor (float): Transform this multiple of the normal. With `0`,
+            this returns the identity. With `1`, this projects to the
+            plane. When `2` it returns the opposite point.
+    """
+    k = check_shape_any(points, (3,), (-1, 3), name="points")
+    check_shape_any(
+        plane_equations, (4,), (-1 if k is None else k, 4), name="plane_equations"
+    )
+    assert isinstance(factor, numbers.Real)
+
+    # Translate the point back to the plane along the normal.
+    signed_distance = signed_distance_to_plane(points, plane_equations)
+    normals, _ = normal_and_offset_from_plane_equations(plane_equations)
+
+    if np.isscalar(signed_distance):
+        return points - factor * signed_distance * normals
+    else:
+        return points - factor * signed_distance.reshape(-1, 1) * normals
+
+
 def project_point_to_plane(points, plane_equations):
     """
     Project each point to the corresponding plane.
@@ -85,11 +112,21 @@ def project_point_to_plane(points, plane_equations):
         plane_equations, (4,), (-1 if k is None else k, 4), name="plane_equations"
     )
 
-    # Translate the point back to the plane along the normal.
-    signed_distance = signed_distance_to_plane(points, plane_equations)
-    normals, _ = normal_and_offset_from_plane_equations(plane_equations)
+    return translate_points_along_plane_normal(
+        points=points, plane_equations=plane_equations, factor=1
+    )
 
-    if np.isscalar(signed_distance):
-        return points - signed_distance * normals
-    else:
-        return points - signed_distance.reshape(-1, 1) * normals
+
+def mirror_point_across_plane(points, plane_equations):
+    """
+    Mirror each point to the corresponding point on the opposite side of the
+    plane.
+    """
+    k = check_shape_any(points, (3,), (-1, 3), name="points")
+    check_shape_any(
+        plane_equations, (4,), (-1 if k is None else k, 4), name="plane_equations"
+    )
+
+    return translate_points_along_plane_normal(
+        points=points, plane_equations=plane_equations, factor=2
+    )

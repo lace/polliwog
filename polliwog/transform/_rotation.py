@@ -33,6 +33,22 @@ def rotation_from_up_and_look(up, look):
 
 def euler(xyz, order="xyz", units="deg"):
     """
+    Convert a Euler angle representation of 3D rotations to a 3x3 rotation matrix.
+
+    Euler angles are a way of representing 3D rotations as a sequence of rotations
+    about the axes. Conceptually, think of `euler([10, 20, 30])` as
+    "Rotate 10 degrees around the x axis, then 20 degrees around the y axis, then
+    30 degrees around the z axis" (that ordering can be changed with the `order`
+    argument, and the units can be given in degrees or radians by setting `units`
+    to `'deg'` or `'rad'`).
+
+    Euler angles are a problematic representation of rotation for numerical methods,
+    as there are multiple possible representations for a given rotation. But they are
+    a very intuitive and readable way to initialize a rotation matrix.
+
+    See also:
+
+        - https://en.wikipedia.org/wiki/Euler_angles
     """
     if not hasattr(xyz, "__iter__"):
         xyz = [xyz]

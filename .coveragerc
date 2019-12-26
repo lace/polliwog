@@ -1,2 +1,4 @@
 [report]
-omit = **/test_*.py
+omit =
+    **/test_*.py
+    polliwog/transform/make_rodrigues_test_data.py
