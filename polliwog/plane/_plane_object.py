@@ -1,9 +1,9 @@
 import numpy as np
 import vg
 from ._plane_functions import (
-    signed_distance_to_plane,
     plane_normal_from_points,
     project_point_to_plane,
+    signed_distance_to_plane,
 )
 
 
