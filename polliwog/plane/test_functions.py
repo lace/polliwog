@@ -3,8 +3,8 @@ import numpy as np
 import pytest
 import vg
 from .functions import (
-    normal_and_offset_from_plane_equations,
     mirror_point_across_plane,
+    normal_and_offset_from_plane_equations,
     plane_equation_from_points,
     plane_normal_from_points,
     project_point_to_plane,
