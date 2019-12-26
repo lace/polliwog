@@ -9,6 +9,7 @@ __all__ = [
     "normal_and_offset_from_plane_equations",
     "signed_distance_to_plane",
     "project_point_to_plane",
+    "mirror_point_across_plane",
 ]
 
 
