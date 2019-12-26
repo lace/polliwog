@@ -3,7 +3,7 @@
 [![version](https://img.shields.io/pypi/v/polliwog.svg?style=flat-square)][pypi]
 [![python versions](https://img.shields.io/pypi/pyversions/polliwog.svg?style=flat-square)][pypi]
 [![license](https://img.shields.io/pypi/l/polliwog.svg?style=flat-square)][pypi]
-[![coverage](https://img.shields.io/coveralls/lace/polliwog.svg?style=flat-square)][coverage]
+[![coverage](https://img.shields.io/badge/coverage-100%25-brightgreen?style=flat-square)][coverage]
 [![build](https://img.shields.io/circleci/project/github/lace/polliwog/master.svg?style=flat-square)][build]
 [![docs build](https://img.shields.io/readthedocs/polliwog.svg?style=flat-square)][docs build]
 [![code style](https://img.shields.io/badge/code%20style-black-black.svg?style=flat-square)][black]
@@ -22,7 +22,7 @@ The goals of this project are:
 - Eventually provide a complete set of functionality for this problem domain.
 
 [pypi]: https://pypi.org/project/polliwog/
-[coverage]: https://coveralls.io/github/lace/polliwog
+[coverage]: https://github.com/lace/polliwog/blob/master/.coveragerc#L2
 [build]: https://circleci.com/gh/lace/polliwog/tree/master
 [docs build]: https://polliwog.readthedocs.io/en/latest/
 [black]: https://black.readthedocs.io/en/stable/
