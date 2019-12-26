@@ -55,13 +55,13 @@ def transform_matrix_for_rotation(rotation, ret_inverse_matrix=False):
     With `ret_inverse_matrix=True`, also returns a matrix which provides
     the reverse transform.
     """
-    from .rodrigues import as_rotation_matrix
+    from .rodrigues import rodrigues_vector_to_rotation_matrix
 
     if rotation.shape == (3, 3):
         forward3 = rotation
     else:
         vg.shape.check(locals(), "rotation", (3,))
-        forward3 = as_rotation_matrix(rotation)
+        forward3 = rodrigues_vector_to_rotation_matrix(rotation)
 
     forward = _convert_33_to_44(forward3)
 
