@@ -1,6 +1,7 @@
 import vg
 from ._composite_transform import CompositeTransform
 
+
 class CoordinateManager(object):
     """
     Example:

@@ -30,9 +30,7 @@ def vertices_with_signs(signs):
 
 
 def intersect_segment_with_plane(p1, p2):
-    from ..plane import (
-        intersect_segment_with_plane as _intersect_segment_with_plane,
-    )
+    from ..plane import intersect_segment_with_plane as _intersect_segment_with_plane
 
     return _intersect_segment_with_plane(
         start_points=p1,
