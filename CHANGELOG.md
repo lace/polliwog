@@ -1,12 +1,18 @@
 # Changelog
 
+## 1.0.0-beta.3 (Dec. 26, 2019)
+
+### Bug fixes
+
+- Correctly expose `mirror_point_across_plane()`.
+
 
 ## 1.0.0-beta.2 (Dec. 26, 2019)
 
 ### BREAKING CHANGES
 
 - Plane: Rename `partition_by_length()` -> `subdivided_by_length()`.
-- Add function for mirroring a point across a plane.
+- Add `mirror_point_across_plane()`.
 - Remove `polliwog.transform.as_rotation_matrix()`.
 - Rename `polliwog.transfer.rodrigues` to `cv2_rodrigues()`. (Better to use
   one of the new functions `rodrigues_vector_to_rotation_matrix()` or
