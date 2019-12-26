@@ -1,6 +1,10 @@
 import numpy as np
 import vg
-from . import functions
+from ._plane_functions import (
+    plane_normal_from_points,
+    project_point_to_plane,
+    signed_distance_to_plane,
+)
 
 
 class Plane(object):
@@ -40,9 +44,7 @@ class Plane(object):
         vg.shape.check(locals(), "p2", (3,))
         vg.shape.check(locals(), "p3", (3,))
         points = np.array([p1, p2, p3])
-        return cls(
-            point_on_plane=p1, unit_normal=functions.plane_normal_from_points(points)
-        )
+        return cls(point_on_plane=p1, unit_normal=plane_normal_from_points(points))
 
     @classmethod
     def from_points_and_vector(cls, p1, p2, vector):
@@ -182,7 +184,7 @@ class Plane(object):
             - Given a single 3D point, the distance as a NumPy scalar.
             - Given a `kx3` stack of points, an `k` array of distances.
         """
-        return functions.signed_distance_to_plane(points, self.equation)
+        return signed_distance_to_plane(points, self.equation)
 
     def distance(self, points):
         return np.absolute(self.signed_distance(points))
@@ -191,7 +193,7 @@ class Plane(object):
         """
         Project a given point (or stack of points) to the plane.
         """
-        return functions.project_point_to_plane(points, self.equation)
+        return project_point_to_plane(points, self.equation)
 
     def line_xsection(self, pt, ray):
         vg.shape.check(locals(), "pt", (3,))

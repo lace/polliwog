@@ -2,7 +2,7 @@ import math
 import numpy as np
 import pytest
 import vg
-from .functions import (
+from ._plane_functions import (
     mirror_point_across_plane,
     normal_and_offset_from_plane_equations,
     plane_equation_from_points,
@@ -10,7 +10,7 @@ from .functions import (
     project_point_to_plane,
     signed_distance_to_plane,
 )
-from .plane import Plane
+from ._plane_object import Plane
 
 
 def assert_plane_equation_satisfies_points(plane_equation, points):
@@ -21,7 +21,7 @@ def assert_plane_equation_satisfies_points(plane_equation, points):
 
 def test_plane_normal_from_points_parity():
     from ..shapes import create_triangular_prism
-    from ..tri.functions import surface_normals
+    from ..tri import surface_normals
 
     points = np.array([[3.0, 0.0, 0.0], [0.0, 3.0, 0.0], [0.0, 0.0, 3.0]])
 

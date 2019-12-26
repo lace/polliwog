@@ -1,10 +1,11 @@
 import numpy as np
 import vg
-from ..plane.intersections import intersect_segment_with_plane
-from ..plane.plane import Plane
 
 
 def slice_open_polyline_by_plane(vertices, plane):
+    from .. import Plane
+    from ..plane import intersect_segment_with_plane
+
     num_v = vg.shape.check(locals(), "vertices", (-1, 3))
     if num_v == 0:
         raise ValueError("A plane can't intersect a polyline with no points")

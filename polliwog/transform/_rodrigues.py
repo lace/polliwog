@@ -174,13 +174,18 @@ def rotation_matrix_to_rodrigues_vector(r, calculate_jacobian=False):
         return r_out
 
 
-def rodrigues(r, calculate_jacobian=False):
+def cv2_rodrigues(r, calculate_jacobian=False):
     """
-    `rodrigues` is a wrapped function designed to be API compatible with OpenCV's cv2.Rodrigues
+    `cv2_rodrigues` is a wrapped function designed to be API compatible with
+    OpenCV's `cv2.Rodrigues`.
 
-    If it is given a rotation matrix, it returns a Rodrigues vector
+    If it is given a rotation matrix, it returns a Rodrigues vector.
 
-    If it is given a Rodrigues vector, it returns a rotation matrix
+    If it is given a Rodrigues vector, it returns a rotation matrix.
+
+    To make your code clearer, call `rodrigues_vector_to_rotation_matrix` or
+    `rotation_matrix_to_rodrigues_vector` directly, which makes the intent of
+    your code clearer.
     """
     r = np.array(r, dtype=np.double)
     if r.size == 3:

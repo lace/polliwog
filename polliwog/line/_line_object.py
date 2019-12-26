@@ -30,7 +30,7 @@ class Line:
         """
         Find the intersection with another line.
         """
-        from .line_intersect import intersect_lines
+        from ._line_intersect import intersect_lines
 
         return intersect_lines(*(self.reference_points + other.reference_points))
 
@@ -38,7 +38,7 @@ class Line:
         """
         Project a given point (or stack of points) to the plane.
         """
-        from .functions import project_point_to_line
+        from ._line_functions import project_point_to_line
 
         return project_point_to_line(
             points=points,

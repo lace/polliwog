@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 import vg
-from .rotation import euler, rotation_from_up_and_look
+from ._rotation import euler, rotation_from_up_and_look
 
 origin = np.zeros(3)
 

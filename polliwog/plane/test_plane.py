@@ -2,7 +2,7 @@ import math
 import numpy as np
 import pytest
 import vg
-from .plane import Plane
+from ._plane_object import Plane
 from .test_functions import assert_plane_equation_satisfies_points
 
 

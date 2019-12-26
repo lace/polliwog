@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from .segment_functions import (
+from ._segment_functions import (
     closest_point_of_line_segment,
     subdivide_segment,
     subdivide_segments,

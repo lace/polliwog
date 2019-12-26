@@ -1,8 +1,8 @@
 import os
 import numpy as np
 import pytest
-from .rodrigues import (
-    rodrigues,
+from ._rodrigues import (
+    cv2_rodrigues,
     rodrigues_vector_to_rotation_matrix,
     rotation_matrix_to_rodrigues_vector,
 )
@@ -22,20 +22,20 @@ opencv_examples = load_opencv_examples()
 
 @pytest.mark.parametrize("arg,result", opencv_examples)
 def test_rodrigues_matches_opencv(arg, result):
-    r = rodrigues(arg)
+    r = cv2_rodrigues(arg)
     np.testing.assert_array_almost_equal(r, result[0])
 
 
 @pytest.mark.parametrize("arg,result", opencv_examples)
 def test_rodrigues_with_derivatives_matches_opencv(arg, result):
-    r, dr = rodrigues(arg, calculate_jacobian=True)
+    r, dr = cv2_rodrigues(arg, calculate_jacobian=True)
     np.testing.assert_array_almost_equal(r, result[0])
     np.testing.assert_array_almost_equal(dr, result[1])
 
 
 def test_rodrigues_errors_with_bad_shape():
     with pytest.raises(ValueError):
-        rodrigues(np.array([0.0, 0.0, 0.0, 0.0]))
+        cv2_rodrigues(np.array([0.0, 0.0, 0.0, 0.0]))
 
 
 @pytest.mark.parametrize("arg,result", opencv_examples)

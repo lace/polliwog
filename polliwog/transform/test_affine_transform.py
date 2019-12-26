@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from .affine_transform import (
+from ._affine_transform import (
     apply_affine_transform,
     transform_matrix_for_rotation,
     transform_matrix_for_scale,

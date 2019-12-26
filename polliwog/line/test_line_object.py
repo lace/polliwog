@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 import vg
-from .line import Line
+from ._line_object import Line
 
 
 def test_constructor():

@@ -1,5 +1,12 @@
 import numpy as np
 import vg
+from ._affine_transform import (
+    apply_affine_transform,
+    transform_matrix_for_rotation,
+    transform_matrix_for_scale,
+    transform_matrix_for_translation,
+)
+from ._rotation import rotation_from_up_and_look
 
 
 class CompositeTransform(object):
@@ -39,8 +46,6 @@ class CompositeTransform(object):
                 or reverse mode.
 
         """
-        from .affine_transform import apply_affine_transform
-
         transform_matrix = self.transform_matrix_for(
             from_range=from_range, reverse=reverse
         )
@@ -104,8 +109,6 @@ class CompositeTransform(object):
         Args:
             factor (float): The scale factor.
         """
-        from .affine_transform import transform_matrix_for_scale
-
         forward, inverse = transform_matrix_for_scale(factor, ret_inverse_matrix=True)
         return self.append_transform(forward, inverse)
 
@@ -133,8 +136,6 @@ class CompositeTransform(object):
         Args:
             vector (np.arraylike): A 3x1 vector.
         """
-        from .affine_transform import transform_matrix_for_translation
-
         forward, inverse = transform_matrix_for_translation(
             translation, ret_inverse_matrix=True
         )
@@ -144,16 +145,12 @@ class CompositeTransform(object):
         """
         Reorient using up and look.
         """
-        from .rotation import rotation_from_up_and_look
-
         return self.rotate(rotation_from_up_and_look(up, look))
 
     def rotate(self, rotation):
         """
         Rotate by the given 3x3 rotation matrix or a Rodrigues vector.
         """
-        from .affine_transform import transform_matrix_for_rotation
-
         forward, inverse = transform_matrix_for_rotation(
             rotation, ret_inverse_matrix=True
         )
