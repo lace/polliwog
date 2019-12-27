@@ -85,8 +85,8 @@ def translate_points_along_plane_normal(points, plane_equations, factor):
 
     Args:
         factor (float): Transform this multiple of the normal. With `0`,
-            this returns the identity. With `1`, this projects to the
-            plane. When `2` it returns the opposite point.
+            this returns the identity. With `-1`, this projects to the
+            plane. When `-2` it returns the opposite point.
     """
     k = check_shape_any(points, (3,), (-1, 3), name="points")
     check_shape_any(
@@ -99,9 +99,9 @@ def translate_points_along_plane_normal(points, plane_equations, factor):
     normals, _ = normal_and_offset_from_plane_equations(plane_equations)
 
     if np.isscalar(signed_distance):
-        return points - factor * signed_distance * normals
+        return points + factor * signed_distance * normals
     else:
-        return points - factor * signed_distance.reshape(-1, 1) * normals
+        return points + factor * signed_distance.reshape(-1, 1) * normals
 
 
 def project_point_to_plane(points, plane_equations):
@@ -114,7 +114,7 @@ def project_point_to_plane(points, plane_equations):
     )
 
     return translate_points_along_plane_normal(
-        points=points, plane_equations=plane_equations, factor=1
+        points=points, plane_equations=plane_equations, factor=-1
     )
 
 
@@ -129,5 +129,5 @@ def mirror_point_across_plane(points, plane_equations):
     )
 
     return translate_points_along_plane_normal(
-        points=points, plane_equations=plane_equations, factor=2
+        points=points, plane_equations=plane_equations, factor=-2
     )
