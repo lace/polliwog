@@ -203,6 +203,15 @@ def test_project_point_vectorized():
     )
 
 
+def test_mirror_point():
+    np.testing.assert_array_equal(
+        Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y).mirror_point(
+            np.array([10, 20, -5])
+        ),
+        np.array([10, 0, -5]),
+    )
+
+
 def test_plane_from_points():
     points = np.array([[1, 1, 1], [-1, 1, 0], [2, 0, 3]])
     plane = Plane.from_points(*points)

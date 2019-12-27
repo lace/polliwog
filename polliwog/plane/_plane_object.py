@@ -1,6 +1,7 @@
 import numpy as np
 import vg
 from ._plane_functions import (
+    mirror_point_across_plane,
     plane_normal_from_points,
     project_point_to_plane,
     signed_distance_to_plane,
@@ -194,6 +195,12 @@ class Plane(object):
         Project a given point (or stack of points) to the plane.
         """
         return project_point_to_plane(points, self.equation)
+
+    def mirror_point(self, points):
+        """
+        Mirror a point (or stack of points) to the opposite side of the plane.
+        """
+        return mirror_point_across_plane(points, self.equation)
 
     def line_xsection(self, pt, ray):
         vg.shape.check(locals(), "pt", (3,))
