@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0-beta.4 (Dec. 27, 2019)
+
+### New features
+
+- Plane: Add `mirror_point()`.
+
+
 ## 1.0.0-beta.3 (Dec. 26, 2019)
 
 ### Bug fixes
