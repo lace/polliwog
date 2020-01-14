@@ -55,7 +55,9 @@ examples = [
 def test_inflection_points():
     for example in examples:
         samples = generate_samples(fn=example.fn, domain=example.domain)
-        result = inflection_points(points=samples, rise_axis=vg.basis.y, run_axis=vg.basis.x)
+        result = inflection_points(
+            points=samples, rise_axis=vg.basis.y, run_axis=vg.basis.x
+        )
         np.testing.assert_array_almost_equal(
             result[:, 0], example.inflection_points, decimal=1
         )
@@ -69,7 +71,7 @@ def test_point_of_max_acceleration():
     for example in examples:
         samples = generate_samples(fn=example.fn, domain=example.domain)
         result = point_of_max_acceleration(
-            points=samples, axis=vg.basis.y, span=vg.basis.x, span_spacing=0.1
+            points=samples, rise_axis=vg.basis.y, run_axis=vg.basis.x, span_spacing=0.1
         )
         np.testing.assert_array_almost_equal(
             result[0], example.point_of_max_acceleration, decimal=1

@@ -45,7 +45,9 @@ def inflection_points(points, rise_axis, run_axis):
     return points[is_inflection_point]
 
 
-def point_of_max_acceleration(points, axis, span, span_spacing=None, plot=False):
+def point_of_max_acceleration(
+    points, rise_axis, run_axis, span_spacing=None, plot=False
+):
     """
     Find the point on a curve where the curve is maximally accelerating
     in the direction specified by `axis`.
@@ -69,19 +71,19 @@ def point_of_max_acceleration(points, axis, span, span_spacing=None, plot=False)
     from ..polyline._polyline_object import Polyline
 
     vg.shape.check(locals(), "points", (-1, 3))
-    vg.shape.check(locals(), "axis", (3,))
-    vg.shape.check(locals(), "span", (3,))
+    vg.shape.check(locals(), "rise_axis", (3,))
+    vg.shape.check(locals(), "run_axis", (3,))
 
     if span_spacing is not None:
         points = (
             Polyline(v=points, is_closed=False).subdivided_by_length(span_spacing).v
         )
 
-    coords_on_span = points.dot(span)
-    coords_on_axis = points.dot(axis)
+    coords_on_run_axis = points.dot(run_axis)
+    coords_on_rise_axis = points.dot(rise_axis)
 
-    finite_difference_1 = np.gradient(coords_on_axis, coords_on_span)
-    finite_difference_2 = np.gradient(finite_difference_1, coords_on_span)
+    finite_difference_1 = np.gradient(coords_on_rise_axis, coords_on_run_axis)
+    finite_difference_2 = np.gradient(finite_difference_1, coords_on_run_axis)
 
     # def moving_average(x, w):
     #     return np.convolve(x, np.ones(w), 'valid') / w
@@ -129,8 +131,8 @@ def point_of_max_acceleration(points, axis, span, span_spacing=None, plot=False)
         import pdb
 
         pdb.set_trace()
-        xs = coords_on_span
-        axs[0].plot(xs, coords_on_axis, label="finite1")
+        xs = coords_on_run_axis
+        axs[0].plot(xs, coords_on_rise_axis, label="finite1")
         axs[1].scatter(
             xs[valid_points], finite_difference_1[valid_points], label="finite1"
         )
