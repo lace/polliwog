@@ -1,4 +1,5 @@
 [report]
+fail_under = 100.0
 omit =
     **/test_*.py
     polliwog/transform/make_rodrigues_test_data.py
