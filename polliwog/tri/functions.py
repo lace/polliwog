@@ -1,7 +1,7 @@
 import numpy as np
 import vg
 from .._common.shape import columnize
-from ..line.functions import coplanar_points_are_on_same_side_of_line
+from ..line._line_functions import coplanar_points_are_on_same_side_of_line
 
 __all__ = [
     "surface_normals",

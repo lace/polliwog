@@ -1,5 +1,5 @@
-from . import functions as _functions
-from .functions import *  # noqa: F401,F403
-from .intersections import intersect_segment_with_plane
+from . import _plane_functions
+from ._plane_functions import *  # noqa: F401,F403
+from ._plane_intersect import intersect_segment_with_plane
 
-__all__ = _functions.__all__ + ["intersect_segment_with_plane"]
+__all__ = _plane_functions.__all__ + ["intersect_segment_with_plane"]

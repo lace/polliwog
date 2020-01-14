@@ -67,7 +67,8 @@ def doc_open():
 
 @cli.command()
 def clean():
-    execute("find . -name '*.pyc' -or -name '__pycache__' -delete")
+    execute("find . -name '*.pyc' -delete")
+    execute("find . -name '__pycache__' -delete")
 
 
 @cli.command()

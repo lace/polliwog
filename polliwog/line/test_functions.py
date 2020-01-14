@@ -1,6 +1,6 @@
 import numpy as np
 import vg
-from .functions import project_point_to_line
+from ._line_functions import project_point_to_line
 
 
 def test_project_point_to_line():

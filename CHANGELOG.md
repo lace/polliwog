@@ -1,5 +1,43 @@
 # Changelog
 
+## 1.0.0-beta.4 (Dec. 27, 2019)
+
+### New features
+
+- Plane: Add `mirror_point()`.
+
+
+## 1.0.0-beta.3 (Dec. 26, 2019)
+
+### Bug fixes
+
+- Correctly expose `mirror_point_across_plane()`.
+
+
+## 1.0.0-beta.2 (Dec. 26, 2019)
+
+### BREAKING CHANGES
+
+- Plane: Rename `partition_by_length()` -> `subdivided_by_length()`.
+- Add `mirror_point_across_plane()`.
+- Remove `polliwog.transform.as_rotation_matrix()`.
+- Rename `polliwog.transfer.rodrigues` to `cv2_rodrigues()`. (Better to use
+  one of the new functions `rodrigues_vector_to_rotation_matrix()` or
+  `rotation_matrix_to_rodrigues_vector()` instead.)
+
+## New features
+
+- Add `rodrigues_vector_to_rotation_matrix()` and
+  `rodrigues_vector_to_rotation_matrix()` as clearer versions of `rodrigues()`.
+
+## Other maintenance
+
+- 100% test coverage :100: :party:
+- Publish the wheel using Python 3.
+- Add leading underscores to all private modules, causing any
+  non-canonical imports to break.
+
+
 ## 1.0.0-beta.1 (Dec. 5, 2019)
 
 ### BREAKING CHANGES

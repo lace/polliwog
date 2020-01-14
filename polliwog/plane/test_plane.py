@@ -2,7 +2,7 @@ import math
 import numpy as np
 import pytest
 import vg
-from .plane import Plane
+from ._plane_object import Plane
 from .test_functions import assert_plane_equation_satisfies_points
 
 
@@ -200,6 +200,15 @@ def test_project_point_vectorized():
             point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
         ).project_point(np.array([[10, 20, -5], [2, 7, 203]])),
         np.array([[10, 10, -5], [2, 10, 203]]),
+    )
+
+
+def test_mirror_point():
+    np.testing.assert_array_equal(
+        Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y).mirror_point(
+            np.array([10, 20, -5])
+        ),
+        np.array([10, 0, -5]),
     )
 
 

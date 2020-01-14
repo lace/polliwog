@@ -1,6 +1,6 @@
 import numpy as np
 import vg
-from .composite import CompositeTransform
+from ._composite_transform import CompositeTransform
 from .test_affine_transform import create_default_cube_verts
 
 

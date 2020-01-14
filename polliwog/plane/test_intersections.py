@@ -1,6 +1,6 @@
 import numpy as np
 import vg
-from .intersections import intersect_segment_with_plane
+from ._plane_intersect import intersect_segment_with_plane
 
 
 def test_intersect_segment_with_plane_single():

@@ -2,9 +2,9 @@ __all__ = ["Polyline", "Plane", "Box", "Line", "CompositeTransform",  "Coordinat
 
 from .package_version import __version__
 
-from .box.box import Box
-from .plane.plane import Plane
-from .line.line import Line
-from .polyline.polyline import Polyline
-from .transform.composite import CompositeTransform
-from .transform.coordinate_manager import CoordinateManager
+from .box._box_object import Box
+from .plane._plane_object import Plane
+from .line._line_object import Line
+from .polyline._polyline_object import Polyline
+from .transform._composite_transform import CompositeTransform
+from .transform._coordinate_manager import CoordinateManager

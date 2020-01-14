@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 import vg
-from .coordinate_manager import CoordinateManager
+from ._coordinate_manager import CoordinateManager
 from .test_affine_transform import create_cube_verts
 
 
