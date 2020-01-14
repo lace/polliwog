@@ -45,12 +45,11 @@ def main():
         # axis = vg.normalize(np.array([0.0, -0.15, 1.0]))
         try:
             result = point_of_max_acceleration(
-                # longest_xs.v, axis, vg.perpendicular(axis, vg.basis.x), span_spacing=0.001, plot=False
+                # longest_xs.v, axis, vg.perpendicular(axis, vg.basis.x), span_spacing=0.001
                 longest_xs.v,
                 vg.basis.z,
                 vg.basis.y,
                 subdivide_by_length=0.001,
-                plot=False,
             )
             result_points.append(result)
         except ValueError:
