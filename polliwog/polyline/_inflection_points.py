@@ -56,8 +56,8 @@ def point_of_max_acceleration(
     Args:
         points (np.arraylike): A stack of points, as `kx3`. For best
             results, trim these to the area of interest before calling.
-        axis (np.arraylike): The vertical axis, as a 3D vector.
-        span (np.arraylike): The horizonal axis, as a 3D vector.
+        rise_axis (np.arraylike): The vertical axis, as a 3D vector.
+        run_axis (np.arraylike): The horizonal axis, as a 3D vector.
         subdivide_by_length (float): When provided, the maximum space
             between each point. The idea is keep the slice width small,
             however this constraint is applied in 3D space, not along
