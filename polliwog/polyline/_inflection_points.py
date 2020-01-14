@@ -67,9 +67,12 @@ def point_of_max_acceleration(
     """
     from ..polyline._polyline_object import Polyline
 
-    vg.shape.check(locals(), "points", (-1, 3))
+    k = vg.shape.check(locals(), "points", (-1, 3))
     vg.shape.check(locals(), "rise_axis", (3,))
     vg.shape.check(locals(), "run_axis", (3,))
+
+    if k < 2:
+        raise ValueError("At least two points are required")
 
     if subdivide_by_length is not None:
         subdivided = Polyline(v=points, is_closed=False).subdivided_by_length(
@@ -83,25 +86,8 @@ def point_of_max_acceleration(
     finite_difference_1 = np.gradient(coords_on_rise_axis, coords_on_run_axis)
     finite_difference_2 = np.gradient(finite_difference_1, coords_on_run_axis)
 
-    # def moving_average(x, w):
-    #     return np.convolve(x, np.ones(w), 'valid') / w
-
-    # window = 2000
-    # moving_average_1 = moving_average(finite_difference_1, window)
-    # (zero_crossings,) = np.where(np.diff(np.sign(moving_average_1)))
-    # index = zero_crossings[-1] - int(window / 2.0)
-
-    # When there are no zero crossings, this is probably because there is no
-    # inflection point, such as on the side of the bust. Use the first point
-    # instead.
-    # try:
-    #     index = zero_crossings[zero_crossings < np.argmin(moving_average_1)][-1]
-    # except IndexError:
-    #     index = 0
-    #     # raise ValueError("No inflection point found")
-
-    # Do not choose a point where the first derivate of the next point is negative.
-    # valid_points = np.concatenate([(finite_difference_1 > 0)[1:], [False]])
+    # `np.argmax(finite_difference_2)` produces false positives where the first
+    # derivative of the next point is positive. Exclude these bogus points.
     valid_points = np.logical_and(
         np.roll(finite_difference_1, 1) > 0, np.roll(finite_difference_1, -1) > 0,
     )
@@ -111,10 +97,8 @@ def point_of_max_acceleration(
     try:
         index = np.argmax(finite_difference_2[valid_points])
     except ValueError:
-        # import pdb; pdb.set_trace()
         plot = True
         index = None
-    # index = np.argmax(finite_difference_2)
 
     if plot:
         import matplotlib.pyplot as plt
@@ -140,45 +124,9 @@ def point_of_max_acceleration(
             xs[valid_points], finite_difference_2[valid_points], label="finite1"
         )
 
-        # axs[3].plot(
-        #     xs, np.gradient(finite_difference_2, coords_on_span), label="finite1"
-        # )
-        # axs[1].plot(xs[: -window + 1], moving_average_1, label="finite1")
-        # axs[5].plot(
-        #     xs[: -window + 1],
-        #     moving_average(finite_difference_2, window),
-        #     label="finite1",
-        # )
-        # axs[0].add_artist(
-        #     plt.Circle((xs[index], coords_on_axis[index]), 0.1, fill=False, color="red")
-        # )
-        # for coord in zero_crossings:
-        #     axs[1].add_artist(
-        #         plt.Circle(
-        #             (xs[coord], moving_average_1[coord]), 0.1, fill=False, color="red"
-        #         )
-        #     )
-        # axs[2].plot(
-        #     xs[int(window / 2) : -int(window / 2) + 1],
-        #     np.gradient(
-        #         moving_average_1, coords_on_span[int(window / 2) : -int(window / 2) + 1]
-        #     ),
-        #     label="finite1",
-        # )
-        # axs[3].plot(xs, finite_difference_1, label='finite1')
         plt.show()
-
-    # if plot:
-    #     return None
-
-    # import pdb; pdb.set_trace()
-
-    # threshold = 0.8 * np.amax(finite_difference_1)
-    # (peaks,) = (finite_difference_2 > threshold).nonzero()
-    # index = int(np.average(peaks))
 
     if index is None:
         return None
 
     return points[valid_points][index]
-    # return points[index]
