@@ -1,5 +1,6 @@
 from collections import namedtuple
 import numpy as np
+import pytest
 import vg
 from ._inflection_points import inflection_points, point_of_max_acceleration
 
@@ -49,6 +50,12 @@ examples = [
         inflection_points=np.array([1.5, 3.1, 4.7]),
         point_of_max_acceleration=5.5,
     ),
+    InflectionPointExample(
+        fn=lambda x: -x ** 2,
+        domain=(0, 5),
+        inflection_points=np.array([]),
+        point_of_max_acceleration=None,
+    ),
 ]
 
 
@@ -76,10 +83,20 @@ def test_point_of_max_acceleration():
             run_axis=vg.basis.x,
             subdivide_by_length=0.1,
         )
-        np.testing.assert_array_almost_equal(
-            result[0], example.point_of_max_acceleration, decimal=1
+        if example.point_of_max_acceleration is None:
+            assert result is None
+        else:
+            np.testing.assert_array_almost_equal(
+                result[0], example.point_of_max_acceleration, decimal=1
+            )
+            np.testing.assert_array_almost_equal(
+                result[1], example.fn(result[0]), decimal=1
+            )
+            np.testing.assert_array_almost_equal(result[2], np.array([0]))
+
+    with pytest.raises(ValueError, match="At least two points are required"):
+        point_of_max_acceleration(
+            points=np.array([vg.basis.x]),
+            rise_axis=vg.basis.y,
+            run_axis=vg.basis.x,
         )
-        np.testing.assert_array_almost_equal(
-            result[1], example.fn(result[0]), decimal=1
-        )
-        np.testing.assert_array_almost_equal(result[2], np.array([0]))
