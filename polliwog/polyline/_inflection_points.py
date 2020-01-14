@@ -97,36 +97,6 @@ def point_of_max_acceleration(
     try:
         index = np.argmax(finite_difference_2[valid_points])
     except ValueError:
-        plot = True
-        index = None
-
-    if plot:
-        import matplotlib.pyplot as plt
-        import seaborn as sns
-
-        sns.set(style="darkgrid")
-
-        # sns.relplot(data=np.hstack([xs, np.arange(len(xs))]))
-
-        fig, axs = plt.subplots(3)
-
-        import pdb
-
-        pdb.set_trace()
-        xs = coords_on_run_axis
-        axs[0].plot(xs, coords_on_rise_axis, label="finite1")
-        axs[1].scatter(
-            xs[valid_points], finite_difference_1[valid_points], label="finite1"
-        )
-        axs[1].plot(xs, finite_difference_1, label="finite1")
-        axs[2].plot(xs, finite_difference_2, label="finite1")
-        axs[2].scatter(
-            xs[valid_points], finite_difference_2[valid_points], label="finite1"
-        )
-
-        plt.show()
-
-    if index is None:
         return None
 
     return points[valid_points][index]
