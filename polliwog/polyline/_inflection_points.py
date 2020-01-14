@@ -2,10 +2,11 @@ import numpy as np
 import vg
 
 
-def inflection_points(points, axis, span):
+def inflection_points(points, rise_axis, run_axis):
     """
-    Find the list of vertices that preceed inflection points in a curve. The curve is differentiated
-    with respect to the coordinate system defined by axis and span.
+    Find the list of vertices that preceed inflection points in a curve. The
+    curve is differentiated with respect to the coordinate system defined by
+    `rise_axis` and `run_axis`.
 
     Interestingly, `lambda x: 2*x + 1` should have no inflection points, but
     almost every point on the line is detected. It's because a zero or zero
@@ -15,23 +16,23 @@ def inflection_points(points, axis, span):
     finite differences. Just know that if you've got a straight line this
     method will go a bit haywire.
 
-    axis: A vector representing the vertical axis of the coordinate system.
-    span: A vector representing the the horiztonal axis of the coordinate system.
+    rise_axis: A vector representing the vertical axis of the coordinate system.
+    run_axis: A vector representing the the horiztonal axis of the coordinate system.
 
     returns: a list of points in space corresponding to the vertices that
     immediately preceed inflection points in the curve
     """
     vg.shape.check(locals(), "points", (-1, 3))
-    vg.shape.check(locals(), "axis", (3,))
-    vg.shape.check(locals(), "span", (3,))
+    vg.shape.check(locals(), "rise_axis", (3,))
+    vg.shape.check(locals(), "run_axis", (3,))
 
-    coords_on_span = points.dot(span)
-    coords_on_axis = points.dot(axis)
+    coords_on_run_axis = points.dot(run_axis)
+    coords_on_rise_axis = points.dot(rise_axis)
 
     # Take the second order finite difference of the curve with respect to the
     # defined coordinate system
-    finite_difference_1 = np.gradient(coords_on_axis, coords_on_span)
-    finite_difference_2 = np.gradient(finite_difference_1, coords_on_span)
+    finite_difference_1 = np.gradient(coords_on_rise_axis, coords_on_run_axis)
+    finite_difference_2 = np.gradient(finite_difference_1, coords_on_run_axis)
 
     # Compare the product of all neighboring pairs of points in the second
     # derivative. If a pair of points has a negative product, then the second

@@ -43,7 +43,9 @@ def test_inflection_points():
         ),
     ]:
         samples = generate_samples(fn=example.fn, domain=example.domain)
-        result = inflection_points(points=samples, axis=vg.basis.y, span=vg.basis.x)
+        result = inflection_points(
+            points=samples, rise_axis=vg.basis.y, run_axis=vg.basis.x
+        )
         np.testing.assert_array_almost_equal(
             result[:, 0], example.inflection_points, decimal=1
         )
