@@ -48,7 +48,7 @@ def point_of_max_acceleration(points, axis, span, span_spacing=None, plot=False)
     """
     Find the point on a curve where the curve is maximally accelerating
     in the direction specified by `axis`.
-    
+
     `span` is the horizontal axis along which slices are taken, and
     `span_spacing`, if provided, indices an upper bound on the size
     of each slice.
@@ -65,16 +65,16 @@ def point_of_max_acceleration(points, axis, span, span_spacing=None, plot=False)
             the changes in the geometry. When `None`, the original points
             are used.
     """
-    from ..polyline.polyline import Polyline
+    from ..polyline._polyline_object import Polyline
 
     vg.shape.check(locals(), "points", (-1, 3))
     vg.shape.check(locals(), "axis", (3,))
     vg.shape.check(locals(), "span", (3,))
 
     if span_spacing is not None:
-        polyline = Polyline(v=points, is_closed=False)
-        polyline.partition_by_length(span_spacing)
-        points = polyline.v
+        points = (
+            Polyline(v=points, is_closed=False).subdivided_by_length(span_spacing).v
+        )
 
     coords_on_span = points.dot(span)
     coords_on_axis = points.dot(axis)
@@ -102,15 +102,14 @@ def point_of_max_acceleration(points, axis, span, span_spacing=None, plot=False)
     # Do not choose a point where the first derivate of the next point is negative.
     # valid_points = np.concatenate([(finite_difference_1 > 0)[1:], [False]])
     valid_points = np.logical_and(
-        np.roll(finite_difference_1, 1) > 0,
-        np.roll(finite_difference_1, -1) > 0,
+        np.roll(finite_difference_1, 1) > 0, np.roll(finite_difference_1, -1) > 0,
     )
     valid_points[0] = False
     valid_points[-1] = False
 
     try:
         index = np.argmax(finite_difference_2[valid_points])
-    except:
+    except ValueError:
         # import pdb; pdb.set_trace()
         plot = True
         index = None
@@ -126,20 +125,45 @@ def point_of_max_acceleration(points, axis, span, span_spacing=None, plot=False)
 
         fig, axs = plt.subplots(3)
 
-        import pdb; pdb.set_trace()
+        import pdb
+
+        pdb.set_trace()
         xs = coords_on_span
-        axs[0].plot(xs, coords_on_axis, label='finite1')
-        axs[1].scatter(xs[valid_points], finite_difference_1[valid_points], label='finite1')
-        axs[1].plot(xs, finite_difference_1, label='finite1')
-        axs[2].plot(xs, finite_difference_2, label='finite1')
-        axs[2].scatter(xs[valid_points], finite_difference_2[valid_points], label='finite1')
-        # axs[3].plot(xs, np.gradient(finite_difference_2, coords_on_span), label='finite1')
-        # axs[1].plot(xs[:-window+1], moving_average_1, label='finite1')
-        # axs[5].plot(xs[:-window+1], moving_average(finite_difference_2, window), label='finite1')
-        # axs[0].add_artist(plt.Circle((xs[index], coords_on_axis[index]), 0.1, fill=False, color='red'))
+        axs[0].plot(xs, coords_on_axis, label="finite1")
+        axs[1].scatter(
+            xs[valid_points], finite_difference_1[valid_points], label="finite1"
+        )
+        axs[1].plot(xs, finite_difference_1, label="finite1")
+        axs[2].plot(xs, finite_difference_2, label="finite1")
+        axs[2].scatter(
+            xs[valid_points], finite_difference_2[valid_points], label="finite1"
+        )
+
+        # axs[3].plot(
+        #     xs, np.gradient(finite_difference_2, coords_on_span), label="finite1"
+        # )
+        # axs[1].plot(xs[: -window + 1], moving_average_1, label="finite1")
+        # axs[5].plot(
+        #     xs[: -window + 1],
+        #     moving_average(finite_difference_2, window),
+        #     label="finite1",
+        # )
+        # axs[0].add_artist(
+        #     plt.Circle((xs[index], coords_on_axis[index]), 0.1, fill=False, color="red")
+        # )
         # for coord in zero_crossings:
-        #     axs[1].add_artist(plt.Circle((xs[coord], moving_average_1[coord]), 0.1, fill=False, color='red'))
-        # axs[2].plot(xs[int(window/2):-int(window/2)+1], np.gradient(moving_average_1, coords_on_span[int(window/2):-int(window/2)+1]), label='finite1')
+        #     axs[1].add_artist(
+        #         plt.Circle(
+        #             (xs[coord], moving_average_1[coord]), 0.1, fill=False, color="red"
+        #         )
+        #     )
+        # axs[2].plot(
+        #     xs[int(window / 2) : -int(window / 2) + 1],
+        #     np.gradient(
+        #         moving_average_1, coords_on_span[int(window / 2) : -int(window / 2) + 1]
+        #     ),
+        #     label="finite1",
+        # )
         # axs[3].plot(xs, finite_difference_1, label='finite1')
         plt.show()
 
@@ -152,7 +176,8 @@ def point_of_max_acceleration(points, axis, span, span_spacing=None, plot=False)
     # (peaks,) = (finite_difference_2 > threshold).nonzero()
     # index = int(np.average(peaks))
 
-    if index is None: return None
+    if index is None:
+        return None
 
     return points[valid_points][index]
     # return points[index]
