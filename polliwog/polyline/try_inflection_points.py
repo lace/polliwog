@@ -49,7 +49,7 @@ def main():
                 longest_xs.v,
                 vg.basis.z,
                 vg.basis.y,
-                span_spacing=0.001,
+                subdivide_by_length=0.001,
                 plot=False,
             )
             result_points.append(result)

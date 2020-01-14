@@ -46,27 +46,24 @@ def inflection_points(points, rise_axis, run_axis):
 
 
 def point_of_max_acceleration(
-    points, rise_axis, run_axis, span_spacing=None, plot=False
+    points, rise_axis, run_axis, subdivide_by_length=None, plot=False
 ):
     """
     Find the point on a curve where the curve is maximally accelerating
-    in the direction specified by `axis`.
-
-    `span` is the horizontal axis along which slices are taken, and
-    `span_spacing`, if provided, indices an upper bound on the size
-    of each slice.
-
-    For best results, slice the points first into a short section that
-    spans the area of interest.
+    in the direction specified by `rise_axis`. `run_axis` is the horizontal
+    axis along which slices are taken.
 
     Args:
-        points (np.arraylike): A stack of points, as `kx3`.
+        points (np.arraylike): A stack of points, as `kx3`. For best
+            results, trim these to the area of interest before calling.
         axis (np.arraylike): The vertical axis, as a 3D vector.
         span (np.arraylike): The horizonal axis, as a 3D vector.
-        span_spacing (float): When provided, the maximum width of each
-            slice. For best results pass a value that is small relative to
-            the changes in the geometry. When `None`, the original points
-            are used.
+        subdivide_by_length (float): When provided, the maximum space
+            between each point. The idea is keep the slice width small,
+            however this constraint is applied in 3D space, not along
+            the `run_axis`. For best results pass a value that is small
+            relative to the changes in the geometry. When `None`, the
+            points are used without modification.
     """
     from ..polyline._polyline_object import Polyline
 
@@ -74,10 +71,11 @@ def point_of_max_acceleration(
     vg.shape.check(locals(), "rise_axis", (3,))
     vg.shape.check(locals(), "run_axis", (3,))
 
-    if span_spacing is not None:
-        points = (
-            Polyline(v=points, is_closed=False).subdivided_by_length(span_spacing).v
+    if subdivide_by_length is not None:
+        subdivided = Polyline(v=points, is_closed=False).subdivided_by_length(
+            subdivide_by_length
         )
+        points = subdivided.v
 
     coords_on_run_axis = points.dot(run_axis)
     coords_on_rise_axis = points.dot(rise_axis)
