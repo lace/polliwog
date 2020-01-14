@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.0-beta.5 (Jan. 13, 2020)
+
+### BREAKING CHANGES
+
+- Rename arguments to `polliwog.polyline.inflection_points`.
+
+### New features
+
+- Add `polliwog.polyline.point_of_max_acceleration`.
+
+
 ## 1.0.0-beta.4 (Dec. 27, 2019)
 
 ### New features
@@ -21,7 +32,7 @@
 - Plane: Rename `partition_by_length()` -> `subdivided_by_length()`.
 - Add `mirror_point_across_plane()`.
 - Remove `polliwog.transform.as_rotation_matrix()`.
-- Rename `polliwog.transfer.rodrigues` to `cv2_rodrigues()`. (Better to use
+- Rename `polliwog.transform.rodrigues` to `cv2_rodrigues()`. (Better to use
   one of the new functions `rodrigues_vector_to_rotation_matrix()` or
   `rotation_matrix_to_rodrigues_vector()` instead.)
 
