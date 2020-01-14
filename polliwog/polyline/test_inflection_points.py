@@ -51,7 +51,7 @@ examples = [
         point_of_max_acceleration=5.5,
     ),
     InflectionPointExample(
-        fn=lambda x: -x ** 2,
+        fn=lambda x: -(x ** 2),
         domain=(0, 5),
         inflection_points=np.array([]),
         point_of_max_acceleration=None,
@@ -96,7 +96,5 @@ def test_point_of_max_acceleration():
 
     with pytest.raises(ValueError, match="At least two points are required"):
         point_of_max_acceleration(
-            points=np.array([vg.basis.x]),
-            rise_axis=vg.basis.y,
-            run_axis=vg.basis.x,
+            points=np.array([vg.basis.x]), rise_axis=vg.basis.y, run_axis=vg.basis.x,
         )
