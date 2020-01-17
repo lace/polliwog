@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0-beta.6 (Jan. 17, 2020)
+
+### New features
+
+- Add `polliwog.pointcloud.percentile`.
+
+
 ## 1.0.0-beta.5 (Jan. 13, 2020)
 
 ### BREAKING CHANGES
