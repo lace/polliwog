@@ -45,9 +45,7 @@ def inflection_points(points, rise_axis, run_axis):
     return points[is_inflection_point]
 
 
-def point_of_max_acceleration(
-    points, rise_axis, run_axis, subdivide_by_length=None, plot=False
-):
+def point_of_max_acceleration(points, rise_axis, run_axis, subdivide_by_length=None):
     """
     Find the point on a curve where the curve is maximally accelerating
     in the direction specified by `rise_axis`. `run_axis` is the horizontal
