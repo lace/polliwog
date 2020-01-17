@@ -1,5 +1,6 @@
 import math
 import numpy as np
+import pytest
 import vg
 from ._pointcloud_functions import percentile
 
@@ -23,3 +24,9 @@ def test_percentile():
     np.testing.assert_almost_equal(result[1], centroid[1])
     # 2.5 is the 75th percentile along negative Z.
     np.testing.assert_almost_equal(result[2], 2.5, decimal=1)
+
+    with pytest.raises(ValueError, match="At least one point is needed"):
+        percentile(points=np.zeros((0, 3)), axis=vg.basis.neg_z, percentile=75)
+
+    with pytest.raises(ValueError, match="Axis must be non-zero"):
+        percentile(points=points, axis=np.array([0, 0, 0]), percentile=75)
