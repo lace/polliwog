@@ -118,6 +118,15 @@
 ```
 
 
+## Point clouds
+
+```eval_rst
+
+.. automodule:: polliwog.pointcloud
+    :members:
+```
+
+
 ## Tesselated shapes
 
 ```eval_rst
