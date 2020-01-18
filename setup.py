@@ -1,3 +1,4 @@
+import setuptools.command.build_py
 from setuptools import find_packages, setup
 
 # Set version_info[__version__], while avoiding importing numpy, in case numpy
@@ -11,6 +12,20 @@ with open("README.md") as f:
 
 with open("requirements.txt") as f:
     install_requires = f.read()
+
+exclude = ["**/test_*.py", "**/make_rodrigues_test_data.py"]
+
+
+class build_py(setuptools.command.build_py.build_py):
+    def find_package_modules(self, package, package_dir):
+        import fnmatch
+
+        return [
+            (pkg, mod, file)
+            for (pkg, mod, file) in super().find_package_modules(package, package_dir)
+            if not any(fnmatch.fnmatchcase(file, pat=pattern) for pattern in exclude)
+        ]
+
 
 setup(
     name="polliwog",
@@ -27,6 +42,7 @@ setup(
     },
     packages=find_packages(),
     install_requires=install_requires,
+    cmdclass={"build_py": build_py},
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
