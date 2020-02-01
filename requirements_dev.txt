@@ -6,7 +6,7 @@ executor >= 21.0
 click >=7.0,<8.0
 
 # Unit tests.
-pytest ==5.3.2
+pytest ==5.3.5
 pytest-cov == 2.8.1
 
 # Lint and formatting.
