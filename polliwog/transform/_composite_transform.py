@@ -109,6 +109,9 @@ class CompositeTransform(object):
 
         Args:
             factor (float): The scale factor.
+
+        See also:
+            `non_uniform_scale()`
         """
         forward, inverse = transform_matrix_for_uniform_scale(
             factor, allow_flipping=allow_flipping, ret_inverse_matrix=True
@@ -117,12 +120,15 @@ class CompositeTransform(object):
 
     def non_uniform_scale(self, x_factor, y_factor, z_factor, allow_flipping=False):
         """
-        Scale by the given factors along `x`, `y`, and `z`
+        Scale by the given factors along `x`, `y`, and `z`.
 
         Args:
             x_factor (float): The scale factor to be applied along the `x` axis.
             y_factor (float): The scale factor to be applied along the `y` axis.
             z_factor (float): The scale factor to be applied along the `z` axis.
+
+        See also:
+            `uniform_scale()`
         """
         forward, inverse = transform_matrix_for_non_uniform_scale(
             x_factor,
