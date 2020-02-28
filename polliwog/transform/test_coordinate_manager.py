@@ -6,6 +6,10 @@ from .test_affine_transform import create_cube_verts
 
 
 def perform_transform_test(apply_transform_fn, expected_v0, expected_v6):
+    """
+    Untransformed v0: [1.0, 0.0, 0.0]
+    Untransformed v6: [5.0, 4.0, 4.0]
+    """
     cube_v = create_cube_verts([1.0, 0.0, 0.0], 4.0)
 
     coordinate_manager = CoordinateManager()
@@ -33,7 +37,7 @@ def test_coordinate_manager_forward():
     coordinate_manager = CoordinateManager()
     coordinate_manager.tag_as("source")
     coordinate_manager.translate(-cube_floor_point)
-    coordinate_manager.scale(2)
+    coordinate_manager.uniform_scale(2)
     coordinate_manager.tag_as("floored_and_scaled")
     coordinate_manager.translate(np.array([0.0, -4.0, 0.0]))
     coordinate_manager.tag_as("centered_at_origin")
@@ -81,7 +85,7 @@ def test_coordinate_manager_forward_with_attrs():
     coordinate_manager = CoordinateManager()
     coordinate_manager.tag_as("source")
     coordinate_manager.translate(-cube_floor_point)
-    coordinate_manager.scale(2)
+    coordinate_manager.uniform_scale(2)
     coordinate_manager.tag_as("floored_and_scaled")
     coordinate_manager.translate(np.array([0.0, -4.0, 0.0]))
     coordinate_manager.tag_as("centered_at_origin")
@@ -107,7 +111,7 @@ def test_coordinate_manager_forward_with_attrs():
 def test_coordinate_manager_out_of_order():
     coordinate_manager = CoordinateManager()
     coordinate_manager.tag_as("before")
-    coordinate_manager.scale(2)
+    coordinate_manager.uniform_scale(2)
     coordinate_manager.tag_as("after")
 
     with pytest.raises(ValueError):
@@ -119,7 +123,7 @@ def test_coordinate_manager_invalid_tag():
 
     coordinate_manager = CoordinateManager()
     coordinate_manager.tag_as("before")
-    coordinate_manager.scale(2)
+    coordinate_manager.uniform_scale(2)
     coordinate_manager.tag_as("after")
 
     with pytest.raises(AttributeError):
@@ -169,4 +173,22 @@ def test_coordinate_manager_rotate():
         ),
         expected_v0=np.array([0.0, 0.0, -1.0]),
         expected_v6=np.array([4, 4.0, -5.0]),
+    )
+
+
+def test_coordinate_manager_non_uniform_scale():
+    perform_transform_test(
+        apply_transform_fn=lambda coordinate_manager: coordinate_manager.non_uniform_scale(
+            1.0, 2.0, 3.0
+        ),
+        expected_v0=np.array([1.0, 0.0, 0.0]),
+        expected_v6=np.array([5, 8.0, 12.0]),
+    )
+
+
+def test_coordinate_manager_flip():
+    perform_transform_test(
+        apply_transform_fn=lambda coordinate_manager: coordinate_manager.flip(1),
+        expected_v0=np.array([1.0, 0.0, 0.0]),
+        expected_v6=np.array([5.0, -4.0, 4.0]),
     )

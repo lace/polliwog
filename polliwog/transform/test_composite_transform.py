@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 import vg
 from ._composite_transform import CompositeTransform
 from .test_affine_transform import create_default_cube_verts
@@ -23,7 +24,7 @@ def test_convert_units():
 def test_translate_then_scale():
     transform = CompositeTransform()
     transform.translate(np.array([8.0, 6.0, 7.0]))
-    transform.scale(10.0)
+    transform.uniform_scale(10.0)
 
     cube_v = create_default_cube_verts()
 
@@ -39,7 +40,7 @@ def test_translate_then_scale():
 
 def test_scale_then_translate():
     transform = CompositeTransform()
-    transform.scale(10.0)
+    transform.uniform_scale(10.0)
     transform.translate(np.array([8.0, 6.0, 7.0]))
 
     cube_v = create_default_cube_verts()
@@ -95,12 +96,12 @@ def test_reverse_transforms():
 
     transforms[1].translate(np.array([8.0, 6.0, 7.0]))
 
-    transforms[2].scale(10.0)
+    transforms[2].uniform_scale(10.0)
 
     transforms[3].translate(np.array([8.0, 6.0, 7.0]))
-    transforms[3].scale(10.0)
+    transforms[3].uniform_scale(10.0)
 
-    transforms[4].scale(10.0)
+    transforms[4].uniform_scale(10.0)
     transforms[4].translate(np.array([8.0, 6.0, 7.0]))
 
     for transform in transforms:
@@ -122,7 +123,7 @@ def test_forward_reverse_equivalence():
     transform = CompositeTransform()
     transform.rotate(np.array([1.0, 2.0, 3.0]))
     transform.translate(np.array([3.0, 2.0, 1.0]))
-    transform.scale(10.0)
+    transform.uniform_scale(10.0)
     transform.rotate(np.array([7.0, 13.0, 5.0]))
 
     forward = transform.transform_matrix_for()
@@ -132,3 +133,8 @@ def test_forward_reverse_equivalence():
     forward = transform.transform_matrix_for(from_range=(0, 2))
     reverse = transform.transform_matrix_for(from_range=(0, 2), reverse=True)
     np.testing.assert_allclose(reverse, np.linalg.inv(forward))
+
+def test_flip_error():
+    transform = CompositeTransform()
+    with pytest.raises(ValueError, match=r"Expected dim to be 0, 1, or 2"):
+        transform.flip(-1)
