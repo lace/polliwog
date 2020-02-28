@@ -134,6 +134,7 @@ def test_forward_reverse_equivalence():
     reverse = transform.transform_matrix_for(from_range=(0, 2), reverse=True)
     np.testing.assert_allclose(reverse, np.linalg.inv(forward))
 
+
 def test_flip_error():
     transform = CompositeTransform()
     with pytest.raises(ValueError, match=r"Expected dim to be 0, 1, or 2"):

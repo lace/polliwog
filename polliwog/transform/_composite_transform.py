@@ -4,8 +4,8 @@ from ._affine_transform import (
     apply_affine_transform,
     transform_matrix_for_non_uniform_scale,
     transform_matrix_for_rotation,
-    transform_matrix_for_uniform_scale,
     transform_matrix_for_translation,
+    transform_matrix_for_uniform_scale,
 )
 from ._rotation import rotation_from_up_and_look
 
