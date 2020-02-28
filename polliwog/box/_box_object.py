@@ -1,5 +1,6 @@
 import numpy as np
 import vg
+from ..plane._plane_object import Plane
 
 
 class Box(object):
@@ -112,6 +113,66 @@ class Box(object):
         The `z` coordinate of the box's center.
         """
         return self.origin[2] + self.size[2] / 2
+
+    @property
+    def min_x_plane(self):
+        """
+        The plane facing the inside of the box, aligned with its minimum
+        `x` coordinate.
+        """
+        center_of_side = self.center_point
+        center_of_side[0] = self.min_x
+        return Plane(center_of_side, vg.basis.x)
+
+    @property
+    def min_y_plane(self):
+        """
+        The plane facing the inside of the box, aligned with its minimum
+        `y` coordinate.
+        """
+        center_of_side = self.center_point
+        center_of_side[1] = self.min_y
+        return Plane(center_of_side, vg.basis.y)
+
+    @property
+    def min_z_plane(self):
+        """
+        The plane facing the inside of the box, aligned with its minimum
+        `z` coordinate.
+        """
+        center_of_side = self.center_point
+        center_of_side[2] = self.min_z
+        return Plane(center_of_side, vg.basis.z)
+
+    @property
+    def max_x_plane(self):
+        """
+        The plane facing the inside of the box, aligned with its maximum
+        `x` coordinate.
+        """
+        center_of_side = self.center_point
+        center_of_side[0] = self.max_x
+        return Plane(center_of_side, vg.basis.neg_x)
+
+    @property
+    def max_y_plane(self):
+        """
+        The plane facing the inside of the box, aligned with its maximum
+        `y` coordinate.
+        """
+        center_of_side = self.center_point
+        center_of_side[1] = self.max_y
+        return Plane(center_of_side, vg.basis.neg_y)
+
+    @property
+    def max_z_plane(self):
+        """
+        The plane facing the inside of the box, aligned with its maximum
+        `z` coordinate.
+        """
+        center_of_side = self.center_point
+        center_of_side[2] = self.max_z
+        return Plane(center_of_side, vg.basis.neg_z)
 
     @property
     def width(self):
