@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+import vg
 from ._box_object import Box
 
 
@@ -24,6 +25,23 @@ def test_mins_mids_maxes():
     assert box.max_x == 4.0
     assert box.max_y == 3.0
     assert box.max_z == 8.0
+
+
+def test_min_max_planes():
+    box = create_box()
+    assert box.min_x_plane.reference_point[0] == 1.0
+    assert box.min_y_plane.reference_point[1] == 2.0
+    assert box.min_z_plane.reference_point[2] == 3.0
+    assert box.max_x_plane.reference_point[0] == 4.0
+    assert box.max_y_plane.reference_point[1] == 3.0
+    assert box.max_z_plane.reference_point[2] == 8.0
+
+    np.testing.assert_array_equal(box.min_x_plane.normal, vg.basis.x)
+    np.testing.assert_array_equal(box.min_y_plane.normal, vg.basis.y)
+    np.testing.assert_array_equal(box.min_z_plane.normal, vg.basis.z)
+    np.testing.assert_array_equal(box.max_x_plane.normal, vg.basis.neg_x)
+    np.testing.assert_array_equal(box.max_y_plane.normal, vg.basis.neg_y)
+    np.testing.assert_array_equal(box.max_z_plane.normal, vg.basis.neg_z)
 
 
 def test_dims():
