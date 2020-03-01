@@ -5,16 +5,16 @@
 
 ### BREAKING CHANGES
 
-- CompositeTransform, CoordinateManager: `scale()` is renamed to `uniform_scale()`
-- `polliwog.transform.transform_matrix_for_scale` is renamed to `polliwog.transform.transform_matrix_for_uniform_scale`
+- CompositeTransform, CoordinateManager: `scale()` is renamed to `uniform_scale()`.
+- `polliwog.transform.transform_matrix_for_scale` is renamed to `polliwog.transform.transform_matrix_for_uniform_scale`.
 
 ### New features
 
 - Box: Add bounding planes.
-- CompositeTransform, CoordinateManager: Add `non_uniform_scale()`
+- CompositeTransform, CoordinateManager: Add `non_uniform_scale()`.
 - CompositeTransform, CoordinateManager: Add `flip()`
 - `polliwog.transform.transform_matrix_for_scale`: Add `allow_flipping` parameter.
-- Add `polliwog.transform.transform_matrix_for_non_uniform_scale`
+- Add `polliwog.transform.transform_matrix_for_non_uniform_scale`.
 
 ### Other improvements
 
