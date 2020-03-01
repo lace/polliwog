@@ -1,5 +1,27 @@
 # Changelog
 
+
+## 1.0.0b7 (Mar. 1, 2020)
+
+### BREAKING CHANGES
+
+- CompositeTransform, CoordinateManager: `scale()` is renamed to `uniform_scale()`
+- `polliwog.transform.transform_matrix_for_scale` is renamed to `polliwog.transform.transform_matrix_for_uniform_scale`
+
+### New features
+
+- Box: Add bounding planes.
+- CompositeTransform, CoordinateManager: Add `non_uniform_scale()`
+- CompositeTransform, CoordinateManager: Add `flip()`
+- `polliwog.transform.transform_matrix_for_scale`: Add `allow_flipping` parameter.
+- Add `polliwog.transform.transform_matrix_for_non_uniform_scale`
+
+### Other improvements
+
+- Document point cloud functions.
+- Omit tests from wheels.
+
+
 ## 1.0.0-beta.6 (Jan. 17, 2020)
 
 ### New features
