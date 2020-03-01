@@ -2,9 +2,10 @@ import numpy as np
 import pytest
 from ._affine_transform import (
     apply_affine_transform,
+    transform_matrix_for_non_uniform_scale,
     transform_matrix_for_rotation,
-    transform_matrix_for_scale,
     transform_matrix_for_translation,
+    transform_matrix_for_uniform_scale,
 )
 
 
@@ -85,7 +86,7 @@ def test_translate():
     np.testing.assert_array_equal(transformed_cube_v[6], [13.0, 10.0, 11.0])
 
 
-def test_scale():
+def test_uniform_scale():
     cube_v = create_default_cube_verts()
 
     # Confidence check.
@@ -93,13 +94,49 @@ def test_scale():
     np.testing.assert_array_equal(cube_v[6], [5.0, 4.0, 4.0])
 
     transformed_cube_v = apply_affine_transform(
-        cube_v, transform_matrix_for_scale(10.0)
+        cube_v, transform_matrix_for_uniform_scale(-10.0, allow_flipping=True)
     )
 
-    np.testing.assert_array_equal(transformed_cube_v[0], [10.0, 0.0, 0.0])
-    np.testing.assert_array_equal(transformed_cube_v[6], [50.0, 40.0, 40.0])
+    np.testing.assert_array_equal(transformed_cube_v[0], [-10.0, 0.0, 0.0])
+    np.testing.assert_array_equal(transformed_cube_v[6], [-50.0, -40.0, -40.0])
 
 
-def test_scale_error():
+def test_uniform_scale_error():
+    with pytest.raises(ValueError, match="Scale factor should be nonzero"):
+        transform_matrix_for_uniform_scale(0)
     with pytest.raises(ValueError, match="Scale factor should be greater than zero"):
-        transform_matrix_for_scale(-1)
+        transform_matrix_for_uniform_scale(-1)
+
+
+def test_non_uniform_scale():
+    cube_v = create_default_cube_verts()
+
+    # Confidence check.
+    np.testing.assert_array_equal(cube_v[0], [1.0, 0.0, 0.0])
+    np.testing.assert_array_equal(cube_v[6], [5.0, 4.0, 4.0])
+
+    forward, inverse = transform_matrix_for_non_uniform_scale(
+        1.0, -2.0, 1.0, allow_flipping=True, ret_inverse_matrix=True
+    )
+    transformed_cube_v = apply_affine_transform(cube_v, forward)
+
+    np.testing.assert_array_equal(transformed_cube_v[0], [1.0, 0.0, 0.0])
+    np.testing.assert_array_equal(transformed_cube_v[6], [5.0, -8.0, 4.0])
+
+    untransformed_cube_v = apply_affine_transform(transformed_cube_v, inverse)
+
+    np.testing.assert_array_almost_equal(untransformed_cube_v, cube_v)
+
+    np.testing.assert_array_equal(
+        transform_matrix_for_non_uniform_scale(
+            1.0, -2.0, 1.0, allow_flipping=True, ret_inverse_matrix=False
+        ),
+        forward,
+    )
+
+
+def test_non_uniform_scale_error():
+    with pytest.raises(ValueError, match="Scale factors should be nonzero"):
+        transform_matrix_for_non_uniform_scale(1.0, 0.0, 3.0)
+    with pytest.raises(ValueError, match="Scale factors should be greater than zero"):
+        transform_matrix_for_non_uniform_scale(1.0, -1.0, 3.0)

@@ -4,9 +4,10 @@ from .._common.shape import columnize
 
 __all__ = [
     "apply_affine_transform",
+    "transform_matrix_for_non_uniform_scale",
     "transform_matrix_for_rotation",
     "transform_matrix_for_translation",
-    "transform_matrix_for_scale",
+    "transform_matrix_for_uniform_scale",
 ]
 
 
@@ -108,7 +109,55 @@ def transform_matrix_for_translation(translation, ret_inverse_matrix=False):
     return forward, inverse
 
 
-def transform_matrix_for_scale(scale_factor, ret_inverse_matrix=False):
+def transform_matrix_for_non_uniform_scale(
+    x_factor, y_factor, z_factor, allow_flipping=False, ret_inverse_matrix=False
+):
+    """
+    Create a transformation matrix that scales by the given factors along
+    `x`, `y`, and `z`.
+
+    Forward:
+        [[  s_0, 0,   0,   0 ],
+        [  0,   s_1, 0,   0 ],
+        [  0,   0,   s_2, 0 ],
+        [  0,   0,   0,   1 ]]
+
+    Reverse:
+        [[  1/s_0, 0,     0,     0 ],
+        [  0,     1/s_1, 0,     0 ],
+        [  0,     0,     1/s_2, 0 ],
+        [  0,     0,     0,     1 ]]
+
+    Args:
+        x_factor (float): The scale factor to be applied along the `x` axis,
+            which should be positive.
+        y_factor (float): The scale factor to be applied along the `y` axis,
+            which should be positive.
+        z_factor (float): The scale factor to be applied along the `z` axis,
+            which should be positive.
+        allow_flipping (bool): When `True`, allows scale factors to be
+            positive or negative, though not zero.
+        ret_inverse_matrix (bool): When `True`, also returns a matrix which
+            provides the inverse transform.
+    """
+    if x_factor == 0 or y_factor == 0 or z_factor == 0:
+        raise ValueError("Scale factors should be nonzero")
+    if not allow_flipping and (x_factor < 0 or y_factor < 0 or z_factor < 0):
+        raise ValueError("Scale factors should be greater than zero")
+    scale = np.array([x_factor, y_factor, z_factor])
+
+    forward = _convert_33_to_44(np.diag(scale))
+
+    if not ret_inverse_matrix:
+        return forward
+
+    inverse = _convert_33_to_44(np.diag(1.0 / scale))
+    return forward, inverse
+
+
+def transform_matrix_for_uniform_scale(
+    scale_factor, allow_flipping=False, ret_inverse_matrix=False
+):
     """
     Create a transformation matrix that scales by the given factor.
 
@@ -129,13 +178,14 @@ def transform_matrix_for_scale(scale_factor, ret_inverse_matrix=False):
         ret_inverse_matrix (bool): When `True`, also returns a matrix which
             provides the inverse transform.
     """
-    if scale_factor <= 0:
+    if scale_factor == 0:
+        raise ValueError("Scale factor should be nonzero")
+    if not allow_flipping and scale_factor < 0:
         raise ValueError("Scale factor should be greater than zero")
-
-    forward = _convert_33_to_44(np.diag(np.repeat(scale_factor, 3)))
-
-    if not ret_inverse_matrix:
-        return forward
-
-    inverse = _convert_33_to_44(np.diag(np.repeat(1.0 / scale_factor, 3)))
-    return forward, inverse
+    return transform_matrix_for_non_uniform_scale(
+        scale_factor,
+        scale_factor,
+        scale_factor,
+        allow_flipping=allow_flipping,
+        ret_inverse_matrix=ret_inverse_matrix,
+    )

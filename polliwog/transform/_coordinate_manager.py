@@ -8,7 +8,7 @@ class CoordinateManager(object):
         >>> coordinate_manager = CoordinateManager()
         >>> coordinate_manager.tag_as('source')
         >>> coordinate_manager.translate(-cube.floor_point)
-        >>> coordinate_manager.scale(2)
+        >>> coordinate_manager.uniform_scale(2)
         >>> coordinate_manager.tag_as('floored_and_scaled')
         >>> coordinate_manager.translate(np.array([0., -4., 0.]))
         >>> coordinate_manager.tag_as('centered_at_origin')
@@ -33,11 +33,17 @@ class CoordinateManager(object):
     def append_transform(self, *args, **kwargs):
         self._transform.append_transform(*args, **kwargs)
 
-    def scale(self, *args, **kwargs):
-        self._transform.scale(*args, **kwargs)
+    def uniform_scale(self, *args, **kwargs):
+        self._transform.uniform_scale(*args, **kwargs)
+
+    def non_uniform_scale(self, *args, **kwargs):
+        self._transform.non_uniform_scale(*args, **kwargs)
 
     def convert_units(self, *args, **kwargs):
         self._transform.convert_units(*args, **kwargs)
+
+    def flip(self, *args, **kwargs):
+        self._transform.flip(*args, **kwargs)
 
     def translate(self, *args, **kwargs):
         self._transform.translate(*args, **kwargs)
