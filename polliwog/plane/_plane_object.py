@@ -155,8 +155,8 @@ class Plane(object):
 
         Args:
             points (np.arraylikw): An array of points.
-            inverted (bool): When `True`, invert the logic. Return the points
-                that lie behind the plane instead.
+            inverted (bool): When `True`, effectively invert the plane. Return
+                the points that lie on or behind the plane instead.
             ret_indices (bool): When `True`, return the indices instead of the
                 points themselves.
         """
