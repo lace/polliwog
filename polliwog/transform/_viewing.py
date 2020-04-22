@@ -52,7 +52,7 @@ def view_to_orthographic_projection(width, height, near=0.1, far=2000, inverse=F
     at the bottom-left of the near clipping plane, and `(1, 1, 1)` at the
     top-right of the far clipping plane.
 
-    Params:
+    Args:
         width (float): Width of the window, in pixels. (FIXME: Is this really
             correct?)
         height (float): Height of the window, in pixels. (FIXME: Is this really
@@ -116,7 +116,7 @@ def viewport_transform(x_right, y_bottom, x_left=0, y_top=0, inverse=False):
 
     No clipping is performed.
 
-    Attrs:
+    Args:
         x_right (int): The `x` coordinate of the right of the viewport.
             (usually the width).
         y_bottom (int): The `y` coordinate of the bottom of the viewport
@@ -180,7 +180,7 @@ def world_to_canvas_orthographic_projection(
     Create a transformation matrix which composes camera, orthographic
     projection, and viewport transformations into a single operation.
 
-    Params:
+    Args:
         width (float): Width of the window, in pixels. (FIXME: Is this really
             correct?)
         height (float): Height of the window, in pixels. (FIXME: Is this really
