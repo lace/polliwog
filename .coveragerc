@@ -4,3 +4,4 @@ omit =
     **/test_*.py
     polliwog/transform/make_rodrigues_test_data.py
     polliwog/polyline/_try_inflection_points.py
+    polliwog/transform/_testing_helper.py
