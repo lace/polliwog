@@ -237,6 +237,18 @@ def test_segment_vectors():
     np.testing.assert_array_equal(polyline.segment_vectors, expected)
 
 
+def test_path_centroid():
+    np.testing.assert_array_equal(
+        Polyline(
+            np.array(
+                [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 5.0, 0.0], [0.0, 5.0, 0.0]]
+            ),
+            is_closed=True,
+        ).path_centroid,
+        np.array([0.5, 2.5, 0]),
+    )
+
+
 def test_length_of_empty_polyline():
     polyline = Polyline(None)
     assert polyline.total_length == 0

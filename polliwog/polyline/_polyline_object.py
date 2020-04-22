@@ -145,6 +145,14 @@ class Polyline(object):
         return self.v[self.e]
 
     @property
+    def segment_vectors(self):
+        """
+        Vectors spanning each segment.
+        """
+        segments = self.segments
+        return segments[:, 1] - segments[:, 0]
+
+    @property
     def segment_lengths(self):
         """
         The length of each of the segments.
@@ -166,12 +174,12 @@ class Polyline(object):
         return np.sum(self.segment_lengths)
 
     @property
-    def segment_vectors(self):
+    def path_centroid(self):
         """
-        Vectors spanning each segment.
+        The weighted average of all the points along the edges of the polyline.
         """
-        segments = self.segments
-        return segments[:, 1] - segments[:, 0]
+        edge_centers = np.average(self.segments, axis=1)
+        return np.average(edge_centers, weights=self.segment_lengths, axis=0)
 
     @property
     def bounding_box(self):
