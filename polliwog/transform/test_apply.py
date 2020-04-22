@@ -27,3 +27,23 @@ def test_apply_transform():
     np.testing.assert_array_equal(
         transformer(points[1], discard_z_coord=True), expected_points_discarding_z[1],
     )
+
+def test_apply_transform_for_vectors():
+    translation = np.array([3.0, 0.5, 2.0])
+    transform = np.array(
+        [
+            [1, 0, 0, translation[0]],
+            [0, 1, 0, translation[1]],
+            [0, 0, 1, translation[2]],
+            [0, 0, 0, 1],
+        ]
+    )
+
+    points = np.array([[1.0, 2.0, 3.0], [5.0, 0.0, 1.0]])
+    expected_points = np.array([[4.0, 2.5, 5.0], [8.0, 0.5, 3.0]])
+
+    # Confidence check.
+    transformer = apply_transform(transform)
+    np.testing.assert_array_equal(transformer(points), expected_points)
+
+    np.testing.assert_array_equal(transformer(points, treat_input_as_vector=True), points)
