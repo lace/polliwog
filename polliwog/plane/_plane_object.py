@@ -149,16 +149,48 @@ class Plane(object):
 
     def points_in_front(self, points, inverted=False, ret_indices=False):
         """
+        Given an array of points, return the points which lie in the
+        half-space in front of it (i.e. in the direction of the plane
+        normal).
+
+        Args:
+            points (np.arraylikw): An array of points.
+            inverted (bool): When `True`, return the points which lie on or
+                behind the plane instead.
+            ret_indices (bool): When `True`, return the indices instead of the
+                points themselves.
+
+        Note:
+            Use `points_on_or_in_front()` for points which lie either on the
+            plane or in front of it.
+        """
+        sign = self.sign(points)
+
+        if inverted:
+            mask = np.less(sign, 0)
+        else:
+            mask = np.greater(sign, 0)
+
+        indices = np.flatnonzero(mask)
+
+        return indices if ret_indices else points[indices]
+
+    def points_on_or_in_front(self, points, inverted=False, ret_indices=False):
+        """
         Given an array of points, return the points which lie either on the
         plane or in the half-space in front of it (i.e. in the direction of
         the plane normal).
 
         Args:
             points (np.arraylikw): An array of points.
-            inverted (bool): When `True`, effectively invert the plane. Return
-                the points that lie on or behind the plane instead.
+            inverted (bool): When `True`, return the points behind the plane
+                instead.
             ret_indices (bool): When `True`, return the indices instead of the
                 points themselves.
+
+        Note:
+            Use `points_in_front()` to get points which lie only in front of
+            the plane.
         """
         sign = self.sign(points)
 
