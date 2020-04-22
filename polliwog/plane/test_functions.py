@@ -20,7 +20,7 @@ def assert_plane_equation_satisfies_points(plane_equation, points):
 
 
 def test_plane_normal_from_points_parity():
-    from ..shapes import create_triangular_prism
+    from ..shapes import triangular_prism
     from ..tri import surface_normals
 
     points = np.array([[3.0, 0.0, 0.0], [0.0, 3.0, 0.0], [0.0, 0.0, 3.0]])
@@ -37,7 +37,7 @@ def test_plane_normal_from_points_parity():
     p1 = np.array([3.0, 0.0, 0.0])
     p2 = np.array([0.0, 3.0, 0.0])
     p3 = np.array([0.0, 0.0, 3.0])
-    vertices = create_triangular_prism(p1, p2, p3, 1.0)
+    vertices = triangular_prism(p1, p2, p3, 1.0)
 
     np.testing.assert_allclose(
         plane_normal_from_points(vertices), surface_normals(vertices)

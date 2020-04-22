@@ -1,10 +1,10 @@
 import numpy as np
+import vg
 
 __all__ = [
-    "create_rectangular_prism",
-    "create_cube",
-    "create_triangular_prism",
-    "create_rectangle",
+    "rectangular_prism",
+    "cube",
+    "triangular_prism",
 ]
 
 
@@ -15,7 +15,7 @@ def _maybe_flatten(vertices, faces, ret_unique_vertices_and_faces):
         return vertices[faces]
 
 
-def create_rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
+def rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
     """
     Tesselate an axis-aligned rectangular prism. One vertex is `origin`. The
     diametrically opposite vertex is `origin + size`.
@@ -39,6 +39,9 @@ def create_rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
           flattened triangle coordinates.
     """
     from ..tri import quads_to_tris
+
+    vg.shape.check(locals(), "origin", (3,))
+    vg.shape.check(locals(), "size", (3,))
 
     lower_base_plane = np.array(
         [
@@ -73,7 +76,7 @@ def create_rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
     return _maybe_flatten(vertices, faces, ret_unique_vertices_and_faces)
 
 
-def create_cube(origin, size, ret_unique_vertices_and_faces=False):
+def cube(origin, size, ret_unique_vertices_and_faces=False):
     """
     Tesselate an axis-aligned cube. One vertex is `origin`. The diametrically
     opposite vertex is `size` units along `+x`, `+y`, and `+z`.
@@ -96,14 +99,18 @@ def create_cube(origin, size, ret_unique_vertices_and_faces=False):
         - With `ret_unique_vertices_and_faces=False`: a `12x3x3` matrix of
           flattened triangle coordinates.
     """
-    return create_rectangular_prism(
+    vg.shape.check(locals(), "origin", (3,))
+    if not isinstance(size, float):
+        raise ValueError("`size` should be a number")
+
+    return rectangular_prism(
         origin,
         np.repeat(size, 3),
         ret_unique_vertices_and_faces=ret_unique_vertices_and_faces,
     )
 
 
-def create_triangular_prism(p1, p2, p3, height, ret_unique_vertices_and_faces=False):
+def triangular_prism(p1, p2, p3, height, ret_unique_vertices_and_faces=False):
     """
     Tesselate a triangular prism whose base is the triangle `p1`, `p2`, `p3`.
     If the vertices are oriented in a counterclockwise direction, the prism
@@ -129,6 +136,12 @@ def create_triangular_prism(p1, p2, p3, height, ret_unique_vertices_and_faces=Fa
     """
     from .. import Plane
 
+    vg.shape.check(locals(), "p1", (3,))
+    vg.shape.check(locals(), "p2", (3,))
+    vg.shape.check(locals(), "p3", (3,))
+    if not isinstance(height, float):
+        raise ValueError("`height` should be a number")
+
     base_plane = Plane.from_points(p1, p2, p3)
     lower_base_to_upper_base = height * -base_plane.normal
     vertices = np.vstack(([p1, p2, p3], [p1, p2, p3] + lower_base_to_upper_base))
@@ -147,29 +160,4 @@ def create_triangular_prism(p1, p2, p3, height, ret_unique_vertices_and_faces=Fa
         dtype=np.uint64,
     )
 
-    return _maybe_flatten(vertices, faces, ret_unique_vertices_and_faces)
-
-
-def create_rectangle(ret_unique_vertices_and_faces=False):
-    """
-    Create a rectangle.
-
-    Args:
-        ret_unique_vertices_and_faces (bool): When `True` return a vertex
-            array containing the unique vertices and an array of faces (i.e.
-            vertex indices). When `False`, return a flattened array of
-            triangle coordinates.
-
-    Returns:
-        object:
-
-        - With `ret_unique_vertices_and_faces=True`: a tuple containing
-          an `4x3` array of vertices and a `2x3` array of triangle faces.
-        - With `ret_unique_vertices_and_faces=False`: a `16x3x3` matrix of
-          flattened triangle coordinates.
-    """
-    vertices = np.array(
-        [[1.0, 0.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.0, -1.0]]
-    )
-    faces = np.array([[0, 1, 2], [3, 1, 0]], dtype=np.uint64)
     return _maybe_flatten(vertices, faces, ret_unique_vertices_and_faces)
