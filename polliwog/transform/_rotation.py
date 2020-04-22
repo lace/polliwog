@@ -22,10 +22,10 @@ def rotation_from_up_and_look(up, look):
 
     if vg.almost_zero(up):
         raise ValueError("Singular up")
-    if vg.almost_zero(up):
+    if vg.almost_zero(look):
         raise ValueError("Singular look")
     if vg.almost_collinear(up, look):
-        raise ValueError("up and look are collinear")
+        raise ValueError("`up` and `look` are almost collinear")
 
     up = vg.normalize(up)
     recomputed_look = vg.normalize(vg.reject(look, from_v=up))
