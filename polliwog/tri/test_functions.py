@@ -21,12 +21,12 @@ def test_surface_normals_from_points_single():
 
 
 def test_surface_normals_from_points_vectorized():
-    from ..shapes import create_triangular_prism
+    from ..shapes import triangular_prism
 
     p1 = np.array([3.0, 0.0, 0.0])
     p2 = np.array([0.0, 3.0, 0.0])
     p3 = np.array([0.0, 0.0, 3.0])
-    vertices = create_triangular_prism(p1, p2, p3, 1.0)
+    vertices = triangular_prism(p1, p2, p3, 1.0)
 
     expected_normals = vg.normalize(
         np.array(
