@@ -4,6 +4,7 @@ from .._common.shape import columnize
 
 __all__ = [
     "apply_transform",
+    "compose_transforms",
 ]
 
 

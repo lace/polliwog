@@ -1,6 +1,6 @@
 from . import _affine_transform
 from ._affine_transform import *  # noqa: F401,F403
-from ._apply import apply_transform  # noqa: F401
+from ._apply import apply_transform, compose_transforms  # noqa: F401
 from ._rodrigues import (  # noqa: F401
     cv2_rodrigues,
     rodrigues_vector_to_rotation_matrix,
