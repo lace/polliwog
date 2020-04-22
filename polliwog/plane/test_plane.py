@@ -157,7 +157,8 @@ def test_points_on_or_in_front():
         plane.points_on_or_in_front(pts, inverted=True), pts[expected_indices]
     )
     np.testing.assert_array_equal(
-        plane.points_on_or_in_front(pts, inverted=True, ret_indices=True), expected_indices
+        plane.points_on_or_in_front(pts, inverted=True, ret_indices=True),
+        expected_indices,
     )
 
 
