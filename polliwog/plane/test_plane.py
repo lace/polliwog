@@ -117,15 +117,47 @@ def test_points_in_front():
 
     plane = Plane(sample, normal)
 
-    pts = np.array([[425.0, 425.0, 25.0], [-500.0, -500.0, 25.0]])
+    pts = np.array([[425.0, 425.0, 25.0], [-500.0, -500.0, 25.0], [1.0, 1.0, 0.0]])
 
-    np.testing.assert_array_equal(plane.points_in_front(pts), pts[0:1])
+    expected_indices = np.array([0])
+    np.testing.assert_array_equal(plane.points_in_front(pts), pts[expected_indices])
     np.testing.assert_array_equal(
-        plane.points_in_front(pts, ret_indices=True), np.array([0])
+        plane.points_in_front(pts, ret_indices=True), expected_indices
     )
-    np.testing.assert_array_equal(plane.points_in_front(pts, inverted=True), pts[1:2])
+
+    expected_indices = np.array([1])
     np.testing.assert_array_equal(
-        plane.points_in_front(pts, inverted=True, ret_indices=True), np.array([1])
+        plane.points_in_front(pts, inverted=True), pts[expected_indices]
+    )
+    np.testing.assert_array_equal(
+        plane.points_in_front(pts, inverted=True, ret_indices=True), expected_indices
+    )
+
+
+def test_points_on_or_in_front():
+    # diagonal plane @ origin - draw a picture!
+    normal = np.array([1.0, 1.0, 0.0])
+    normal /= np.linalg.norm(normal)
+    sample = np.array([1.0, 1.0, 0.0])
+
+    plane = Plane(sample, normal)
+
+    pts = np.array([[425.0, 425.0, 25.0], [-500.0, -500.0, 25.0], [1.0, 1.0, 0.0]])
+
+    expected_indices = np.array([0, 2])
+    np.testing.assert_array_equal(
+        plane.points_on_or_in_front(pts), pts[expected_indices]
+    )
+    np.testing.assert_array_equal(
+        plane.points_on_or_in_front(pts, ret_indices=True), expected_indices
+    )
+
+    expected_indices = np.array([1, 2])
+    np.testing.assert_array_equal(
+        plane.points_on_or_in_front(pts, inverted=True), pts[expected_indices]
+    )
+    np.testing.assert_array_equal(
+        plane.points_on_or_in_front(pts, inverted=True, ret_indices=True), expected_indices
     )
 
 
