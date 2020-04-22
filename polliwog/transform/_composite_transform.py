@@ -1,12 +1,12 @@
 import numpy as np
 import vg
 from ._affine_transform import (
-    apply_affine_transform,
     transform_matrix_for_non_uniform_scale,
     transform_matrix_for_rotation,
     transform_matrix_for_translation,
     transform_matrix_for_uniform_scale,
 )
+from ._apply import apply_transform
 from ._rotation import rotation_from_up_and_look
 
 
@@ -34,7 +34,7 @@ class CompositeTransform(object):
         # List of tuples, containing forward and reverse matrices.
         self.transforms = []
 
-    def __call__(self, points, from_range=None, reverse=False):
+    def __call__(self, points, from_range=None, reverse=False, discard_z_coord=False):
         """
         Args:
             points (np.arraylike): Points to transform, as a 3xn array.
@@ -47,10 +47,9 @@ class CompositeTransform(object):
                 or reverse mode.
 
         """
-        transform_matrix = self.transform_matrix_for(
-            from_range=from_range, reverse=reverse
-        )
-        return apply_affine_transform(points=points, transform_matrix=transform_matrix)
+        return apply_transform(
+            self.transform_matrix_for(from_range=from_range, reverse=reverse)
+        )(points, discard_z_coord=discard_z_coord)
 
     def transform_matrix_for(self, from_range=None, reverse=False):
         """
@@ -64,7 +63,7 @@ class CompositeTransform(object):
           forward or reverse matrices are used.
 
         """
-        from functools import reduce
+        from ._apply import compose_transforms
 
         if from_range is not None:
             start, stop = from_range
@@ -72,18 +71,12 @@ class CompositeTransform(object):
         else:
             selected_transforms = self.transforms
 
-        # The transpose of a product of matrices equals the products of each
-        # transpose in reverse order.
-        matrices = [
-            reverse_matrix if reverse else forward_matrix.T
-            for forward_matrix, reverse_matrix in selected_transforms
-        ]
+        if reverse:
+            matrices = [inverse for _, inverse in reversed(selected_transforms)]
+        else:
+            matrices = [forward for forward, _ in selected_transforms]
 
-        if not len(matrices):
-            return np.eye(4)
-
-        matrix = reduce(np.dot, matrices)
-        return matrix if reverse else matrix.T
+        return compose_transforms(*matrices)
 
     def append_transform(self, forward, reverse=None):
         """

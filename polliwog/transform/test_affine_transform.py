@@ -1,12 +1,12 @@
 import numpy as np
 import pytest
 from ._affine_transform import (
-    apply_affine_transform,
     transform_matrix_for_non_uniform_scale,
     transform_matrix_for_rotation,
     transform_matrix_for_translation,
     transform_matrix_for_uniform_scale,
 )
+from ._apply import apply_transform
 
 
 def create_cube_verts(origin, size):
@@ -31,27 +31,6 @@ def create_default_cube_verts():
     return create_cube_verts([1.0, 0.0, 0.0], 4.0)
 
 
-def test_apply_affine_transform():
-    scale_factor = np.array([3.0, 0.5, 2.0])
-    transform = np.array(
-        [
-            [scale_factor[0], 0, 0, 0],
-            [0, scale_factor[1], 0, 0],
-            [0, 0, scale_factor[2], 0],
-            [0, 0, 0, 1],
-        ]
-    )
-
-    points = np.array([[1.0, 2.0, 3.0], [5.0, 0.0, 1.0]])
-    expected_points = np.array([[3.0, 1.0, 6.0], [15.0, 0.0, 2.0]])
-    np.testing.assert_array_equal(
-        apply_affine_transform(points, transform), expected_points
-    )
-    np.testing.assert_array_equal(
-        apply_affine_transform(points[1], transform), expected_points[1]
-    )
-
-
 def test_rotate():
     cube_v = create_default_cube_verts()
     ways_to_rotate_around_y_a_quarter_turn = [
@@ -63,9 +42,7 @@ def test_rotate():
         np.testing.assert_array_equal(cube_v[0], [1.0, 0.0, 0.0])
         np.testing.assert_array_equal(cube_v[6], [5.0, 4.0, 4.0])
 
-        transformed_cube_v = apply_affine_transform(
-            cube_v, transform_matrix_for_rotation(rot)
-        )
+        transformed_cube_v = apply_transform(transform_matrix_for_rotation(rot))(cube_v)
 
         np.testing.assert_array_almost_equal(transformed_cube_v[0], [0.0, 0.0, -1.0])
         np.testing.assert_array_almost_equal(transformed_cube_v[6], [4, 4.0, -5.0])
@@ -78,9 +55,9 @@ def test_translate():
     np.testing.assert_array_equal(cube_v[0], [1.0, 0.0, 0.0])
     np.testing.assert_array_equal(cube_v[6], [5.0, 4.0, 4.0])
 
-    transformed_cube_v = apply_affine_transform(
-        cube_v, transform_matrix_for_translation(np.array([8.0, 6.0, 7.0]))
-    )
+    transformed_cube_v = apply_transform(
+        transform_matrix_for_translation(np.array([8.0, 6.0, 7.0]))
+    )(cube_v)
 
     np.testing.assert_array_equal(transformed_cube_v[0], [9.0, 6.0, 7.0])
     np.testing.assert_array_equal(transformed_cube_v[6], [13.0, 10.0, 11.0])
@@ -93,9 +70,9 @@ def test_uniform_scale():
     np.testing.assert_array_equal(cube_v[0], [1.0, 0.0, 0.0])
     np.testing.assert_array_equal(cube_v[6], [5.0, 4.0, 4.0])
 
-    transformed_cube_v = apply_affine_transform(
-        cube_v, transform_matrix_for_uniform_scale(-10.0, allow_flipping=True)
-    )
+    transformed_cube_v = apply_transform(
+        transform_matrix_for_uniform_scale(-10.0, allow_flipping=True)
+    )(cube_v)
 
     np.testing.assert_array_equal(transformed_cube_v[0], [-10.0, 0.0, 0.0])
     np.testing.assert_array_equal(transformed_cube_v[6], [-50.0, -40.0, -40.0])
@@ -118,12 +95,12 @@ def test_non_uniform_scale():
     forward, inverse = transform_matrix_for_non_uniform_scale(
         1.0, -2.0, 1.0, allow_flipping=True, ret_inverse_matrix=True
     )
-    transformed_cube_v = apply_affine_transform(cube_v, forward)
+    transformed_cube_v = apply_transform(forward)(cube_v)
 
     np.testing.assert_array_equal(transformed_cube_v[0], [1.0, 0.0, 0.0])
     np.testing.assert_array_equal(transformed_cube_v[6], [5.0, -8.0, 4.0])
 
-    untransformed_cube_v = apply_affine_transform(transformed_cube_v, inverse)
+    untransformed_cube_v = apply_transform(inverse)(transformed_cube_v)
 
     np.testing.assert_array_almost_equal(untransformed_cube_v, cube_v)
 
