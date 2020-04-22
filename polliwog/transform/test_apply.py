@@ -28,6 +28,7 @@ def test_apply_transform():
         transformer(points[1], discard_z_coord=True), expected_points_discarding_z[1],
     )
 
+
 def test_apply_transform_for_vectors():
     translation = np.array([3.0, 0.5, 2.0])
     transform = np.array(
@@ -46,4 +47,6 @@ def test_apply_transform_for_vectors():
     transformer = apply_transform(transform)
     np.testing.assert_array_equal(transformer(points), expected_points)
 
-    np.testing.assert_array_equal(transformer(points, treat_input_as_vector=True), points)
+    np.testing.assert_array_equal(
+        transformer(points, treat_input_as_vector=True), points
+    )
