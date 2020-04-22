@@ -36,6 +36,7 @@ def test_teapot_orthographic_projection():
         canvas_coords[-len(expected_tail) :], expected_tail
     )
 
+
 def test_inverse_orthographic_projection():
     world_coords = teapot_verts()
     canvas_coords = apply_transform(
@@ -54,7 +55,7 @@ def test_inverse_orthographic_projection():
             position=np.array([0.5, 1.5, 0.0]),
             target=np.array([-0.5, 1.0, -2.0]),
             zoom=100,
-            inverse=True
+            inverse=True,
         )
     )(canvas_coords)
     np.testing.assert_array_almost_equal(untransformed_world_coords, world_coords)
