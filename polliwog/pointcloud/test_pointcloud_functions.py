@@ -2,7 +2,7 @@ import math
 import numpy as np
 import pytest
 import vg
-from ._pointcloud_functions import percentile
+from ._pointcloud_functions import extent, percentile
 
 
 def random_points_along_side_of_cylinder(radius=1.0, height=3.0, n_samples=1):
@@ -30,3 +30,18 @@ def test_percentile():
 
     with pytest.raises(ValueError, match="Axis must be non-zero"):
         percentile(points=points, axis=np.array([0, 0, 0]), percentile=75)
+
+
+def test_extent():
+    points = np.array(
+        [[0, 0, 0], [10, 10, 0], [10, 0, 0], [0, 11, 0]], dtype=np.float64
+    )
+    np.testing.assert_almost_equal(extent(points), 14.87, decimal=2)
+
+    distance, i, j = extent(points, ret_indices=True)
+    np.testing.assert_almost_equal(distance, 14.87, decimal=2)
+    assert i == 2
+    assert j == 3
+
+    with pytest.raises(ValueError, match="At least two points are required"):
+        extent(np.array([[0, 0, 0]]))
