@@ -1,6 +1,34 @@
 # Changelog
 
 
+## 1.0.0b8 (Apr. 22, 2020)
+
+### BREAKING CHANGES
+
+- `Polyline.points_in_front()` no longer returns points on the plane.
+- Rename `polliwog.shapes.create_cube()` to `polliwog.shapes.cube`, etc.
+- Remove `polliwog.shapes.create_rectangle()`.
+- `polliwog.transform.apply_affine_transform` is renamed to
+  `polliwog.transform.apply_transform`. It now accepts a single argument,
+  a transformation matrix, which it wraps into a function which is
+  returned. The function accepts a point or stack of points, along with
+  two kwargs. With `discard_z_coord=True`, discard the z coordinate of
+  the result. With `treat_input_as_vectors=True`, it does not use the
+  homogeneous coordinate, and therefore ignores translation.
+
+### New features
+
+- Add `Polyline.points_on_or_in_front()`.
+- Add `Polyline.path_centroid` property.
+- Add `polliwog.transform.compose_transforms()`.
+- Add several functions in `polliwog.transform` for orthographic viewing
+  transformations.
+
+### Other improvements
+
+- Improve docs.
+
+
 ## 1.0.0b7 (Mar. 1, 2020)
 
 ### BREAKING CHANGES
