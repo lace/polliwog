@@ -289,6 +289,37 @@ class Plane(object):
         pts[~pt_is_valid] = np.nan
         return pts, pt_is_valid
 
+    def tilted(self, new_point, coplanar_point):
+        """
+        Create a new plane which adjusts the angle of the receiver so it passes
+        through `new_point`. `coplanar_point` is the point on the old plane
+        which is preserved.
+
+        Args:
+            new_point (np.arraylike): A reference point for the desired plane,
+                with shape `(3,)`.
+            coplanar_point (np.arraylike): The point in common, between the
+                original and desired planes.
+
+        Returns:
+            Plane: The adjusted plane.
+        """
+        vg.shape.check(locals(), "new_point", (3,))
+        vg.shape.check(locals(), "coplanar_point", (3,))
+
+        vector_along_old_plane = self.project_point(new_point) - coplanar_point
+        vector_along_new_plane = new_point - coplanar_point
+        angle_between_vectors = vg.angle(
+            vector_along_old_plane, vector_along_new_plane, units="rad",
+        )
+        new_normal = vg.rotate(
+            self.normal,
+            around_axis=vg.perpendicular(vector_along_old_plane, self.normal),
+            angle=angle_between_vectors,
+            units="rad",
+        )
+        return Plane(point_on_plane=coplanar_point, normal=new_normal)
+
 
 Plane.xy = Plane(point_on_plane=np.zeros(3), unit_normal=vg.basis.z)
 Plane.xy.__doc__ = "The `xy`-plane."
