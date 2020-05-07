@@ -298,8 +298,8 @@ class Plane(object):
         Args:
             new_point (np.arraylike): A point on the desired plane, with shape
                 `(3,)`.
-            coplanar_point (np.arraylike): The point which the old and new
-                planes have in common.
+            coplanar_point (np.arraylike): The `(3,)` point which the old and
+                new planes have in common.
 
         Returns:
             Plane: The adjusted plane.
