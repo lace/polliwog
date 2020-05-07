@@ -318,7 +318,7 @@ class Plane(object):
             angle=angle_between_vectors,
             units="rad",
         )
-        return Plane(point_on_plane=coplanar_point, normal=new_normal)
+        return Plane(point_on_plane=coplanar_point, unit_normal=new_normal)
 
 
 Plane.xy = Plane(point_on_plane=np.zeros(3), unit_normal=vg.basis.z)
