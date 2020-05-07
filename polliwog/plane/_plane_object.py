@@ -309,12 +309,16 @@ class Plane(object):
 
         vector_along_old_plane = self.project_point(new_point) - coplanar_point
         vector_along_new_plane = new_point - coplanar_point
-        angle_between_vectors = vg.angle(
-            vector_along_old_plane, vector_along_new_plane, units="rad",
+        axis_of_rotation = vg.perpendicular(vector_along_old_plane, self.normal)
+        angle_between_vectors = vg.signed_angle(
+            vector_along_old_plane,
+            vector_along_new_plane,
+            look=axis_of_rotation,
+            units="rad",
         )
         new_normal = vg.rotate(
             self.normal,
-            around_axis=vg.perpendicular(vector_along_old_plane, self.normal),
+            around_axis=axis_of_rotation,
             angle=angle_between_vectors,
             units="rad",
         )
