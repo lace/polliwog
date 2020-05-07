@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0b9 (Apr. 22, 2020)
+
+### New features
+
+- Add `Plane.tilted()`.
+
 
 ## 1.0.0b8 (Apr. 22, 2020)
 
