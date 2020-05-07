@@ -381,6 +381,26 @@ def test_line_segment_plane_intersections():
     np.testing.assert_array_equal(is_intersecting, [False, False, True, True, False])
 
 
+def test_tilted():
+    coplanar_point = np.zeros(3)
+    new_point = np.array([-1.0, -1.0, 0.0])
+    new_plane = Plane(np.array([5.0, 0.0, 3.0]), vg.basis.y).tilted(
+        new_point=new_point, coplanar_point=coplanar_point
+    )
+    np.testing.assert_almost_equal(new_plane.distance(new_point), 0)
+    np.testing.assert_almost_equal(new_plane.distance(coplanar_point), 0)
+    np.testing.assert_almost_equal(new_plane.distance(np.array([-0.5, -0.5, 0.0])), 0)
+
+    coplanar_point = np.zeros(3)
+    new_point = np.array([1.0, 1.0, 0.0])
+    new_plane = Plane(np.array([5.0, 0.0, 3.0]), vg.basis.y).tilted(
+        new_point=new_point, coplanar_point=coplanar_point
+    )
+    np.testing.assert_almost_equal(new_plane.distance(new_point), 0)
+    np.testing.assert_almost_equal(new_plane.distance(coplanar_point), 0)
+    np.testing.assert_almost_equal(new_plane.distance(np.array([0.5, 0.5, 0.0])), 0)
+
+
 def test_constants():
     np.testing.assert_array_equal(Plane.xy.normal, vg.basis.z)
     np.testing.assert_array_equal(Plane.xz.normal, vg.basis.y)
