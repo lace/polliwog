@@ -291,15 +291,15 @@ class Plane(object):
 
     def tilted(self, new_point, coplanar_point):
         """
-        Create a new plane which adjusts the angle of the receiver so it passes
-        through `new_point`. `coplanar_point` is the point on the old plane
-        which is preserved.
+        Create a new plane, tilted so it passes through `new_point`. Also
+        specify a `coplanar_point` which the old and new planes should have
+        in common.
 
         Args:
-            new_point (np.arraylike): A reference point for the desired plane,
-                with shape `(3,)`.
-            coplanar_point (np.arraylike): The point in common, between the
-                original and desired planes.
+            new_point (np.arraylike): A point on the desired plane, with shape
+                `(3,)`.
+            coplanar_point (np.arraylike): The point which the old and new
+                planes have in common.
 
         Returns:
             Plane: The adjusted plane.
