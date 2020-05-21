@@ -83,6 +83,32 @@ def test_tri_contains_coplanar_point():
     )  # noqa: E712
 
 
+def test_tri_contains_coplanar_point_stacked():
+    a = np.array([0.0, 0.0, 0.0])
+    b = np.array([4.0, 0.1, 0.0])
+    c = np.array([3.0, 3.1, 0.0])
+
+    stacked_a = np.array([a, a, a, a, a, a, a, [0.06710189, 1.69908346, 0.06590126]])
+    stacked_b = np.array([b, b, b, b, b, b, b, [0.05648619, 1.70207, 0.07402092]])
+    stacked_c = np.array([c, c, c, c, c, c, c, [0.05969098, 1.69641423, 0.07268801]])
+    stacked_p = np.array(
+        [
+            a,
+            b,
+            c,
+            [2.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
+            [2.0, 0.0, 0.0],
+            [2.0, 5.0, 0.0],
+            [0.07534771, 1.6869296, 0.06190757],
+        ]
+    )
+    np.testing.assert_array_equal(
+        tri_contains_coplanar_point(stacked_a, stacked_b, stacked_c, stacked_p),
+        np.array([True, True, True, True, True, False, False, False]),
+    )
+
+
 def test_barycentric():
     triangle = np.array([[-1.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, math.sqrt(2), 0.0]])
 

@@ -37,10 +37,10 @@ def coplanar_points_are_on_same_side_of_line(a, b, p1, p2):
         bool: `True` when `a` and `b` are on the same side of the line defined
         by `p1` and `p2`.
     """
-    vg.shape.check(locals(), "a", (3,))
-    vg.shape.check(locals(), "b", (3,))
-    vg.shape.check(locals(), "p1", (3,))
-    vg.shape.check(locals(), "p2", (3,))
+    check_shape_any(a, (3,), (-1, 3), name="a")
+    vg.shape.check(locals(), "b", a.shape)
+    vg.shape.check(locals(), "p1", a.shape)
+    vg.shape.check(locals(), "p2", a.shape)
 
     # Uses "same-side technique" from http://blackpawn.com/texts/pointinpoly/default.html
     along_line = b - a

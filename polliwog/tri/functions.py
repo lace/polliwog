@@ -1,6 +1,6 @@
 import numpy as np
 import vg
-from .._common.shape import columnize
+from .._common.shape import check_shape_any, columnize
 from ..line._line_functions import coplanar_points_are_on_same_side_of_line
 
 __all__ = [
@@ -38,16 +38,18 @@ def tri_contains_coplanar_point(a, b, c, point):
     Assuming `point` is coplanar with the triangle `ABC`, check if it lies
     inside it.
     """
-    vg.shape.check(locals(), "a", (3,))
-    vg.shape.check(locals(), "b", (3,))
-    vg.shape.check(locals(), "c", (3,))
-    vg.shape.check(locals(), "point", (3,))
+    check_shape_any(a, (3,), (-1, 3), name="a")
+    vg.shape.check(locals(), "b", a.shape)
+    vg.shape.check(locals(), "c", a.shape)
+    vg.shape.check(locals(), "point", a.shape)
 
     # Uses "same-side technique" from http://blackpawn.com/texts/pointinpoly/default.html
-    return (
-        coplanar_points_are_on_same_side_of_line(b, c, point, a)
-        and coplanar_points_are_on_same_side_of_line(a, c, point, b)
-        and coplanar_points_are_on_same_side_of_line(a, b, point, c)
+    return np.logical_and(
+        np.logical_and(
+            coplanar_points_are_on_same_side_of_line(b, c, point, a),
+            coplanar_points_are_on_same_side_of_line(a, c, point, b),
+        ),
+        coplanar_points_are_on_same_side_of_line(a, b, point, c),
     )
 
 
