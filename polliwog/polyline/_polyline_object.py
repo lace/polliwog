@@ -293,7 +293,9 @@ class Polyline(object):
         else:
             return result
 
-    def subdivided_by_length(self, max_length, ret_indices=False):
+    def subdivided_by_length(
+        self, max_length, edges_to_subdivide=None, ret_indices=False
+    ):
         """
         Subdivide each line segment longer than `max_length` with
         equal-length segments, such that none of the new segments are longer
@@ -301,18 +303,29 @@ class Polyline(object):
 
         Args:
             max_length (float): The maximum lenth of a segment.
+            edges_to_subdivide (np.arraylike): An optional boolean mask the same
+                length as the number of edges. Only the edges marked `True` are
+                subdivided. The default is to subdivide all edges longer than
+                `max_length`.
             ret_indices (bool): When `True`, also returns the indices of the
                 original vertices.
         """
         import itertools
         from ..segment import subdivide_segment
 
+        if edges_to_subdivide is None:
+            edges_to_subdivide = np.ones(self.num_e, dtype=np.bool)
+        else:
+            vg.shape.check(locals(), "edges_to_subdivide", (self.num_e,))
+
         old_num_e = self.num_e
         old_num_v = self.num_v
         num_segments_needed = np.ceil(self.segment_lengths / max_length).astype(
             dtype=np.int64
         )
-        (es_to_subdivide,) = (num_segments_needed > 1).nonzero()
+        (es_to_subdivide,) = np.logical_and(
+            edges_to_subdivide, num_segments_needed > 1
+        ).nonzero()
         vs_to_insert = [
             subdivide_segment(
                 self.v[self.e[old_e_index][0]],

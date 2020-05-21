@@ -393,6 +393,49 @@ def test_partition_length_divide_by_five():
     np.testing.assert_array_equal(result.v[indices], original.v)
 
 
+def test_partition_length_divide_by_five_skip_some():
+    original = Polyline(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [1.0, 2.0, 0.0],
+                [1.0, 3.0, 0.0],
+            ]
+        )
+    )
+
+    edges_to_subdivide = np.array([False, True, False, True])
+
+    expected = Polyline(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 0.2, 0.0],
+                [1.0, 0.4, 0.0],
+                [1.0, 0.6, 0.0],
+                [1.0, 0.8, 0.0],
+                [1.0, 1.0, 0.0],
+                [1.0, 2.0, 0.0],
+                [1.0, 2.2, 0.0],
+                [1.0, 2.4, 0.0],
+                [1.0, 2.6, 0.0],
+                [1.0, 2.8, 0.0],
+                [1.0, 3.0, 0.0],
+            ]
+        )
+    )
+
+    for max_length in (0.2, 0.24):
+        result = original.subdivided_by_length(
+            max_length, edges_to_subdivide=edges_to_subdivide
+        )
+        np.testing.assert_array_almost_equal(result.v, expected.v)
+        np.testing.assert_array_equal(result.e, expected.e)
+
+
 def test_subdivided_by_length_divide_some_leave_some():
     original = Polyline(
         np.array(
