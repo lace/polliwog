@@ -1054,3 +1054,55 @@ def test_slice_at_points():
     sliced = Polyline(v=points).sliced_at_points(np.array([1.0, 1.0, 0.0]), end_point)
     assert sliced.is_closed is False
     np.testing.assert_array_equal(sliced.v, np.array([[1.0, 1.0, 0.0], end_point]))
+
+
+def test_sectioned():
+    vs = np.arange(108).reshape(36, 3)
+    polyline = Polyline(v=vs, is_closed=False)
+    breakpoints = np.array([10, 15, 18, 27, 33])
+
+    broken = polyline.sectioned(breakpoints)
+    assert len(broken) == 6
+    assert sum(section.total_length for section in broken) == polyline.total_length
+    np.testing.assert_array_equal(broken[0].v, vs[:11])
+    np.testing.assert_array_equal(broken[1].v, vs[10:16])
+    np.testing.assert_array_equal(broken[2].v, vs[15:19])
+    np.testing.assert_array_equal(broken[3].v, vs[18:28])
+    np.testing.assert_array_equal(broken[4].v, vs[27:34])
+    np.testing.assert_array_equal(broken[5].v, vs[33:])
+
+
+def test_sectioned_degenerate():
+    vs = np.arange(108).reshape(36, 3)
+    polyline = Polyline(v=vs, is_closed=False)
+
+    broken = polyline.sectioned(np.array([], dtype=np.uint64))
+    assert len(broken) == 1
+    np.testing.assert_array_equal(broken[0].v, vs)
+
+
+def test_sectioned_errors():
+    vs = np.arange(108).reshape(36, 3)
+    polyline = Polyline(v=vs, is_closed=False)
+    with pytest.raises(ValueError, match="Every section must have at least one edge"):
+        polyline.sectioned(np.array([0]))
+    with pytest.raises(ValueError, match="Every section must have at least one edge"):
+        polyline.sectioned(np.array([10, 10]))
+    with pytest.raises(ValueError, match="Every section must have at least one edge"):
+        polyline.sectioned(np.array([35]))
+
+    with pytest.raises(
+        NotImplementedError, match="Not implemented for closed polylines"
+    ):
+        Polyline(v=vs, is_closed=True).sectioned(np.array([10]))
+
+
+def test_section_edge_case():
+    vs = np.arange(108).reshape(36, 3)
+    polyline = Polyline(v=vs, is_closed=False)
+    broken = polyline.sectioned(np.array([10, 11]))
+    assert len(broken) == 3
+    assert sum(section.total_length for section in broken) == polyline.total_length
+    np.testing.assert_array_equal(broken[0].v, vs[:11])
+    np.testing.assert_array_equal(broken[1].v, vs[10:12])
+    np.testing.assert_array_equal(broken[2].v, vs[11:])
