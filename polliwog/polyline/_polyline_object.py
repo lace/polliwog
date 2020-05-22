@@ -577,3 +577,39 @@ class Polyline(object):
 
         # Then slice at those points.
         return working_polyline.sliced_at_indices(start_v_index, end_v_index + 1)
+
+    def sectioned(self, section_breakpoints, copy_vs=False):
+        """
+        Section the given open polyline at the given breakpoints, which indicate
+        where one segment ends and the next one starts. Each of the breakpoint
+        vertices is included as an endpoint in one section and a start point in
+        the next section.
+
+        Args:
+            breakpoints (np.arraylike): The indices of the breakpoints.
+            copy_vs (bool): When `True`, copy the vertices into the new polylines.
+                When `False`, return polylines with views for vertex arrays.
+
+        Returns:
+            list: A list of the sectioned polylines.
+        """
+        if self.is_closed:
+            raise NotImplementedError("Not implemented for closed polylines")
+
+        vg.shape.check(locals(), "section_breakpoints", (-1,))
+
+        section_breakpoints = section_breakpoints.astype(np.uint64)
+        maybe_copy = np.copy if copy_vs else lambda vs: vs
+        section_starts = np.hstack([np.array(0, dtype=np.uint64), section_breakpoints])
+        section_ends = np.hstack(
+            [section_breakpoints + 1, np.array([self.num_v], dtype=np.uint64)]
+        )
+
+        edges_per_section = section_ends - section_starts - 1
+        if (edges_per_section < 1).any():
+            raise ValueError("Every section must have at least one edge")
+
+        return [
+            Polyline(v=maybe_copy(self.v[start:end]), is_closed=False)
+            for (start, end) in zip(section_starts, section_ends)
+        ]
