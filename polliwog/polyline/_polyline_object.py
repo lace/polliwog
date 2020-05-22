@@ -586,7 +586,6 @@ class Polyline(object):
         the next section.
 
         Args:
-            polyline (polliwog.Polyline): The open Polyline to cut.
             breakpoints (np.arraylike): The indices of the breakpoints.
             copy_vs (bool): When `True`, copy the vertices into the new polylines.
                 When `False`, return polylines with views for vertex arrays.
