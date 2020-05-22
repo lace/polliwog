@@ -582,14 +582,17 @@ class Polyline(object):
         """
         Section the given open polyline at the given breakpoints, which indicate
         where one segment ends and the next one starts. Each of the breakpoint
-        vertices is included in two of the results.
+        vertices is included as an endpoint in one section and a start point in
+        the next section.
+
         Args:
             polyline (polliwog.Polyline): The open Polyline to cut.
             breakpoints (np.arraylike): The indices of the breakpoints.
             copy_vs (bool): When `True`, copy the vertices into the new polylines.
                 When `False`, return polylines with views for vertex arrays.
+
         Returns:
-            list: A list of the broken polylines.
+            list: A list of the sectioned polylines.
         """
         if self.is_closed:
             raise NotImplementedError("Not implemented for closed polylines")
