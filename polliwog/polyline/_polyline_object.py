@@ -161,9 +161,8 @@ class Polyline(object):
         if self.e is None:
             return np.zeros(0)
         else:
-            v1s = self.v[self.e[:, 0]]
-            v2s = self.v[self.e[:, 1]]
-            return vg.euclidean_distance(v1s, v2s)
+            segments = self.segments
+            return vg.euclidean_distance(segments[:, 0], segments[:, 1])
 
     @property
     def total_length(self):
