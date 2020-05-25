@@ -1,12 +1,16 @@
 # Changelog
 
-## 1.0.0b9 (May 22, 2020)
+## 1.0.0b10 (May 25, 2020)
 
 ### New features
 
 - Add `Polyline.sectioned()`.
 - Add stacked input support to `polliwog.tri.tri_contains_coplanar_point()`
   and `polliwog.line.coplanar_points_are_on_same_side_of_line()`.
+
+### Optimizations
+
+- `Polyline.segment_lengths`: Minor optimization
 
 
 ## 1.0.0b9 (May 7, 2020)
