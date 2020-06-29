@@ -15,9 +15,9 @@ except ImportError:
     )
     exit(-1)
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
-from polliwog.transform.rotation import (
+from polliwog.transform.rotation import (  # noqa: E402 Needs to happen after the modification of sys.path
     euler,
-)  # noqa: E402 Needs to happen after the modification of sys.path
+)
 
 
 THINGS_TO_TEST = [

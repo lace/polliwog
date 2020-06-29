@@ -56,21 +56,25 @@ def test_tri_contains_coplanar_point():
     assert tri_contains_coplanar_point(a, b, c, b) == True  # noqa: E712
     assert tri_contains_coplanar_point(a, b, c, c) == True  # noqa: E712
     assert (
-        tri_contains_coplanar_point(a, b, c, np.array([2.0, 1.0, 0.0])) == True
-    )  # noqa: E712
+        tri_contains_coplanar_point(a, b, c, np.array([2.0, 1.0, 0.0]))
+        == True  # noqa: E712
+    )
 
     # Unexpected, as it's not in the plane, though if projected to the plane,
     # it is in the triangle.
     assert (
-        tri_contains_coplanar_point(a, b, c, np.array([0.0, 0.0, 1.0])) == True
-    )  # noqa: E712
+        tri_contains_coplanar_point(a, b, c, np.array([0.0, 0.0, 1.0]))
+        == True  # noqa: E712
+    )
 
     assert (
-        tri_contains_coplanar_point(a, b, c, np.array([2.0, 0.0, 0.0])) == False
-    )  # noqa: E712
+        tri_contains_coplanar_point(a, b, c, np.array([2.0, 0.0, 0.0]))
+        == False  # noqa: E712
+    )
     assert (
-        tri_contains_coplanar_point(a, b, c, np.array([2.0, 5.0, 0.0])) == False
-    )  # noqa: E712
+        tri_contains_coplanar_point(a, b, c, np.array([2.0, 5.0, 0.0]))
+        == False  # noqa: E712
+    )
 
     assert (
         tri_contains_coplanar_point(
@@ -79,8 +83,8 @@ def test_tri_contains_coplanar_point():
             np.array([0.05969098, 1.69641423, 0.07268801]),
             np.array([0.07534771, 1.6869296, 0.06190757]),
         )
-        == False
-    )  # noqa: E712
+        == False  # noqa: E712
+    )
 
 
 def test_tri_contains_coplanar_point_stacked():
