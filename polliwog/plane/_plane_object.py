@@ -138,14 +138,14 @@ class Plane(object):
         """
         return Plane(point_on_plane=self._r0, unit_normal=-self._n)
 
-    def sign(self, points):
+    def sign(self, points, decimal=12):
         """
         Given an array of points, return an array with +1 for points in front
         of the plane (in the direction of the normal), -1 for points behind
         the plane (away from the normal), and 0 for points on the plane.
 
         """
-        return np.sign(self.signed_distance(points))
+        return np.sign(self.signed_distance(points).round(decimal))
 
     def points_in_front(self, points, inverted=False, ret_indices=False):
         """
