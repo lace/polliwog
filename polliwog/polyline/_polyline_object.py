@@ -411,7 +411,7 @@ class Polyline(object):
         """
         # TODO: Refactor to use `..plane.intersections.intersect_segment_with_plane()`.
         # Identify edges with endpoints that are not on the same side of the plane
-        signed_distances = plane.signed_distance(self.v)
+        signed_distances = plane.signed_distance(self.v, epsilon=None)
         which_es = np.abs(np.sign(signed_distances)[self.e].sum(axis=1)) != 2
         # For the intersecting edges, compute the distance of the endpoints to the plane
         endpoint_distances = np.abs(signed_distances[self.e[which_es]])
