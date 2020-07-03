@@ -96,6 +96,7 @@ def signed_distance_to_plane(points, plane_equations, epsilon=EPSILON_COPLANAR):
                 result = 0.0
         else:
             result[np.abs(result) < epsilon] = 0.0
+
     return result
 
 
