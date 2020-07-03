@@ -1,6 +1,7 @@
 import numpy as np
 import vg
 from ._plane_functions import (
+    EPSILON_COPLANAR,
     mirror_point_across_plane,
     plane_normal_from_points,
     project_point_to_plane,
@@ -138,14 +139,25 @@ class Plane(object):
         """
         return Plane(point_on_plane=self._r0, unit_normal=-self._n)
 
-    def sign(self, points, decimal=12):
+    def sign(self, points, epsilon=EPSILON_COPLANAR):
         """
         Given an array of points, return an array with +1 for points in front
         of the plane (in the direction of the normal), -1 for points behind
         the plane (away from the normal), and 0 for points on the plane.
 
+        Args:
+            points (np.arraylike): A 3D point or a `kx3` stack of points.
+            epsilon (float): Return 0 for points within this distance of the
+                plane.
+
+        Returns:
+            depends:
+
+            - Given a single 3D point, the distance as a NumPy scalar.
+            - Given a `kx3` stack of points, an `k` array of distances.
+
         """
-        return np.sign(self.signed_distance(points).round(decimal))
+        return np.sign(self.signed_distance(points, epsilon=epsilon))
 
     def points_in_front(self, points, inverted=False, ret_indices=False):
         """
@@ -203,13 +215,15 @@ class Plane(object):
 
         return indices if ret_indices else points[indices]
 
-    def signed_distance(self, points):
+    def signed_distance(self, points, epsilon=EPSILON_COPLANAR):
         """
         Returns the signed distances to the given points or the signed
         distance to a single point.
 
         Args:
             points (np.arraylike): A 3D point or a `kx3` stack of points.
+            epsilon (float): Return 0 for points within this distance of the
+                plane.
 
         Returns:
             depends:
@@ -217,7 +231,7 @@ class Plane(object):
             - Given a single 3D point, the distance as a NumPy scalar.
             - Given a `kx3` stack of points, an `k` array of distances.
         """
-        return signed_distance_to_plane(points, self.equation)
+        return signed_distance_to_plane(points, self.equation, epsilon=epsilon)
 
     def distance(self, points):
         return np.absolute(self.signed_distance(points))

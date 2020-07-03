@@ -4,6 +4,7 @@ import vg
 from .._common.shape import check_shape_any, columnize
 
 __all__ = [
+    "EPSILON_COPLANAR",
     "plane_normal_from_points",
     "plane_equation_from_points",
     "normal_and_offset_from_plane_equations",
@@ -11,6 +12,8 @@ __all__ = [
     "project_point_to_plane",
     "mirror_point_across_plane",
 ]
+
+EPSILON_COPLANAR = 1e-12
 
 
 def plane_normal_from_points(points, normalize=True):
@@ -62,12 +65,22 @@ def normal_and_offset_from_plane_equations(plane_equations):
     return normal, offset
 
 
-def signed_distance_to_plane(points, plane_equations):
+def signed_distance_to_plane(points, plane_equations, epsilon=EPSILON_COPLANAR):
     """
     Return the signed distances from each point to the corresponding plane.
 
     For convenience, can also be called with a single point and a single
     plane.
+
+    Args:
+        points (np.ndarray): The points of interest as `kx3`.
+        plane_equations (np.ndarray): The plane equations as `kx4`.
+        epsilon (float): Return 0 for points within this distance of the
+            plane. Pass `None` to skip this check.
+
+    Return:
+        The signed distance, or for stacked inputs, an array of signed
+            distances.
     """
     k = check_shape_any(points, (3,), (-1, 3), name="points")
     check_shape_any(
@@ -75,7 +88,15 @@ def signed_distance_to_plane(points, plane_equations):
     )
 
     normals, offsets = normal_and_offset_from_plane_equations(plane_equations)
-    return vg.dot(points, normals) + offsets
+    result = vg.dot(points, normals) + offsets
+
+    if epsilon is not None:
+        if np.isscalar(result):
+            if np.abs(result) < epsilon:
+                result = 0.0
+        else:
+            result[np.abs(result) < epsilon] = 0.0
+    return result
 
 
 def translate_points_along_plane_normal(points, plane_equations, factor):
@@ -95,7 +116,7 @@ def translate_points_along_plane_normal(points, plane_equations, factor):
     assert isinstance(factor, numbers.Real)
 
     # Translate the point back to the plane along the normal.
-    signed_distance = signed_distance_to_plane(points, plane_equations)
+    signed_distance = signed_distance_to_plane(points, plane_equations, epsilon=None)
     normals, _ = normal_and_offset_from_plane_equations(plane_equations)
 
     if np.isscalar(signed_distance):
