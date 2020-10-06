@@ -22,10 +22,12 @@ def test_apply_transform():
 
     expected_points_discarding_z = np.array([[3.0, 1.0], [15.0, 0.0]])
     np.testing.assert_array_equal(
-        transformer(points, discard_z_coord=True), expected_points_discarding_z,
+        transformer(points, discard_z_coord=True),
+        expected_points_discarding_z,
     )
     np.testing.assert_array_equal(
-        transformer(points[1], discard_z_coord=True), expected_points_discarding_z[1],
+        transformer(points[1], discard_z_coord=True),
+        expected_points_discarding_z[1],
     )
 
 
