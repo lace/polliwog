@@ -223,7 +223,8 @@ class Polyline(object):
         vg.shape.check(locals(), "indices", (k,))
 
         new_polyline = Polyline(
-            v=np.insert(self.v, indices, points, axis=0), is_closed=self.is_closed,
+            v=np.insert(self.v, indices, points, axis=0),
+            is_closed=self.is_closed,
         )
 
         if not ret_new_indices:
@@ -510,8 +511,8 @@ class Polyline(object):
         closest_points_of_segments = closest_points_of_segments.reshape(
             num_points, self.num_e, 3
         )
-        distance_to_closest_points_of_segments = distance_to_closest_points_of_segments.reshape(
-            num_points, self.num_e
+        distance_to_closest_points_of_segments = (
+            distance_to_closest_points_of_segments.reshape(num_points, self.num_e)
         )
 
         indices_of_nearest_segments = np.argmin(
@@ -553,7 +554,8 @@ class Polyline(object):
             )
             (_, start_v_index) = working_polyline.e[segment_index]
             working_polyline = working_polyline.with_insertions(
-                points=nearest_point.reshape(-1, 3), indices=np.array([start_v_index]),
+                points=nearest_point.reshape(-1, 3),
+                indices=np.array([start_v_index]),
             )
 
         try:

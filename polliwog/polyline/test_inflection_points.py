@@ -96,5 +96,7 @@ def test_point_of_max_acceleration():
 
     with pytest.raises(ValueError, match="At least two points are required"):
         point_of_max_acceleration(
-            points=np.array([vg.basis.x]), rise_axis=vg.basis.y, run_axis=vg.basis.x,
+            points=np.array([vg.basis.x]),
+            rise_axis=vg.basis.y,
+            run_axis=vg.basis.x,
         )

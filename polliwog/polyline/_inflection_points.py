@@ -87,7 +87,8 @@ def point_of_max_acceleration(points, rise_axis, run_axis, subdivide_by_length=N
     # `np.argmax(finite_difference_2)` produces false positives where the first
     # derivative of the next point is positive. Exclude these bogus points.
     valid_points = np.logical_and(
-        np.roll(finite_difference_1, 1) > 0, np.roll(finite_difference_1, -1) > 0,
+        np.roll(finite_difference_1, 1) > 0,
+        np.roll(finite_difference_1, -1) > 0,
     )
     valid_points[0] = False
     valid_points[-1] = False
