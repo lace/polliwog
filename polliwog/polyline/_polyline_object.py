@@ -630,22 +630,19 @@ class Polyline(object):
         if self.is_closed:
             raise ValueError("Must be an open polyline")
 
-        if type(percentage_along_curve) != float:
-            raise ValueError("percentage_along_curve must be a floating point number")
+        if type(fraction_of_total) != float:
+            raise ValueError("fraction_of_total must be a floating point number")
 
-        if 0 >= percentage_along_curve or percentage_along_curve >= 1:
-            raise ValueError("percentage_along_curve must be a value between 0 and 1")
+        if 0 > fraction_of_total or fraction_of_total > 1:
+            raise ValueError("fraction_of_total must be a value between 0 and 1")
 
-        desired_length = self.total_length * percentage_along_curve
+        desired_length = self.total_length * fraction_of_total
         cumulative_lengths = np.cumsum([0, *self.segment_lengths])
         index_of_segment_containing_point = (
             np.argmax(cumulative_lengths > desired_length) - 1
         )
 
-        point_on_polyline_at_percentage_along_curve = self.v[
-            index_of_segement_containing_point
-        ] + (
-            (desired_length - cumulative_lengths[index_of_segement_containing_point])
-            * self.segment_vectors[index_of_segement_containing_point]
+        return self.v[index_of_segment_containing_point] + (
+            (desired_length - cumulative_lengths[index_of_segment_containing_point])
+            * self.segment_vectors[index_of_segment_containing_point]
         )
-        return point_on_polyline_at_percentage_along_curve
