@@ -614,3 +614,33 @@ class Polyline(object):
             Polyline(v=maybe_copy(self.v[start:end]), is_closed=False)
             for (start, end) in zip(section_starts, section_ends)
         ]
+
+    def point_along_curve(self, percentage_along_curve):
+        """
+        Selects a point on a polyline, the given percentage along the cuve.  Ex:
+        Halfway.
+
+        Args:
+            percentage_along_curve: floating point value between 0 and 1.
+
+        Returns:
+            A point on the polyline that is the given percentage distance
+            from the starting point to the endpoint.
+        """
+        if self.is_closed:
+            raise ValueError("Must be an open polyline")
+
+        if type(percentage_along_curve) != float:
+            raise ValueError("percentage_along_curve must be a floating point number")
+
+        if 0 > percentage_along_curve or percentage_along_curve > 1:
+            raise ValueError("percentage_along_curve must be a value between 0 and 1")
+
+        desired_length = self.total_length * percentage_along_curve
+        cumulative_lengths = np.cumsum(self.segment_lengths)
+        index_before_point = np.argmax(cumulative_lengths > desired_length) - 1
+
+        return self.v[index_before_point] + (
+            (desired_length - cumulative_lengths[index_before_point])
+            * self.segment_vectors[index_before_point]
+        )
