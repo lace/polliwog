@@ -1126,14 +1126,15 @@ def test_point_along_curve():
 
 def test_point_along_curve_errors():
     vs = np.arange(108).reshape(36, 3)
-    polyline = Polyline(v=vs, is_closed=True)
+    closed_polyline = Polyline(v=vs, is_closed=True)
+    open_polyline = Polyline(v=vs, is_closed=False)
     with pytest.raises(ValueError, match="Must be an open polyline"):
-        polyline.point_along_curve(0.5)
+        closed_polyline.point_along_curve(0.5)
     with pytest.raises(
         ValueError, match="percentage_along_curve must be a floating point number"
     ):
-        polyline.point_along_curve(2)
+        open_polyline.point_along_curve(2)
     with pytest.raises(
         ValueError, match="percentage_along_curve must be a value between 0 and 1"
     ):
-        polyline.point_along_curve(2.5)
+        open_polyline.point_along_curve(2.5)
