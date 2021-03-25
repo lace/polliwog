@@ -1137,4 +1137,3 @@ def test_point_along_curve_errors():
         ValueError, match="percentage_along_curve must be a value between 0 and 1"
     ):
         polyline.point_along_curve(2.5)
-        
