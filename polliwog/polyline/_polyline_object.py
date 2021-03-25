@@ -637,10 +637,14 @@ class Polyline(object):
             raise ValueError("percentage_along_curve must be a value between 0 and 1")
 
         desired_length = self.total_length * percentage_along_curve
-        cumulative_lengths = np.cumsum(self.segment_lengths)
-        index_of_segement_containing_point = np.argmax(cumulative_lengths > desired_length)
+        cumulative_lengths = np.concatenate(
+            np.array([0]), np.cumsum(self.segment_lengths)
+        )
+        index_of_segement_containing_point = np.argmax(
+            cumulative_lengths > desired_length
+        )
 
         return self.v[index_of_segement_containing_point] + (
-            (desired_length - cumulative_lengths[index_of_segement_containing_point - 1])
+            (desired_length - cumulative_lengths[index_of_segement_containing_point])
             * self.segment_vectors[index_of_segement_containing_point]
         )
