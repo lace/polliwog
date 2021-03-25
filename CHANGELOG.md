@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0b11 (Mar. 25, 2021)
+
+## New features
+
+- Polyline: Add `point_along_path()` method.
+
+
 ## 1.0.0b10 (May 25, 2020)
 
 ### New features
