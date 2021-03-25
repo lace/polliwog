@@ -1134,7 +1134,7 @@ def test_point_along_curve():
         polyline.point_along_curve(0.8), np.array([1.8, 3.0, 0.0])
     )
     np.testing.assert_array_almost_equal(
-        polyline.point_along_curve(0.03), np.array([0.3, 0.0, 0.0])
+        polyline.point_along_curve(0.05), np.array([0.3, 0.0, 0.0])
     )
     np.testing.assert_array_almost_equal(
         polyline.point_along_curve(0.95), np.array([2.0, 3.7, 0.0])
