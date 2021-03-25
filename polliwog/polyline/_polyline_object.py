@@ -633,7 +633,7 @@ class Polyline(object):
         if type(percentage_along_curve) != float:
             raise ValueError("percentage_along_curve must be a floating point number")
 
-        if 0 > percentage_along_curve or percentage_along_curve > 1:
+        if 0 >= percentage_along_curve or percentage_along_curve >= 1:
             raise ValueError("percentage_along_curve must be a value between 0 and 1")
 
         desired_length = self.total_length * percentage_along_curve
