@@ -1162,4 +1162,4 @@ def test_point_along_curve_errors():
     with pytest.raises(
         ValueError, match="percentage_along_curve must be a value between 0 and 1"
     ):
-        open_polyline.point_along_curve(1)
+        open_polyline.point_along_curve(1.0)
