@@ -1117,11 +1117,22 @@ def test_section_edge_case():
 
 def test_point_along_curve():
     example_vs = np.array(
-        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
+        [
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [1.0, 1.0, 0.0],
+            [1.0, 3.0, 0.0],
+            [2.0, 3.0, 0.0],
+            [2.0, 4.0, 0.0],
+        ]
     )
     polyline = Polyline(v=example_vs, is_closed=False)
-    expected_result = np.array([1.0, 0.5, 0.0])
-    np.testing.assert_array_equal(polyline.point_along_curve(0.5), expected_result)
+    np.testing.assert_array_equal(
+        polyline.point_along_curve(0.2), np.array([1.0, 0.2, 0.0])
+    )
+    np.testing.assert_array_equal(
+        polyline.point_along_curve(0.2), np.array([1.8, 0.3, 0.0])
+    )
 
 
 def test_point_along_curve_errors():
