@@ -638,9 +638,9 @@ class Polyline(object):
 
         desired_length = self.total_length * percentage_along_curve
         cumulative_lengths = np.cumsum(self.segment_lengths)
-        index_before_point = np.argmax(cumulative_lengths > desired_length) - 1
+        index_before_point = np.argmax(cumulative_lengths > desired_length)
 
-        return self.v[index_before_point + 1] + (
-            (desired_length - cumulative_lengths[index_before_point])
+        return self.v[index_before_point] + (
+            (desired_length - cumulative_lengths[index_before_point - 1])
             * self.segment_vectors[index_before_point]
         )
