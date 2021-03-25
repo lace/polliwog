@@ -640,7 +640,7 @@ class Polyline(object):
         cumulative_lengths = np.cumsum(self.segment_lengths)
         index_before_point = np.argmax(cumulative_lengths > desired_length) - 1
 
-        return self.v[index_before_point] + (
+        return self.v[index_before_point + 1] + (
             (desired_length - cumulative_lengths[index_before_point])
             * self.segment_vectors[index_before_point]
         )
