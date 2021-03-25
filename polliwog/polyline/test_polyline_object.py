@@ -1127,10 +1127,10 @@ def test_point_along_curve():
         ]
     )
     polyline = Polyline(v=example_vs, is_closed=False)
-    np.testing.assert_array_equal(
+    np.testing.assert_array_almost_equal(
         polyline.point_along_curve(0.2), np.array([1.0, 0.2, 0.0])
     )
-    np.testing.assert_array_equal(
+    np.testing.assert_array_almost_equal(
         polyline.point_along_curve(0.2), np.array([1.8, 0.3, 0.0])
     )
 
@@ -1149,3 +1149,7 @@ def test_point_along_curve_errors():
         ValueError, match="percentage_along_curve must be a value between 0 and 1"
     ):
         open_polyline.point_along_curve(2.5)
+    with pytest.raises(
+        ValueError, match="percentage_along_curve must be a value between 0 and 1"
+    ):
+        open_polyline.point_along_curve(0)
