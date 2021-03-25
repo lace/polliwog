@@ -1113,3 +1113,51 @@ def test_section_edge_case():
     np.testing.assert_array_equal(broken[0].v, vs[:11])
     np.testing.assert_array_equal(broken[1].v, vs[10:12])
     np.testing.assert_array_equal(broken[2].v, vs[11:])
+
+
+def test_point_along_path():
+    example_vs = np.array(
+        [
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [1.0, 1.0, 0.0],
+            [1.0, 3.0, 0.0],
+            [2.0, 3.0, 0.0],
+            [2.0, 4.0, 0.0],
+        ]
+    )
+    polyline = Polyline(v=example_vs, is_closed=False)
+    np.testing.assert_array_almost_equal(
+        polyline.point_along_path(0.2), np.array([1.0, 0.2, 0.0])
+    )
+    np.testing.assert_array_almost_equal(
+        polyline.point_along_path(0.8), np.array([1.8, 3.0, 0.0])
+    )
+    np.testing.assert_array_almost_equal(
+        polyline.point_along_path(0.05), np.array([0.3, 0.0, 0.0])
+    )
+    np.testing.assert_array_almost_equal(
+        polyline.point_along_path(0.95), np.array([2.0, 3.7, 0.0])
+    )
+    np.testing.assert_array_almost_equal(
+        polyline.point_along_path(1.0), np.array([2.0, 4.0, 0.0])
+    )
+    np.testing.assert_array_almost_equal(
+        polyline.point_along_path(0.0), np.array([0.0, 0.0, 0.0])
+    )
+
+
+def test_point_along_path_errors():
+    vs = np.arange(108).reshape(36, 3)
+    closed_polyline = Polyline(v=vs, is_closed=True)
+    open_polyline = Polyline(v=vs, is_closed=False)
+    with pytest.raises(ValueError, match="Must be an open polyline"):
+        closed_polyline.point_along_path(0.5)
+    with pytest.raises(
+        ValueError, match="fraction_of_total must be a floating point number"
+    ):
+        open_polyline.point_along_path(2)
+    with pytest.raises(
+        ValueError, match="fraction_of_total must be a value between 0 and 1"
+    ):
+        open_polyline.point_along_path(2.5)

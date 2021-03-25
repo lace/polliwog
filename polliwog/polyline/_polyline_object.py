@@ -614,3 +614,35 @@ class Polyline(object):
             Polyline(v=maybe_copy(self.v[start:end]), is_closed=False)
             for (start, end) in zip(section_starts, section_ends)
         ]
+
+    def point_along_path(self, fraction_of_total):
+        """
+        Selects a point the given fraction of the total length of the polyline. For
+        example, to find the halfway point, pass `fraction_of_total=0.5`.
+
+        Args:
+            fraction_of_total (float): Fraction of the total length, from 0 to 1
+
+        Returns:
+            A point on the polyline that is the given fraction of the total length
+            from the starting point to the endpoint.
+        """
+        if self.is_closed:
+            raise ValueError("Must be an open polyline")
+
+        if type(fraction_of_total) != float:
+            raise ValueError("fraction_of_total must be a floating point number")
+
+        if 0 > fraction_of_total or fraction_of_total > 1:
+            raise ValueError("fraction_of_total must be a value between 0 and 1")
+
+        desired_length = self.total_length * fraction_of_total
+        cumulative_lengths = np.cumsum([0, *self.segment_lengths])
+        index_of_segment_containing_point = (
+            np.argmax(cumulative_lengths > desired_length) - 1
+        )
+
+        return self.v[index_of_segment_containing_point] + (
+            (desired_length - cumulative_lengths[index_of_segment_containing_point])
+            * self.segment_vectors[index_of_segment_containing_point]
+        )
