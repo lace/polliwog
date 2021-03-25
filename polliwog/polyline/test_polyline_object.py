@@ -1113,3 +1113,28 @@ def test_section_edge_case():
     np.testing.assert_array_equal(broken[0].v, vs[:11])
     np.testing.assert_array_equal(broken[1].v, vs[10:12])
     np.testing.assert_array_equal(broken[2].v, vs[11:])
+
+
+def test_point_along_curve():
+    example_vs = np.array(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
+    )
+    polyline = Polyline(v=example_vs, is_closed=False)
+    expected_result = np.array([1.0, 0.5, 0.0])
+    np.testing.assert_array_equal(polyline.point_along_curve(0.5), expected_result)
+
+
+def test_point_along_curve_errors():
+    vs = np.arange(108).reshape(36, 3)
+    polyline = Polyline(v=vs, is_closed=True)
+    with pytest.raises(ValueError, match="Must be an open polyline"):
+        polyline.point_along_curve(0.5)
+    with pytest.raises(
+        ValueError, match="percentage_along_curve must be a floating point number"
+    ):
+        polyline.point_along_curve(2)
+    with pytest.raises(
+        ValueError, match="percentage_along_curve must be a value between 0 and 1"
+    ):
+        polyline.point_along_curve(2.5)
+        
