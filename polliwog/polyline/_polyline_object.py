@@ -615,16 +615,16 @@ class Polyline(object):
             for (start, end) in zip(section_starts, section_ends)
         ]
 
-    def point_along_curve(self, percentage_along_curve):
+    def point_along_path(self, fraction_of_total):
         """
-        Selects a point on a polyline, the given percentage along the cuve.  Ex:
-        Halfway.
+        Selects a point the given fraction of the total length of the polyline. For
+        example, to find the halfway point, pass `fraction_of_total=0.5`.
 
         Args:
-            percentage_along_curve: floating point value between 0 and 1.
+            fraction_of_total (float): Fraction of the total length, from 0 to 1
 
         Returns:
-            A point on the polyline that is the given percentage distance
+            A point on the polyline that is the given fraction of the total length
             from the starting point to the endpoint.
         """
         if self.is_closed:
@@ -638,7 +638,7 @@ class Polyline(object):
 
         desired_length = self.total_length * percentage_along_curve
         cumulative_lengths = np.cumsum([0, *self.segment_lengths])
-        index_of_segement_containing_point = (
+        index_of_segment_containing_point = (
             np.argmax(cumulative_lengths > desired_length) - 1
         )
 
