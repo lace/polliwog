@@ -29,6 +29,11 @@ def intersect_lines(p0, q0, p1, q1):
         # There is no intesection; either parallel (k=0) or collinear (both=0) lines.
         return None
 
+    # Check for the special case of lines in parallel planes.
+    # https://math.stackexchange.com/a/697278/640314
+    if np.dot(g, k) != 0:
+        return None
+
     l = h_ / k_ * e  # noqa: E741
     sign = -1 if np.all(h / h_ == k / k_) else +1
     return p0 + sign * l
