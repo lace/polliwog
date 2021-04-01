@@ -5,7 +5,9 @@ def intersect_lines(p0, q0, p1, q1):
     """
     Intersect two lines in 3d: (p0, q0) and (p1, q1). Each should be a 3D
     point.
-    See this for a diagram: http://math.stackexchange.com/questions/270767/find-intersection-of-two-3d-lines
+
+    See also:
+        https://math.stackexchange.com/a/271366/640314
     """
     e = p0 - q0  # direction of line 0
     f = p1 - q1  # direction of line 1
@@ -27,7 +29,7 @@ def intersect_lines(p0, q0, p1, q1):
         # There is no intesection; either parallel (k=0) or collinear (both=0) lines.
         return None
 
-    l = h_ / k_ * e  # noqa: E741 (FIXME)
+    l = h_ / k_ * e  # noqa: E741
     sign = -1 if np.all(h / h_ == k / k_) else +1
     return p0 + sign * l
 
