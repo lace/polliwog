@@ -4,10 +4,28 @@ from .._common.shape import check_shape_any, columnize
 from ..line._line_functions import coplanar_points_are_on_same_side_of_line
 
 __all__ = [
+    "edges_of_faces",
     "surface_normals",
     "tri_contains_coplanar_point",
     "barycentric_coordinates_of_points",
 ]
+
+
+def edges_of_faces(faces, normalize=True):
+    """
+    Given a stack of triangles expressed as vertex indices, return a
+    normalized array of edges. When `normalize=True`, sorts the edges so they
+    more easily can be compared.
+    """
+    vg.shape.check(locals(), "faces", (-1, 3))
+
+    # TODO: It's probably possible to accomplish this more efficiently. Maybe
+    # with `np.pick()`?
+    interleaved_edges = np.stack(
+        [faces[:, 0:2], faces[:, 1:3], np.roll(faces, 1, axis=1)[:, 0:2]]
+    )
+    flattened_edges = np.swapaxes(interleaved_edges, 0, 1).reshape(-1, 2)
+    return np.sort(flattened_edges, axis=1) if normalize else flattened_edges
 
 
 def surface_normals(points, normalize=True):

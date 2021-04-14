@@ -3,9 +3,40 @@ import numpy as np
 import vg
 from .functions import (
     barycentric_coordinates_of_points,
+    edges_of_faces,
     surface_normals,
     tri_contains_coplanar_point,
 )
+
+
+def test_edges_of_faces():
+    faces = np.arange(6).reshape(-1, 3)
+    np.testing.assert_array_equal(
+        edges_of_faces(faces, normalize=False),
+        np.array(
+            [
+                [0, 1],
+                [1, 2],
+                [2, 0],
+                [3, 4],
+                [4, 5],
+                [5, 3],
+            ]
+        ),
+    )
+    np.testing.assert_array_equal(
+        edges_of_faces(faces),
+        np.array(
+            [
+                [0, 1],
+                [1, 2],
+                [0, 2],
+                [3, 4],
+                [4, 5],
+                [3, 5],
+            ]
+        ),
+    )
 
 
 def test_surface_normals_from_points_single():
