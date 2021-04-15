@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0b12 (Apr. 15, 2021)
+
+## New features
+
+- Add `polliwog.tri.edges_of_faces` function.
+
+
 ## 1.0.0b11 (Mar. 25, 2021)
 
 ## New features
