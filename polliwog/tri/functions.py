@@ -14,7 +14,7 @@ __all__ = [
 def edges_of_faces(faces, normalize=True):
     """
     Given a stack of triangles expressed as vertex indices, return a
-    normalized array of edges. When `normalize=True`, sorts the edges so they
+    normalized array of edges. When `normalize=True`, sort the edges so they
     more easily can be compared.
     """
     vg.shape.check(locals(), "faces", (-1, 3))
