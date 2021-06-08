@@ -618,14 +618,16 @@ class Polyline(object):
     def point_along_path(self, fraction_of_total):
         """
         Selects a point the given fraction of the total length of the polyline. For
-        example, to find the halfway point, pass `fraction_of_total=0.5`.
+        example, to find the halfway point, pass `fraction_of_total=0.5`. Also works
+        with stacked values, e.g. `fraction_of_total=np.linspace(0, 1, 11)`.
 
         Args:
-            fraction_of_total (float): Fraction of the total length, from 0 to 1
+            fraction_of_total (object): Fraction of the total length, from 0 to 1
 
-        Returns:
+        Returns (object):
             A point on the polyline that is the given fraction of the total length
-            from the starting point to the endpoint.
+            from the starting point to the endpoint. For stacked fractions, return
+            the points.
         """
         from .._common.shape import columnize
 
