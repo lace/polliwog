@@ -1,3 +1,5 @@
+from numbers import Number
+import numpy as np
 import vg
 
 
@@ -17,12 +19,19 @@ def columnize(arr, shape=(-1, 3), name=None):
         raise ValueError("shape should be a tuple")
     name = name or "arr"
 
-    if arr.ndim == len(shape):
-        vg.shape.check_value(arr, shape, name=name)
-        return arr, True, lambda x: x
+    if len(shape) == 1:
+        if isinstance(arr, Number):
+            return np.array(arr).reshape(*shape), False, lambda x: x[0]
+        else:
+            vg.shape.check_value(arr, shape, name=name)
+            return arr, True, lambda x: x
     else:
-        vg.shape.check_value(arr, shape[1:], name=name)
-        return arr.reshape(*shape), False, lambda x: x[0]
+        if arr.ndim == len(shape):
+            vg.shape.check_value(arr, shape, name=name)
+            return arr, True, lambda x: x
+        else:
+            vg.shape.check_value(arr, shape[1:], name=name)
+            return arr.reshape(*shape), False, lambda x: x[0]
 
 
 def check_shape_any(arr, *shapes, name=None):
