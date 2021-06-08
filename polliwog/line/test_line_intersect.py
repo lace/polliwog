@@ -38,6 +38,13 @@ def test_intersect_lines_with_parallel_lines():
     assert intersect_lines(p0, q0, p1, q1) is None
 
 
+# https://github.com/lace/polliwog/issues/216
+def test_intersect_lines_in_parallel_planes():
+    p0, q0 = np.array([[0.0, 1.0, 0.0], [1.0, 0.0, 0.0]])
+    p1, q1 = np.array([[0.0, 0.0, 1.0], [1.0, 1.0, 1.0]])
+    assert intersect_lines(p0, q0, p1, q1) is None
+
+
 def test_intersect_lines_with_degenerate_input_p():
     p0, q0 = np.array([[0.0, 1.0, 2.0], [0.0, 10.0, 20.0]])
     p1, q1 = np.array([[0.0, 1.0, 2.0], [1.0, 11.0, 21.0]])
