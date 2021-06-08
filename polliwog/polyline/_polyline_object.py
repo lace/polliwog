@@ -631,9 +631,6 @@ class Polyline(object):
         """
         from .._common.shape import columnize
 
-        if self.is_closed:
-            raise ValueError("Must be an open polyline")
-
         fraction_of_total, _, transform_result = columnize(
             fraction_of_total, (-1,), name="fraction_of_total"
         )

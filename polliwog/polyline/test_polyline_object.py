@@ -1153,11 +1153,8 @@ def test_point_along_path():
 
 def test_point_along_path_errors():
     vs = np.arange(108).reshape(36, 3)
-    closed_polyline = Polyline(v=vs, is_closed=True)
-    open_polyline = Polyline(v=vs, is_closed=False)
-    with pytest.raises(ValueError, match="Must be an open polyline"):
-        closed_polyline.point_along_path(0.5)
+    polyline = Polyline(v=vs, is_closed=False)
     with pytest.raises(
         ValueError, match="fraction_of_total must be a value between 0 and 1"
     ):
-        open_polyline.point_along_path(2.5)
+        polyline.point_along_path(2.5)
