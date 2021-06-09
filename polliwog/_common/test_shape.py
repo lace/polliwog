@@ -4,6 +4,22 @@ import vg
 from .shape import check_shape_any, columnize
 
 
+def test_columnize_1d():
+    shape = (-1,)
+
+    columnized, is_columnized, transform_result = columnize(2.5, shape)
+    np.testing.assert_array_equal(columnized, np.array([2.5]))
+    assert columnized.shape == (1,)
+    assert is_columnized is False
+    assert transform_result([1.0]) == 1.0
+
+    columnized, is_columnized, transform_result = columnize(np.array([2.5]), shape)
+    np.testing.assert_array_equal(columnized, np.array([2.5]))
+    assert columnized.shape == (1,)
+    assert is_columnized is True
+    assert transform_result([1.0]) == [1.0]
+
+
 def test_columnize_2d():
     shape = (-1, 3)
 

@@ -618,31 +618,34 @@ class Polyline(object):
     def point_along_path(self, fraction_of_total):
         """
         Selects a point the given fraction of the total length of the polyline. For
-        example, to find the halfway point, pass `fraction_of_total=0.5`.
+        example, to find the halfway point, pass `fraction_of_total=0.5`. Also works
+        with stacked values, e.g. `fraction_of_total=np.linspace(0, 1, 11)`.
 
         Args:
-            fraction_of_total (float): Fraction of the total length, from 0 to 1
+            fraction_of_total (object): Fraction of the total length, from 0 to 1
 
-        Returns:
+        Returns (object):
             A point on the polyline that is the given fraction of the total length
-            from the starting point to the endpoint.
+            from the starting point to the endpoint. For stacked fractions, return
+            the points.
         """
-        if self.is_closed:
-            raise ValueError("Must be an open polyline")
+        from .._common.shape import columnize
 
-        if type(fraction_of_total) != float:
-            raise ValueError("fraction_of_total must be a floating point number")
+        fraction_of_total, _, transform_result = columnize(
+            fraction_of_total, (-1,), name="fraction_of_total"
+        )
 
-        if 0 > fraction_of_total or fraction_of_total > 1:
+        if np.any(0 > fraction_of_total) or np.any(fraction_of_total > 1):
             raise ValueError("fraction_of_total must be a value between 0 and 1")
 
         desired_length = self.total_length * fraction_of_total
-        cumulative_lengths = np.cumsum([0, *self.segment_lengths])
-        index_of_segment_containing_point = (
-            np.argmax(cumulative_lengths > desired_length) - 1
+        cumulative_length = np.cumsum([0, *self.segment_lengths])
+        index_of_segment = (
+            np.argmax(cumulative_length.reshape(-1, 1) > desired_length, axis=0) - 1
         )
 
-        return self.v[index_of_segment_containing_point] + (
-            (desired_length - cumulative_lengths[index_of_segment_containing_point])
-            * self.segment_vectors[index_of_segment_containing_point]
+        return transform_result(
+            self.v[index_of_segment]
+            + (desired_length - cumulative_length[index_of_segment]).reshape(-1, 1)
+            * self.segment_vectors[index_of_segment]
         )

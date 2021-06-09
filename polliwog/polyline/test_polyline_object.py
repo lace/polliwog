@@ -1127,37 +1127,34 @@ def test_point_along_path():
         ]
     )
     polyline = Polyline(v=example_vs, is_closed=False)
-    np.testing.assert_array_almost_equal(
-        polyline.point_along_path(0.2), np.array([1.0, 0.2, 0.0])
+    fractions_of_total = np.array([0.2, 0.8, 0.05, 0.95, 1.0, 0.0])
+    expected_points = np.array(
+        [
+            [1.0, 0.2, 0.0],
+            [1.8, 3.0, 0.0],
+            [0.3, 0.0, 0.0],
+            [2.0, 3.7, 0.0],
+            [2.0, 4.0, 0.0],
+            [0.0, 0.0, 0.0],
+        ]
     )
+    for this_fraction_of_total, this_expected_point in zip(
+        fractions_of_total, expected_points
+    ):
+        np.testing.assert_array_almost_equal(
+            polyline.point_along_path(float(this_fraction_of_total)),
+            this_expected_point,
+        )
+
     np.testing.assert_array_almost_equal(
-        polyline.point_along_path(0.8), np.array([1.8, 3.0, 0.0])
-    )
-    np.testing.assert_array_almost_equal(
-        polyline.point_along_path(0.05), np.array([0.3, 0.0, 0.0])
-    )
-    np.testing.assert_array_almost_equal(
-        polyline.point_along_path(0.95), np.array([2.0, 3.7, 0.0])
-    )
-    np.testing.assert_array_almost_equal(
-        polyline.point_along_path(1.0), np.array([2.0, 4.0, 0.0])
-    )
-    np.testing.assert_array_almost_equal(
-        polyline.point_along_path(0.0), np.array([0.0, 0.0, 0.0])
+        polyline.point_along_path(fractions_of_total), expected_points
     )
 
 
 def test_point_along_path_errors():
     vs = np.arange(108).reshape(36, 3)
-    closed_polyline = Polyline(v=vs, is_closed=True)
-    open_polyline = Polyline(v=vs, is_closed=False)
-    with pytest.raises(ValueError, match="Must be an open polyline"):
-        closed_polyline.point_along_path(0.5)
-    with pytest.raises(
-        ValueError, match="fraction_of_total must be a floating point number"
-    ):
-        open_polyline.point_along_path(2)
+    polyline = Polyline(v=vs, is_closed=False)
     with pytest.raises(
         ValueError, match="fraction_of_total must be a value between 0 and 1"
     ):
-        open_polyline.point_along_path(2.5)
+        polyline.point_along_path(2.5)
