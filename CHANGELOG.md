@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0b13 (Jun. 9, 2021)
+
+## New features
+
+- Polyline: Vectorize `point_along_path()` and support closed polylines.
+
+
 ## 1.0.0b12 (Apr. 15, 2021)
 
 ## New features
