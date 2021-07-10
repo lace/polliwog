@@ -12,5 +12,5 @@ pypng == 0.0.20
 
 # Lint and formatting.
 black ==21.6b0
-flake8 ==3.8.4
+flake8 ==3.9.2
 flake8-import-order ==0.18.1
