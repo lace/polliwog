@@ -45,7 +45,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.autosummary",
-    "recommonmark",
+    "myst_parser",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -129,10 +129,3 @@ apidoc_excluded_paths = ["test_*", "package_version.py", "**/test_*"]
 apidoc_separate_modules = True
 apidoc_toc_file = False
 apidoc_module_first = True
-
-
-def setup(app):
-    from recommonmark.transform import AutoStructify
-
-    app.add_config_value("recommonmark_config", {}, True)
-    app.add_transform(AutoStructify)
