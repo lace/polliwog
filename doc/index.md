@@ -2,7 +2,7 @@
 
 ## Polygonal chains
 
-```eval_rst
+```{eval-rst}
 
 .. py:currentmodule:: polliwog
 
@@ -12,7 +12,7 @@
 
 ### Polygonal chain functions
 
-```eval_rst
+```{eval-rst}
 .. py:currentmodule:: polliwog
 
 .. automodule:: polliwog.polyline
@@ -21,7 +21,7 @@
 
 ## Planes
 
-```eval_rst
+```{eval-rst}
 
 .. py:currentmodule:: polliwog
 
@@ -33,7 +33,7 @@
 
 ### Named coordinate planes
 
-```eval_rst
+```{eval-rst}
 .. py:currentmodule:: polliwog
 
 .. autodata:: polliwog.Plane.xy
@@ -43,7 +43,7 @@
 
 ### Plane functions
 
-```eval_rst
+```{eval-rst}
 .. py:currentmodule:: polliwog
 
 .. automodule:: polliwog.plane
@@ -52,7 +52,7 @@
 
 ## Triangles
 
-```eval_rst
+```{eval-rst}
 
 .. py:currentmodule:: polliwog
 
@@ -64,7 +64,7 @@
 
 ### High-level API
 
-```eval_rst
+```{eval-rst}
 .. py:currentmodule:: polliwog
 
 .. autoclass:: CompositeTransform
@@ -75,7 +75,7 @@
 
 ### Transform functions
 
-```eval_rst
+```{eval-rst}
 .. py:currentmodule:: polliwog
 
 .. automodule:: polliwog.transform
@@ -84,7 +84,7 @@
 
 ## Lines
 
-```eval_rst
+```{eval-rst}
 
 .. py:currentmodule:: polliwog
 
@@ -97,7 +97,7 @@
 
 ## Line segments
 
-```eval_rst
+```{eval-rst}
 
 .. py:currentmodule:: polliwog
 
@@ -109,7 +109,7 @@
 
 ## Boxes
 
-```eval_rst
+```{eval-rst}
 
 .. py:currentmodule:: polliwog
 
@@ -120,7 +120,7 @@
 
 ## Point clouds
 
-```eval_rst
+```{eval-rst}
 
 .. automodule:: polliwog.pointcloud
     :members:
@@ -129,7 +129,7 @@
 
 ## Tesselated shapes
 
-```eval_rst
+```{eval-rst}
 
 .. automodule:: polliwog.shapes
     :members:
@@ -138,7 +138,7 @@
 
 # Indices and tables
 
-```eval_rst
+```{eval-rst}
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
