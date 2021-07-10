@@ -1,8 +1,12 @@
-version: 2
+version: 2.1
+
+with_python: &with_python
+  docker:
+    - image: circleci/python:3.7
+
 jobs:
   main:
-    docker:
-      - image: circleci/python:3.7
+    <<: *with_python
 
     steps:
       - checkout
@@ -43,8 +47,7 @@ jobs:
             ./dev.py lint
 
   format:
-    docker:
-      - image: circleci/python:3.7
+    <<: *with_python
 
     steps:
       - checkout
