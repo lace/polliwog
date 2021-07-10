@@ -6,7 +6,7 @@ executor >= 21.0
 click >=7.0,<9.0
 
 # Unit tests.
-pytest ==6.1.0
+pytest ==6.2.4
 pytest-cov == 2.12.1
 pypng == 0.0.20
 
