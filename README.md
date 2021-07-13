@@ -80,17 +80,12 @@ from polliwog import Polyline
 ```
 
 
-## Contribute
+## Development
 
-- Issue Tracker: https://github.com/lace/polliwog/issues
-- Source Code: https://github.com/lace/polliwog
+After cloning the repo, run `./bootstrap.zsh` to initialize a virtual
+environment with the project's dependencies.
 
-Pull requests welcome!
-
-
-## Support
-
-If you are having issues, please let us know.
+Subsequently, run `./dev.py install` to update the dependencies.
 
 
 ## Acknowledgements

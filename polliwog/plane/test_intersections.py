@@ -1,6 +1,6 @@
 import numpy as np
+from polliwog.plane import intersect_segment_with_plane
 import vg
-from ._plane_intersect import intersect_segment_with_plane
 
 
 def test_intersect_segment_with_plane_single():

@@ -1,12 +1,12 @@
 import numpy as np
-import pytest
-from ._affine_transform import (
+from polliwog.transform import (
+    apply_transform,
     transform_matrix_for_non_uniform_scale,
     transform_matrix_for_rotation,
     transform_matrix_for_translation,
     transform_matrix_for_uniform_scale,
 )
-from ._apply import apply_transform
+import pytest
 
 
 def create_cube_verts(origin, size):

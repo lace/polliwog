@@ -1,6 +1,6 @@
 import numpy as np
+from polliwog.shapes import cube, rectangular_prism, triangular_prism
 import pytest
-from ._shapes import cube, rectangular_prism, triangular_prism
 
 
 def test_rectangular_prism():

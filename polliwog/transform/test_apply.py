@@ -1,5 +1,5 @@
 import numpy as np
-from ._apply import apply_transform
+from polliwog.transform import apply_transform
 
 
 def test_apply_transform():
