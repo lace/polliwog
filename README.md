@@ -53,10 +53,14 @@ from polliwog import Polyline
 
 ## Development
 
+First, [install Poetry][].
+
 After cloning the repo, run `./bootstrap.zsh` to initialize a virtual
 environment with the project's dependencies.
 
 Subsequently, run `./dev.py install` to update the dependencies.
+
+[install poetry]: https://python-poetry.org/docs/#installation
 
 
 ## Acknowledgements
