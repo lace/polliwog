@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-import vg
+from vg.compat import v1 as vg
 from ._line_object import Line
 
 

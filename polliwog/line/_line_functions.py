@@ -1,4 +1,4 @@
-import vg
+from vg.compat import v1 as vg
 from .._common.shape import check_shape_any
 
 __all__ = ["project_point_to_line", "coplanar_points_are_on_same_side_of_line"]
