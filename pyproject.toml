@@ -44,3 +44,12 @@ myst-parser = "^0.15.0"
 # Lint requires setuptools.
 requires = ["setuptools", "poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.coverage.report]
+fail_under = 100.0
+omit = [
+    "**/test_*.py",
+    "polliwog/transform/make_rodrigues_test_data.py",
+    "polliwog/polyline/_try_inflection_points.py",
+    "polliwog/transform/_testing_helper.py",
+]
