@@ -1,0 +1,55 @@
+[tool.poetry]
+name = "polliwog"
+version = "1.0.0b13"
+description = "2D and 3D computational geometry library"
+authors = ["Paul Melnikow <github@paulmelnikow.com>", "Metabolize, Body Labs, and other contributors"]
+license = "BSD-2-Clause"
+include = ["CHANGELOG.md"]
+exclude = ["**/test_*.py", "**/*_test_data.py", "**/*_test_assets.npz", "**/_try_inflection_points.py"]
+homepage = "https://polliwog.dev/"
+repository = "https://github.com/lace/polliwog"
+documentation = "https://polliwog.dev/"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Manufacturing",
+    "Topic :: Artistic Software",
+    "Topic :: Multimedia :: Graphics :: 3D Modeling",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Operating System :: OS Independent",
+]
+
+[tool.poetry.dependencies]
+python = ">= 3.7, <4"
+numpy = "< 1.19.0"
+ounce = ">=1.1.0,<2.0"
+vg = ">= 1.5.0"
+
+[tool.poetry.dev-dependencies]
+executor = "23.2"
+click = "8.0.1"
+pytest = "6.2.4"
+pytest-cov = "2.12.1"
+flake8 = "3.9.2"
+black = "21.6b0"
+coverage = "5.5"
+flake8-import-order = "0.18.1"
+Sphinx = "4.1.0"
+sphinxcontrib-apidoc = "0.3.0"
+myst-parser = "0.15.1"
+
+[build-system]
+# Lint requires setuptools.
+requires = ["setuptools", "poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.coverage.report]
+fail_under = 100.0
+omit = [
+    "**/test_*.py",
+    "polliwog/transform/make_rodrigues_test_data.py",
+    "polliwog/polyline/_try_inflection_points.py",
+    "polliwog/transform/_testing_helper.py",
+]

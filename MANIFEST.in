@@ -1,4 +1,0 @@
-include LICENSE
-include requirements.txt
-exclude **/test_*.py
-exclude **/_try_inflection_points.py

@@ -1,10 +1,10 @@
 import numpy as np
-import pytest
-from ._segment_functions import (
+from polliwog.segment import (
     closest_point_of_line_segment,
     subdivide_segment,
     subdivide_segments,
 )
+import pytest
 
 
 def test_subdivide_segment_raises_exception_for_invalid_partition_size_type():

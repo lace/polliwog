@@ -1,7 +1,7 @@
 import numpy as np
+from polliwog import Box
 import pytest
 import vg
-from ._box_object import Box
 
 
 def create_box():
