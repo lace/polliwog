@@ -1,14 +1,14 @@
 [tool.poetry]
 name = "polliwog"
 version = "1.0.0b13"
-description = "2D and 3D computational geometry library which scales from prototyping to production"
+description = "2D and 3D computational geometry library"
 authors = ["Paul Melnikow <github@paulmelnikow.com>", "Metabolize, Body Labs, and other contributors"]
 license = "BSD-2-Clause"
 include = ["CHANGELOG.md"]
 exclude = ["**/test_*.py", "**/*_test_data.py", "**/*_test_assets.npz", "**/_try_inflection_points.py"]
-homepage = "https://polliwog.readthedocs.io/en/stable"
+homepage = "https://polliwog.dev/"
 repository = "https://github.com/lace/polliwog"
-documentation = "https://polliwog.readthedocs.io/en/stable"
+documentation = "https://polliwog.dev/"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
