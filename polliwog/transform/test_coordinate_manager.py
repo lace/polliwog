@@ -1,7 +1,7 @@
 import numpy as np
+from polliwog import CoordinateManager
 import pytest
 import vg
-from ._coordinate_manager import CoordinateManager
 from .test_affine_transform import create_cube_verts
 
 

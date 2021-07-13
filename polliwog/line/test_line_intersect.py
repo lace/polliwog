@@ -1,5 +1,5 @@
 import numpy as np
-from ._line_intersect import intersect_2d_lines, intersect_lines
+from polliwog.line import intersect_2d_lines, intersect_lines
 
 
 def test_intersect_2d_lines():

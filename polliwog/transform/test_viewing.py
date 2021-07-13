@@ -1,6 +1,5 @@
 import numpy as np
-from ._apply import apply_transform
-from ._viewing import world_to_canvas_orthographic_projection
+from polliwog.transform import apply_transform, world_to_canvas_orthographic_projection
 
 
 def teapot_verts():

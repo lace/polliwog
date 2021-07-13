@@ -1,5 +1,5 @@
 import numpy as np
-from .quad_faces import quads_to_tris
+from polliwog.tri import quads_to_tris
 
 
 def test_quads_to_tris():

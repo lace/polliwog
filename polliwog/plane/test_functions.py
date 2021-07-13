@@ -1,8 +1,7 @@
 import math
 import numpy as np
-import pytest
-import vg
-from ._plane_functions import (
+from polliwog import Plane
+from polliwog.plane import (
     mirror_point_across_plane,
     normal_and_offset_from_plane_equations,
     plane_equation_from_points,
@@ -10,7 +9,8 @@ from ._plane_functions import (
     project_point_to_plane,
     signed_distance_to_plane,
 )
-from ._plane_object import Plane
+import pytest
+import vg
 
 
 def assert_plane_equation_satisfies_points(plane_equation, points):

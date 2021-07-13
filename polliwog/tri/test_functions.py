@@ -1,12 +1,12 @@
 import math
 import numpy as np
-import vg
-from .functions import (
+from polliwog.tri import (
     barycentric_coordinates_of_points,
     edges_of_faces,
     surface_normals,
     tri_contains_coplanar_point,
 )
+import vg
 
 
 def test_edges_of_faces():
@@ -52,7 +52,7 @@ def test_surface_normals_from_points_single():
 
 
 def test_surface_normals_from_points_vectorized():
-    from ..shapes import triangular_prism
+    from polliwog.shapes import triangular_prism
 
     p1 = np.array([3.0, 0.0, 0.0])
     p2 = np.array([0.0, 3.0, 0.0])

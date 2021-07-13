@@ -1,11 +1,11 @@
 import os
 import numpy as np
-import pytest
-from ._rodrigues import (
+from polliwog.transform import (
     cv2_rodrigues,
     rodrigues_vector_to_rotation_matrix,
     rotation_matrix_to_rodrigues_vector,
 )
+import pytest
 
 
 def load_opencv_examples():
