@@ -1,6 +1,6 @@
 from numbers import Number
 import numpy as np
-import vg
+from vg.compat import v1 as vg
 
 
 def columnize(arr, shape=(-1, 3), name=None):
