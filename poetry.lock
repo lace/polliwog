@@ -716,8 +716,8 @@ python-versions = "*"
 
 [[package]]
 name = "vg"
-version = "1.10.0"
-description = "Linear algebra for humans: a very good vector-geometry and linear-algebra toolbelt"
+version = "1.11.1"
+description = "A vector-geometry toolbelt for dealing with 3D points and vectors"
 category = "main"
 optional = false
 python-versions = "*"
@@ -740,7 +740,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = ">= 3.7, <4"
-content-hash = "9e46f3ee4074b8d6764bb14ed592207aeee558fcc1afac41e21a06e699d7786f"
+content-hash = "bfef04c0b10de37b74df02a2df3a28ab4f562d29e83ec82c2bec441448d9d011"
 
 [metadata.files]
 alabaster = [
@@ -1193,8 +1193,8 @@ verboselogs = [
     {file = "verboselogs-1.7.tar.gz", hash = "sha256:e33ddedcdfdafcb3a174701150430b11b46ceb64c2a9a26198c76a156568e427"},
 ]
 vg = [
-    {file = "vg-1.10.0-py3-none-any.whl", hash = "sha256:d5758dc70675865e9267673dec8c4026807d04d80299e8f53099f93331f83585"},
-    {file = "vg-1.10.0.tar.gz", hash = "sha256:63d026a15591bd2f71ccf91151584afbdf14869831ca35183fb4a9190b2949ff"},
+    {file = "vg-1.11.1-py3-none-any.whl", hash = "sha256:191ed442e2100067d9dc8eebb63314670a8454a0890f21843725614ba9a80249"},
+    {file = "vg-1.11.1.tar.gz", hash = "sha256:20b55eb23cfdba67f8e6f75d6f0c65a24c4ae6574591fbfe3f7d492193fe9730"},
 ]
 zipp = [
     {file = "zipp-3.5.0-py3-none-any.whl", hash = "sha256:957cfda87797e389580cb8b9e3870841ca991e2125350677b2ca83a0e99390a3"},

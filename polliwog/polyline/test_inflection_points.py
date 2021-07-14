@@ -1,7 +1,7 @@
 from collections import namedtuple
 import numpy as np
 import pytest
-import vg
+from vg.compat import v1 as vg
 from ._inflection_points import inflection_points, point_of_max_acceleration
 
 

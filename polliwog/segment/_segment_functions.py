@@ -1,5 +1,5 @@
 import numpy as np
-import vg
+from vg.compat import v1 as vg
 
 
 def subdivide_segment(p1, p2, num_points, endpoint=True):

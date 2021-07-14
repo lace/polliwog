@@ -1,5 +1,5 @@
 import numpy as np
-import vg
+from vg.compat import v1 as vg
 
 
 def slice_open_polyline_by_plane(vertices, plane):

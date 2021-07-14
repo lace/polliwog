@@ -1,5 +1,5 @@
 import numpy as np
-import vg
+from vg.compat import v1 as vg
 from .._common.shape import columnize
 
 __all__ = [

@@ -1,6 +1,6 @@
 import numbers
 import numpy as np
-import vg
+from vg.compat import v1 as vg
 from .._common.shape import check_shape_any, columnize
 
 __all__ = [

@@ -1,5 +1,5 @@
 import numpy as np
-import vg
+from vg.compat import v1 as vg
 
 
 def inflection_points(points, rise_axis, run_axis):

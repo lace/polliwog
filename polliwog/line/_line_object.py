@@ -1,4 +1,4 @@
-import vg
+from vg.compat import v1 as vg
 
 
 class Line:

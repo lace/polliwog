@@ -1,5 +1,5 @@
 import numpy as np
-import vg
+from vg.compat import v1 as vg
 from ._affine_transform import (
     transform_matrix_for_non_uniform_scale,
     transform_matrix_for_rotation,

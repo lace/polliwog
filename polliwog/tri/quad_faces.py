@@ -1,5 +1,5 @@
 import numpy as np
-import vg
+from vg.compat import v1 as vg
 
 
 def quads_to_tris(quads, ret_mapping=False):

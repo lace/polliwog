@@ -10,7 +10,7 @@ from polliwog.plane import (
     signed_distance_to_plane,
 )
 import pytest
-import vg
+from vg.compat import v1 as vg
 
 
 def assert_plane_equation_satisfies_points(plane_equation, points):
