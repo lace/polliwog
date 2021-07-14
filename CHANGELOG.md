@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.0b14 (Jun. 9, 2021)
+
+## BREAKING CHANGES
+
+- Remove `polliwog.__version__`.
+
+## Other changes
+
+- Upgrade `vg` dependency to `>=1.11.1`.
+
+
 ## 1.0.0b13 (Jun. 9, 2021)
 
 ## New features
