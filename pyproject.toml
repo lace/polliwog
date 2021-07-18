@@ -22,23 +22,23 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">= 3.7, <4"
-numpy = "< 1.19.0"
+python = ">=3.7,<4"
+numpy = "<1.19.0"
 ounce = ">=1.1.0,<2.0"
-vg = ">= 1.11.1"
+vg = ">=2.0.0rc0"
 
 [tool.poetry.dev-dependencies]
-executor = "23.2"
+black = "21.6b0"
 click = "8.0.1"
+coverage = "5.5"
+executor = "23.2"
+flake8 = "3.9.2"
+flake8-import-order = "0.18.1"
+myst-parser = "0.15.1"
 pytest = "6.2.4"
 pytest-cov = "2.12.1"
-flake8 = "3.9.2"
-black = "21.6b0"
-coverage = "5.5"
-flake8-import-order = "0.18.1"
 Sphinx = "4.1.0"
 sphinxcontrib-apidoc = "0.3.0"
-myst-parser = "0.15.1"
 
 [build-system]
 # Lint requires setuptools.
