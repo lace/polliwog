@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0 (Jul. 18, 2021)
+
+- Upgrade `vg` dependency to `>=2.0`.
+
+
 ## 1.0.0b14 (Jun. 9, 2021)
 
 ## BREAKING CHANGES
