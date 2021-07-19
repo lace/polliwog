@@ -1,5 +1,5 @@
 import numpy as np
-from vg.compat import v1 as vg
+from vg.compat import v2 as vg
 
 
 def rodrigues_vector_to_rotation_matrix(r, calculate_jacobian=False):

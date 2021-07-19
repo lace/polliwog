@@ -1,5 +1,5 @@
 import numpy as np
-from vg.compat import v1 as vg
+from vg.compat import v2 as vg
 
 
 def rotation_from_up_and_look(up, look):

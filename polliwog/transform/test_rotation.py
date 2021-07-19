@@ -1,7 +1,7 @@
 import numpy as np
 from polliwog.transform import euler, rotation_from_up_and_look
 import pytest
-from vg.compat import v1 as vg
+from vg.compat import v2 as vg
 
 origin = np.zeros(3)
 

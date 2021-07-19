@@ -1,5 +1,5 @@
 import numpy as np
-from vg.compat import v1 as vg
+from vg.compat import v2 as vg
 
 
 def write_canvas_points_to_png(canvas_coords, width, height, out_path):

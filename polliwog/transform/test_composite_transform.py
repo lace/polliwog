@@ -1,7 +1,7 @@
 import numpy as np
 from polliwog import CompositeTransform
 import pytest
-from vg.compat import v1 as vg
+from vg.compat import v2 as vg
 from .test_affine_transform import create_default_cube_verts
 
 

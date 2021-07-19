@@ -1,7 +1,7 @@
 import numpy as np
 from polliwog import Plane
 import pytest
-from vg.compat import v1 as vg
+from vg.compat import v2 as vg
 from ._slice_by_plane import slice_open_polyline_by_plane
 
 point_on_plane = np.array([1.0, 2.0, 3.0])
