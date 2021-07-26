@@ -1,5 +1,5 @@
 import numpy as np
-from vg.compat import v1 as vg
+from vg.compat import v2 as vg
 from ._plane_functions import (
     mirror_point_across_plane,
     plane_normal_from_points,

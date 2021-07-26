@@ -12,7 +12,7 @@ def main():
     # from hobart.svg import write_polyline_3d
     import numpy as np
     from polliwog import Plane
-    from vg.compat import v1 as vg
+    from vg.compat import v2 as vg
     from .inflection_points import point_of_max_acceleration
     from entente.landmarks._mesh import add_landmark_points
 

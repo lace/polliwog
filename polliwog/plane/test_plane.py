@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import pytest
-from vg.compat import v1 as vg
+from vg.compat import v2 as vg
 from ._plane_object import Plane
 from .test_functions import assert_plane_equation_satisfies_points
 

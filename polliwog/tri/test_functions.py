@@ -6,7 +6,7 @@ from polliwog.tri import (
     surface_normals,
     tri_contains_coplanar_point,
 )
-from vg.compat import v1 as vg
+from vg.compat import v2 as vg
 
 
 def test_edges_of_faces():
