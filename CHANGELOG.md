@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.1 (Aug. 27, 2021)
+
+## Bug fixes
+
+- `Polyline.point_along_path()`: Fix issue where non-unit length segments
+  compute the wrong point. (For segments longer than 1, the point was sometimes
+  entirely off the polyline.)
+
+
 ## 1.0.0 (Jul. 18, 2021)
 
 - Upgrade `vg` dependency to `>=2.0`.
