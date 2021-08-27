@@ -1151,6 +1151,22 @@ def test_point_along_path():
     )
 
 
+def test_point_along_path_non_unit_length():
+    start_point = np.array([-20, 125, -20])
+    polyline = Polyline(
+        v=np.array([start_point, [0, 125, 20], [20, 125, -20]]), is_closed=True
+    )
+    fraction_of_length = 0.009259259259259259
+    point_along_path = polyline.point_along_path(fraction_of_length)
+    np.testing.assert_array_almost_equal(
+        polyline.nearest(point_along_path), point_along_path
+    )
+    np.testing.assert_almost_equal(
+        vg.euclidean_distance(start_point, point_along_path),
+        fraction_of_length * polyline.total_length,
+    )
+
+
 def test_point_along_path_errors():
     vs = np.arange(108).reshape(36, 3)
     polyline = Polyline(v=vs, is_closed=False)

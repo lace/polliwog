@@ -647,5 +647,5 @@ class Polyline(object):
         return transform_result(
             self.v[index_of_segment]
             + (desired_length - cumulative_length[index_of_segment]).reshape(-1, 1)
-            * self.segment_vectors[index_of_segment]
+            * vg.normalize(self.segment_vectors[index_of_segment])
         )
