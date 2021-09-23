@@ -37,14 +37,11 @@ def test_slice_cube_corner():
     )
     extent = np.max(vertices, axis=0)
 
-    point_on_plane = extent - 0.05
-    plane_normal = np.array([1, 1, 1])
-
     sliced_vertices, sliced_faces = slice_triangles_by_plane(
         vertices=vertices,
         faces=faces,
-        point_on_plane=point_on_plane,
-        plane_normal=plane_normal,
+        point_on_plane=extent - 0.05,
+        plane_normal=np.array([1, 1, 1]),
     )
 
     np.testing.assert_array_almost_equal(np.min(sliced_vertices, axis=0), extent - 0.15)
