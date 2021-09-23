@@ -79,7 +79,7 @@ def slice_faces_plane(vertices, faces, plane_normal, plane_origin, cached_dots=N
     if len(vertices) == 0:
         return vertices, faces
 
-    if cached_dots is not None:
+    if cached_dots is not None:  # pragma: no cover
         dots = cached_dots
     else:
         # dot product of each vertex with the plane normal indexed by face
