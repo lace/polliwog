@@ -105,59 +105,6 @@ def test_slice_cube_edge_multiple_planes():
     assert len(sliced_faces) == 12
 
 
-def test_slice_cube_top():
-    """
-    Tests new quads and entirely contained triangles.
-    """
-    origin = np.array([-0.5, -0.5, -0.5])
-    vertices, faces = rectangular_prism(
-        origin=origin,
-        size=np.repeat(1, 3),
-        ret_unique_vertices_and_faces=True,
-    )
-    extent = np.max(vertices, axis=0)
-
-    sliced_vertices, sliced_faces = slice_triangles_by_plane(
-        vertices=vertices,
-        faces=faces,
-        point_on_plane=extent - 0.05,
-        plane_normal=vg.basis.z,
-    )
-
-    np.testing.assert_array_almost_equal(
-        np.min(sliced_vertices, axis=0), origin + np.array([0, 0, 0.95])
-    )
-    np.testing.assert_array_almost_equal(np.max(sliced_vertices, axis=0), extent)
-    assert len(sliced_faces) == 14
-
-
-def test_slice_cube_edge_multiple_planes():
-    origin = np.array([-0.5, -0.5, -0.5])
-    vertices, faces = rectangular_prism(
-        origin=origin,
-        size=np.repeat(1, 3),
-        ret_unique_vertices_and_faces=True,
-    )
-    extent = np.max(vertices, axis=0)
-
-    sliced_vertices, sliced_faces = slice_triangles_by_plane(
-        *slice_triangles_by_plane(
-            vertices=vertices,
-            faces=faces,
-            point_on_plane=extent - 0.05,
-            plane_normal=vg.basis.z,
-        ),
-        point_on_plane=extent - 0.05,
-        plane_normal=vg.basis.y,
-    )
-
-    np.testing.assert_array_almost_equal(
-        np.min(sliced_vertices, axis=0), origin + np.array([0, 0.95, 0.95])
-    )
-    np.testing.assert_array_almost_equal(np.max(sliced_vertices, axis=0), extent)
-    assert len(sliced_faces) == 12
-
-
 def test_slice_cube_all_in_front():
     origin = np.array([-0.5, -0.5, -0.5])
     vertices, faces = rectangular_prism(
