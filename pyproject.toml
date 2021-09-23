@@ -28,7 +28,7 @@ ounce = ">=1.1.0,<2.0"
 vg = ">=2.0.0"
 
 [tool.poetry.dev-dependencies]
-black = "21.8b0"
+black = "21.9b0"
 click = "8.0.1"
 coverage = "5.5"
 executor = "23.2"
