@@ -1,0 +1,109 @@
+# Imported and adapated from Trimesh
+#
+# Copyright (c) 2019 Michael Dawson-Haggerty
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+# https://github.com/mikedh/trimesh/blob/510b4468d65ecb52759c9c660bf5c4791361d63f/tests/test_section.py#L156-L234
+
+import numpy as np
+from polliwog.plane import slice_triangles_by_plane
+from ..shapes import rectangular_prism
+
+
+def test_slice_cube_corner():
+    origin = np.array([-0.5, -0.5, -0.5])
+    vertices, faces = rectangular_prism(
+        origin=origin,
+        size=np.repeat(1, 3),
+        ret_unique_vertices_and_faces=True,
+    )
+    extent = np.max(vertices, axis=0)
+
+    # Cut corner off of box and make sure the bounds and number of faces is correct
+    # Tests new triangles, but not new quads or triangles contained entirely
+    point_on_plane = extent - 0.05
+    plane_normal = np.array([1, 1, 1])
+
+    sliced_vertices, sliced_faces = slice_triangles_by_plane(
+        vertices=vertices,
+        faces=faces,
+        point_on_plane=point_on_plane,
+        plane_normal=plane_normal,
+    )
+
+    np.testing.assert_array_almost_equal(np.min(sliced_vertices, axis=0), extent - 0.15)
+    np.testing.assert_array_almost_equal(np.max(sliced_vertices, axis=0), extent)
+    assert len(sliced_faces) == 4
+
+
+def test_slice_cube_top():
+    """
+    Tests new quads and entirely contained triangles.
+    """
+    origin = np.array([-0.5, -0.5, -0.5])
+    vertices, faces = rectangular_prism(
+        origin=origin,
+        size=np.repeat(1, 3),
+        ret_unique_vertices_and_faces=True,
+    )
+    extent = np.max(vertices, axis=0)
+
+    point_on_plane = extent - 0.05
+    plane_normal = np.array([0, 0, 1])
+
+    sliced_vertices, sliced_faces = slice_triangles_by_plane(
+        vertices=vertices,
+        faces=faces,
+        point_on_plane=point_on_plane,
+        plane_normal=plane_normal,
+    )
+
+    np.testing.assert_array_almost_equal(
+        np.min(sliced_vertices, axis=0), origin + np.array([0, 0, 0.95])
+    )
+    np.testing.assert_array_almost_equal(np.max(sliced_vertices, axis=0), extent)
+    assert len(sliced_faces) == 14
+
+
+def test_slice_cube_edge_multiple_planes():
+    origin = np.array([-0.5, -0.5, -0.5])
+    vertices, faces = rectangular_prism(
+        origin=origin,
+        size=np.repeat(1, 3),
+        ret_unique_vertices_and_faces=True,
+    )
+    extent = np.max(vertices, axis=0)
+
+    sliced_vertices, sliced_faces = slice_triangles_by_plane(
+        *slice_triangles_by_plane(
+            vertices=vertices,
+            faces=faces,
+            point_on_plane=extent - 0.05,
+            plane_normal=np.array([0, 0, 1]),
+        ),
+        point_on_plane=extent - 0.05,
+        plane_normal=np.array([0, 1, 0]),
+    )
+
+    np.testing.assert_array_almost_equal(
+        np.min(sliced_vertices, axis=0), origin + np.array([0, 0.95, 0.95])
+    )
+    np.testing.assert_array_almost_equal(np.max(sliced_vertices, axis=0), extent)
+    assert len(sliced_faces) == 12
