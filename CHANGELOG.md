@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 (Sep. 23, 2021)
+
+## New features
+
+- Add `polliwog.plane.slice_triangles_by_plane()` function, with implementation
+  adapted from Trimesh.
+
+
 ## 1.0.1 (Aug. 27, 2021)
 
 ## Bug fixes
