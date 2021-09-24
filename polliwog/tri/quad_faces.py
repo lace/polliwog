@@ -16,11 +16,11 @@ def quads_to_tris(quads, ret_mapping=False):
     """
     vg.shape.check(locals(), "quads", (-1, 4))
 
-    tris = np.empty((2 * len(quads), 3))
+    tris = np.empty((2 * len(quads), 3), dtype=np.uint64)
     tris[0::2, :] = quads[:, [0, 1, 2]]
     tris[1::2, :] = quads[:, [0, 2, 3]]
     if ret_mapping:
-        f_old_to_new = np.arange(len(tris)).reshape(-1, 2)
+        f_old_to_new = np.arange(len(tris), dtype=np.uint64).reshape(-1, 2)
         return tris, f_old_to_new
     else:
         return tris
