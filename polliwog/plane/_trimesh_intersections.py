@@ -50,7 +50,9 @@ class ToleranceMesh(object):
 tol = ToleranceMesh()
 
 
-def slice_faces_plane(vertices, faces, plane_normal, plane_origin, cached_dots=None):
+def slice_faces_plane(
+    vertices, faces, plane_normal, plane_origin, face_index=None, cached_dots=None
+):
     """
     Slice a mesh (given as a set of faces and vertices) with a plane, returning a
     new mesh (again as a set of faces and vertices) that is the
@@ -65,6 +67,9 @@ def slice_faces_plane(vertices, faces, plane_normal, plane_origin, cached_dots=N
         Normal vector of plane to intersect with mesh
     plane_origin :  (3,) float
         Point on plane to intersect with mesh
+    face_index : ((m,) int)
+        Indexes of faces to slice. When no mask is provided, the
+        default is to slice all faces.
     cached_dots : (n, 3) float
         If an external function has stored dot
         products pass them here to avoid recomputing
@@ -78,6 +83,13 @@ def slice_faces_plane(vertices, faces, plane_normal, plane_origin, cached_dots=N
 
     if len(vertices) == 0:
         return vertices, faces
+
+    # Construct a mask for the faces to slice.
+    if face_index is None:
+        mask = np.ones(len(faces), dtype=np.bool)
+    else:
+        mask = np.zeros(len(faces), dtype=np.bool)
+        mask[face_index] = True
 
     if cached_dots is not None:  # pragma: no cover
         dots = cached_dots
@@ -106,8 +118,10 @@ def slice_faces_plane(vertices, faces, plane_normal, plane_origin, cached_dots=N
     # (0,0,0),  (-1,0,0),  (-1,-1,0), (-1,-1,-1) <- inside
     # (1,0,0),  (1,1,0),   (1,1,1)               <- outside
     # (1,0,-1), (1,-1,-1), (1,1,-1)              <- onedge
-    onedge = np.logical_and(signs_asum >= 2, np.abs(signs_sum) <= 1)
-    inside = signs_sum == -signs_asum
+    onedge = np.logical_and(
+        np.logical_and(signs_asum >= 2, np.abs(signs_sum) <= 1), mask
+    )
+    inside = np.logical_or((signs_sum == -signs_asum), ~mask)
 
     # Automatically include all faces that are "inside"
     new_faces = faces[inside]
