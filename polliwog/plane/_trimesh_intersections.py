@@ -50,6 +50,64 @@ class ToleranceMesh(object):
 tol = ToleranceMesh()
 
 
+def unique_bincount(values, minlength=0, return_inverse=False, return_counts=False):
+    """
+    For arrays of integers find unique values using bin counting.
+    Roughly 10x faster for correct input than np.unique
+
+    Parameters
+    --------------
+    values : (n,) int
+      Values to find unique members of
+    minlength : int
+      Maximum value that will occur in values (values.max())
+    return_inverse : bool
+      If True, return an inverse such that unique[inverse] == values
+    return_counts : bool
+      If True, also return the number of times each
+      unique item appears in values
+
+    Returns
+    ------------
+    unique : (m,) int
+      Unique values in original array
+    inverse : (n,) int, optional
+      An array such that unique[inverse] == values
+      Only returned if return_inverse is True
+    counts : (m,) int, optional
+      An array holding the counts of each unique item in values
+      Only returned if return_counts is True
+    """
+    values = np.asanyarray(values)
+    if len(values.shape) != 1 or values.dtype.kind != "i":
+        raise ValueError("input must be 1D integers!")
+
+    # count the number of occurrences of each value
+    counts = np.bincount(values, minlength=minlength)
+
+    # which bins are occupied at all
+    # counts are integers so this works
+    unique_bin = counts.astype(bool)
+
+    # which values are unique
+    # indexes correspond to original values
+    unique = np.where(unique_bin)[0]
+    ret = (unique,)
+
+    if return_inverse:
+        # find the inverse to reconstruct original
+        inverse = (np.cumsum(unique_bin) - 1)[values]
+        ret += (inverse,)
+
+    if return_counts:
+        unique_counts = counts[unique]
+        ret += (unique_counts,)
+
+    if len(ret) == 1:
+        return ret[0]
+    return ret
+
+
 def slice_faces_plane(
     vertices, faces, plane_normal, plane_origin, face_index=None, cached_dots=None
 ):
@@ -148,10 +206,7 @@ def slice_faces_plane(
             )
             return empty
 
-        # TODO: Adapt the optimized `unique_bincount()` helper from trimesh, which
-        # unfortunately does not work with unsigned ints.
-        # https://github.com/numpy/numpy/issues/17760
-        unique, inverse = np.unique(new_faces.reshape(-1), return_inverse=True)
+        unique, inverse = unique_bincount(new_faces.reshape(-1), return_inverse=True)
 
         # use the unique indices for our final vertices and faces
         final_vert = vertices[unique]
@@ -241,10 +296,7 @@ def slice_faces_plane(
         new_vertices = np.append(new_vertices, new_tri_vertices, axis=0)
         new_faces = np.append(new_faces, new_tri_faces, axis=0)
 
-    # TODO: Adapt the optimized `unique_bincount()` helper from trimesh, which
-    # unfortunately does not work with unsigned ints.
-    # https://github.com/numpy/numpy/issues/17760
-    unique, inverse = np.unique(new_faces.reshape(-1), return_inverse=True)
+    unique, inverse = unique_bincount(new_faces.reshape(-1), return_inverse=True)
 
     # use the unique indexes for our final vertex and faces
     final_vert = new_vertices[unique]
