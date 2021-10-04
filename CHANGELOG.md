@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.0 (Oct. 4, 2021)
+
+## BREAKING CHANGES
+
+- Functions which accept triangle face indices require the dtype to be
+  `np.int64`.
+
+While this restriction may be a little inconvenient for the caller, it improves
+interoperability and performance, simplifies the implementation, and produces
+more predictable return values. It's recommended that consuming applications
+store all face indices using this dtype.
+
+
 ## 1.2.0 (Oct. 4, 2021)
 
 ## New features
