@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 (Oct. 4, 2021)
+
+## New features
+
+- `polliwog.plane.slice_triangles_by_plane()`: Add support for slicing a
+  submesh.
+
+
 ## 1.1.0 (Sep. 23, 2021)
 
 ## New features
