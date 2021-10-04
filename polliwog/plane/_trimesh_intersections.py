@@ -50,7 +50,7 @@ class ToleranceMesh(object):
 tol = ToleranceMesh()
 
 
-def unique_bincount(values, minlength=0, return_inverse=False, return_counts=False):
+def unique_bincount(values, minlength=0):
     """
     For arrays of integers find unique values using bin counting.
     Roughly 10x faster for correct input than np.unique
@@ -61,11 +61,6 @@ def unique_bincount(values, minlength=0, return_inverse=False, return_counts=Fal
       Values to find unique members of
     minlength : int
       Maximum value that will occur in values (values.max())
-    return_inverse : bool
-      If True, return an inverse such that unique[inverse] == values
-    return_counts : bool
-      If True, also return the number of times each
-      unique item appears in values
 
     Returns
     ------------
@@ -73,13 +68,9 @@ def unique_bincount(values, minlength=0, return_inverse=False, return_counts=Fal
       Unique values in original array
     inverse : (n,) int, optional
       An array such that unique[inverse] == values
-      Only returned if return_inverse is True
-    counts : (m,) int, optional
-      An array holding the counts of each unique item in values
-      Only returned if return_counts is True
     """
     values = np.asanyarray(values)
-    if len(values.shape) != 1 or values.dtype.kind != "i":
+    if len(values.shape) != 1 or values.dtype.kind != "i":  # pragma: no cover
         raise ValueError("input must be 1D integers!")
 
     # count the number of occurrences of each value
@@ -92,20 +83,11 @@ def unique_bincount(values, minlength=0, return_inverse=False, return_counts=Fal
     # which values are unique
     # indexes correspond to original values
     unique = np.where(unique_bin)[0]
-    ret = (unique,)
 
-    if return_inverse:
-        # find the inverse to reconstruct original
-        inverse = (np.cumsum(unique_bin) - 1)[values]
-        ret += (inverse,)
+    # find the inverse to reconstruct original
+    inverse = (np.cumsum(unique_bin) - 1)[values]
 
-    if return_counts:
-        unique_counts = counts[unique]
-        ret += (unique_counts,)
-
-    if len(ret) == 1:
-        return ret[0]
-    return ret
+    return unique, inverse
 
 
 def slice_faces_plane(
@@ -206,7 +188,7 @@ def slice_faces_plane(
             )
             return empty
 
-        unique, inverse = unique_bincount(new_faces.reshape(-1), return_inverse=True)
+        unique, inverse = unique_bincount(new_faces.reshape(-1))
 
         # use the unique indices for our final vertices and faces
         final_vert = vertices[unique]
@@ -296,7 +278,7 @@ def slice_faces_plane(
         new_vertices = np.append(new_vertices, new_tri_vertices, axis=0)
         new_faces = np.append(new_faces, new_tri_faces, axis=0)
 
-    unique, inverse = unique_bincount(new_faces.reshape(-1), return_inverse=True)
+    unique, inverse = unique_bincount(new_faces.reshape(-1))
 
     # use the unique indexes for our final vertex and faces
     final_vert = new_vertices[unique]
