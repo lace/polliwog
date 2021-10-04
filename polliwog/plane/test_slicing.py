@@ -49,6 +49,31 @@ def test_slice_cube_corner():
     assert len(sliced_faces) == 4
 
 
+def test_slice_cube_submesh():
+    origin = np.array([-0.5, -0.5, -0.5])
+    vertices, faces = rectangular_prism(
+        origin=origin,
+        size=np.repeat(1, 3),
+        ret_unique_vertices_and_faces=True,
+    )
+    extent = np.max(vertices, axis=0)
+
+    # Only act on the top of the cube.
+    mask = np.zeros(len(faces), dtype=np.bool)
+    mask[[2, 3]] = True
+
+    _, sliced_faces = slice_triangles_by_plane(
+        vertices=vertices,
+        faces=faces,
+        point_on_plane=extent - 0.05,
+        plane_normal=np.array([1, 1, 1]),
+        faces_to_slice=mask,
+    )
+    # Only the corner of the top is kept, along with the rest of the cube.
+    # TODO: Improve this assertion.
+    assert len(sliced_faces) == 11
+
+
 def test_slice_cube_top():
     """
     Tests new quads and entirely contained triangles.
