@@ -1,5 +1,6 @@
 import numpy as np
 from vg.compat import v2 as vg
+from ..tri import FACE_DTYPE
 
 
 def slice_triangles_by_plane(
@@ -32,5 +33,5 @@ def slice_triangles_by_plane(
         face_index=None if faces_to_slice is None else faces_to_slice.nonzero()[0],
     )
     assert vertices.dtype == np.float64
-    assert faces.dtype == np.uint64
+    assert faces.dtype == FACE_DTYPE
     return vertices, faces

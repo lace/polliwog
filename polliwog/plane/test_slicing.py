@@ -26,6 +26,7 @@ import numpy as np
 from polliwog.plane import slice_triangles_by_plane
 from vg.compat import v2 as vg
 from ..shapes import rectangular_prism
+from ..tri import FACE_DTYPE
 
 
 def test_slice_cube_corner():
@@ -167,7 +168,7 @@ def test_slice_cube_all_in_back():
 
 def test_slice_empty():
     vertices = np.zeros((0, 3), dtype=np.float64)
-    faces = np.zeros((0, 3), dtype=np.uint64)
+    faces = np.zeros((0, 3), dtype=FACE_DTYPE)
 
     sliced_vertices, sliced_faces = slice_triangles_by_plane(
         vertices=vertices,

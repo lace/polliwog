@@ -3,7 +3,10 @@ from vg.compat import v2 as vg
 from .._common.shape import check_shape_any, columnize
 from ..line._line_functions import coplanar_points_are_on_same_side_of_line
 
+FACE_DTYPE = np.int64
+
 __all__ = [
+    "FACE_DTYPE",
     "edges_of_faces",
     "surface_normals",
     "tri_contains_coplanar_point",
@@ -18,6 +21,7 @@ def edges_of_faces(faces, normalize=True):
     more easily can be compared.
     """
     vg.shape.check(locals(), "faces", (-1, 3))
+    assert faces.dtype == FACE_DTYPE
 
     # TODO: It's probably possible to accomplish this more efficiently. Maybe
     # with `np.pick()`?

@@ -1,5 +1,6 @@
 import numpy as np
 from polliwog.shapes import cube, rectangular_prism, triangular_prism
+from polliwog.tri import FACE_DTYPE
 import pytest
 
 
@@ -39,6 +40,7 @@ def test_rectangular_prism():
     vertices, faces = rectangular_prism(
         origin=origin, size=size, ret_unique_vertices_and_faces=True
     )
+    assert faces.dtype == FACE_DTYPE
     np.testing.assert_array_equal(faces, expected_faces)
     np.testing.assert_array_equal(vertices, expected_vertices)
 

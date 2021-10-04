@@ -26,7 +26,7 @@
 import logging
 import numpy as np
 
-from ..tri import quads_to_tris
+from ..tri import FACE_DTYPE, quads_to_tris
 
 log = logging.getLogger("polliwog.plane._trimesh_intersections")
 
@@ -144,7 +144,7 @@ def slice_faces_plane(
             # if no new faces at all return empty arrays
             empty = (
                 np.zeros((0, 3), dtype=np.float64),
-                np.zeros((0, 3), dtype=np.uint64),
+                np.zeros((0, 3), dtype=FACE_DTYPE),
             )
             return empty
 
@@ -152,8 +152,6 @@ def slice_faces_plane(
         # unfortunately does not work with unsigned ints.
         # https://github.com/numpy/numpy/issues/17760
         unique, inverse = np.unique(new_faces.reshape(-1), return_inverse=True)
-        # `np.unique()` returns signed ints.
-        inverse = inverse.astype(np.uint64)
 
         # use the unique indices for our final vertices and faces
         final_vert = vertices[unique]
@@ -190,9 +188,9 @@ def slice_faces_plane(
         # Fill out new quad faces with the intersection points as vertices
         new_quad_faces = np.append(
             quad_int_verts,
-            np.arange(
-                len(new_vertices), len(new_vertices) + 2 * num_quads, dtype=np.uint64
-            ).reshape(num_quads, 2),
+            np.arange(len(new_vertices), len(new_vertices) + 2 * num_quads).reshape(
+                num_quads, 2
+            ),
             axis=1,
         )
 
@@ -225,9 +223,9 @@ def slice_faces_plane(
         # Fill out new triangles with the intersection points as vertices
         new_tri_faces = np.append(
             tri_int_verts,
-            np.arange(
-                len(new_vertices), len(new_vertices) + 2 * num_tris, dtype=np.uint64
-            ).reshape(num_tris, 2),
+            np.arange(len(new_vertices), len(new_vertices) + 2 * num_tris).reshape(
+                num_tris, 2
+            ),
             axis=1,
         )
 
@@ -247,8 +245,6 @@ def slice_faces_plane(
     # unfortunately does not work with unsigned ints.
     # https://github.com/numpy/numpy/issues/17760
     unique, inverse = np.unique(new_faces.reshape(-1), return_inverse=True)
-    # `np.unique()` returns signed ints.
-    inverse = inverse.astype(np.uint64)
 
     # use the unique indexes for our final vertex and faces
     final_vert = new_vertices[unique]
