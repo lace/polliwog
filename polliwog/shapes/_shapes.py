@@ -67,10 +67,8 @@ def rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
                     [6, 7, 3, 2],  # -z face
                     [3, 7, 4, 0],  # -x face
                 ],
-                dtype=np.uint64,
             )
         ),
-        dtype=np.uint64,
     )
 
     return _maybe_flatten(vertices, faces, ret_unique_vertices_and_faces)
@@ -157,7 +155,6 @@ def triangular_prism(p1, p2, p3, height, ret_unique_vertices_and_faces=False):
             [2, 3, 0],  # side 2, 5, 3, 0
             [5, 4, 3],  # base
         ],
-        dtype=np.uint64,
     )
 
     return _maybe_flatten(vertices, faces, ret_unique_vertices_and_faces)

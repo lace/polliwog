@@ -599,11 +599,11 @@ class Polyline(object):
 
         vg.shape.check(locals(), "section_breakpoints", (-1,))
 
-        section_breakpoints = section_breakpoints.astype(np.uint64)
+        section_breakpoints = section_breakpoints.astype(np.int64)
         maybe_copy = np.copy if copy_vs else lambda vs: vs
-        section_starts = np.hstack([np.array(0, dtype=np.uint64), section_breakpoints])
+        section_starts = np.hstack([np.array(0, dtype=np.int64), section_breakpoints])
         section_ends = np.hstack(
-            [section_breakpoints + 1, np.array([self.num_v], dtype=np.uint64)]
+            [section_breakpoints + 1, np.array([self.num_v], dtype=np.int64)]
         )
 
         edges_per_section = section_ends - section_starts - 1

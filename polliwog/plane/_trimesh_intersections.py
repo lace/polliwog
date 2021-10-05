@@ -26,7 +26,7 @@
 import logging
 import numpy as np
 
-from ..tri import quads_to_tris
+from ..tri import FACE_DTYPE, quads_to_tris
 
 log = logging.getLogger("polliwog.plane._trimesh_intersections")
 
@@ -48,6 +48,46 @@ class ToleranceMesh(object):
 
 
 tol = ToleranceMesh()
+
+
+def unique_bincount(values, minlength=0):
+    """
+    For arrays of integers find unique values using bin counting.
+    Roughly 10x faster for correct input than np.unique
+
+    Parameters
+    --------------
+    values : (n,) int
+      Values to find unique members of
+    minlength : int
+      Maximum value that will occur in values (values.max())
+
+    Returns
+    ------------
+    unique : (m,) int
+      Unique values in original array
+    inverse : (n,) int, optional
+      An array such that unique[inverse] == values
+    """
+    values = np.asanyarray(values)
+    if len(values.shape) != 1 or values.dtype.kind != "i":  # pragma: no cover
+        raise ValueError("input must be 1D integers!")
+
+    # count the number of occurrences of each value
+    counts = np.bincount(values, minlength=minlength)
+
+    # which bins are occupied at all
+    # counts are integers so this works
+    unique_bin = counts.astype(bool)
+
+    # which values are unique
+    # indexes correspond to original values
+    unique = np.where(unique_bin)[0]
+
+    # find the inverse to reconstruct original
+    inverse = (np.cumsum(unique_bin) - 1)[values]
+
+    return unique, inverse
 
 
 def slice_faces_plane(
@@ -144,16 +184,11 @@ def slice_faces_plane(
             # if no new faces at all return empty arrays
             empty = (
                 np.zeros((0, 3), dtype=np.float64),
-                np.zeros((0, 3), dtype=np.uint64),
+                np.zeros((0, 3), dtype=FACE_DTYPE),
             )
             return empty
 
-        # TODO: Adapt the optimized `unique_bincount()` helper from trimesh, which
-        # unfortunately does not work with unsigned ints.
-        # https://github.com/numpy/numpy/issues/17760
-        unique, inverse = np.unique(new_faces.reshape(-1), return_inverse=True)
-        # `np.unique()` returns signed ints.
-        inverse = inverse.astype(np.uint64)
+        unique, inverse = unique_bincount(new_faces.reshape(-1))
 
         # use the unique indices for our final vertices and faces
         final_vert = vertices[unique]
@@ -190,9 +225,9 @@ def slice_faces_plane(
         # Fill out new quad faces with the intersection points as vertices
         new_quad_faces = np.append(
             quad_int_verts,
-            np.arange(
-                len(new_vertices), len(new_vertices) + 2 * num_quads, dtype=np.uint64
-            ).reshape(num_quads, 2),
+            np.arange(len(new_vertices), len(new_vertices) + 2 * num_quads).reshape(
+                num_quads, 2
+            ),
             axis=1,
         )
 
@@ -225,9 +260,9 @@ def slice_faces_plane(
         # Fill out new triangles with the intersection points as vertices
         new_tri_faces = np.append(
             tri_int_verts,
-            np.arange(
-                len(new_vertices), len(new_vertices) + 2 * num_tris, dtype=np.uint64
-            ).reshape(num_tris, 2),
+            np.arange(len(new_vertices), len(new_vertices) + 2 * num_tris).reshape(
+                num_tris, 2
+            ),
             axis=1,
         )
 
@@ -243,12 +278,7 @@ def slice_faces_plane(
         new_vertices = np.append(new_vertices, new_tri_vertices, axis=0)
         new_faces = np.append(new_faces, new_tri_faces, axis=0)
 
-    # TODO: Adapt the optimized `unique_bincount()` helper from trimesh, which
-    # unfortunately does not work with unsigned ints.
-    # https://github.com/numpy/numpy/issues/17760
-    unique, inverse = np.unique(new_faces.reshape(-1), return_inverse=True)
-    # `np.unique()` returns signed ints.
-    inverse = inverse.astype(np.uint64)
+    unique, inverse = unique_bincount(new_faces.reshape(-1))
 
     # use the unique indexes for our final vertex and faces
     final_vert = new_vertices[unique]

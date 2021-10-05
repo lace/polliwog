@@ -1083,7 +1083,7 @@ def test_sectioned_degenerate():
     vs = np.arange(108).reshape(36, 3)
     polyline = Polyline(v=vs, is_closed=False)
 
-    broken = polyline.sectioned(np.array([], dtype=np.uint64))
+    broken = polyline.sectioned(np.array([], dtype=np.int64))
     assert len(broken) == 1
     np.testing.assert_array_equal(broken[0].v, vs)
 
