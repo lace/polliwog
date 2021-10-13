@@ -62,9 +62,9 @@ def rectangular_prism(origin, size, ret_unique_vertices_and_faces=False):
                 [
                     [0, 1, 2, 3],  # lower base (-y)
                     [7, 6, 5, 4],  # upper base (+y)
-                    [4, 5, 1, 0],  # +z face
+                    [4, 5, 1, 0],  # -z face
                     [5, 6, 2, 1],  # +x face
-                    [6, 7, 3, 2],  # -z face
+                    [6, 7, 3, 2],  # +z face
                     [3, 7, 4, 0],  # -x face
                 ],
             )
