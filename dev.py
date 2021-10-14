@@ -35,7 +35,7 @@ def coverage():
 
 @cli.command()
 def coverage_report():
-    execute("coverage html")
+    execute("coverage html --fail-under=0")
     execute("open htmlcov/index.html")
 
 
