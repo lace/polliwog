@@ -188,7 +188,7 @@ def slice_faces_plane(
             )
             return empty
 
-        unique, inverse = unique_bincount(new_faces.reshape(-1))
+        unique, inverse = unique_bincount(new_faces.ravel())
 
         # use the unique indices for our final vertices and faces
         final_vert = vertices[unique]
