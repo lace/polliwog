@@ -40,7 +40,11 @@ def slice_triangles_by_plane(
     )
 
     if ret_face_mapping:
-        vertices, faces, face_mapping = result
+        (
+            vertices,
+            faces,
+            face_mapping,
+        ) = result  # lgtm [py/mismatched-multiple-assignment]
         assert face_mapping.dtype == FACE_DTYPE
     else:
         vertices, faces = result
