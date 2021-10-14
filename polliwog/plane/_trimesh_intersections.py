@@ -218,8 +218,8 @@ def slice_faces_plane(
         # (in CCW order of the inside vertices)
         quad_int_inds = np.where(cut_signs_quad == 1)[1]
         quad_int_verts = cut_faces_quad[
-            np.stack((range(num_quads), range(num_quads)), axis=1),
-            np.stack(((quad_int_inds + 1) % 3, (quad_int_inds + 2) % 3), axis=1),
+            np.tile(np.arange(num_quads).reshape(num_quads, 1), 2),
+            (np.repeat(quad_int_inds.reshape(-1, 1), 2, axis=1) + np.array([1, 2])) % 3,
         ]
 
         # Fill out new quad faces with the intersection points as vertices
@@ -234,8 +234,8 @@ def slice_faces_plane(
         # Extract correct intersection points from int_points and order them in
         # the same way as they were added to faces
         new_quad_vertices = quad_int_points[
-            np.stack((range(num_quads), range(num_quads)), axis=1),
-            np.stack((((quad_int_inds + 2) % 3).T, quad_int_inds.T), axis=1),
+            np.tile(np.arange(num_quads).reshape(num_quads, 1), 2),
+            (np.repeat(quad_int_inds.reshape(-1, 1), 2, axis=1) + np.array([2, 0])) % 3,
             :,
         ].reshape(2 * num_quads, 3)
 
@@ -269,8 +269,8 @@ def slice_faces_plane(
         # Extract correct intersection points and order them in the same way as
         # the vertices were added to the faces
         new_tri_vertices = tri_int_points[
-            np.stack((range(num_tris), range(num_tris)), axis=1),
-            np.stack((tri_int_inds.T, ((tri_int_inds + 2) % 3).T), axis=1),
+            np.tile(np.arange(num_tris).reshape(num_tris, 1), 2),
+            (np.repeat(tri_int_inds.reshape(-1, 1), 2, axis=1) + np.array([0, 2])) % 3,
             :,
         ].reshape(2 * num_tris, 3)
 
