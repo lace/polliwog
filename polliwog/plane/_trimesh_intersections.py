@@ -237,10 +237,10 @@ def slice_faces_plane(
     if num_quads > 0:
         # Extract the vertex on the outside of the plane, then get the vertices
         # (in CCW order of the inside vertices)
-        quad_int_inds = np.where(cut_signs_quad == 1)[1].reshape(-1, 1)
+        quad_int_inds_col = np.where(cut_signs_quad == 1)[1].reshape(-1, 1)
         quad_int_verts = cut_faces_quad[
             np.tile(np.arange(num_quads).reshape(num_quads, 1), 2),
-            (np.repeat(quad_int_inds, 2, axis=1) + np.array([1, 2])) % 3,
+            (np.repeat(quad_int_inds_col, 2, axis=1) + np.array([1, 2])) % 3,
         ]
 
         # Fill out new quad faces with the intersection points as vertices
@@ -256,7 +256,7 @@ def slice_faces_plane(
         # the same way as they were added to faces
         new_quad_vertices = quad_int_points[
             np.tile(np.arange(num_quads).reshape(num_quads, 1), 2),
-            (np.repeat(quad_int_inds, 2, axis=1) + np.array([2, 0])) % 3,
+            (np.repeat(quad_int_inds_col, 2, axis=1) + np.array([2, 0])) % 3,
             :,
         ].reshape(2 * num_quads, 3)
 
