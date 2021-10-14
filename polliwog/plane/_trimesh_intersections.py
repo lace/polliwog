@@ -308,7 +308,6 @@ def slice_faces_plane(
             # One new triangle has been added for each triangle.
             new_face_mapping = np.append(new_face_mapping, onedge_tri)
 
-
     # Renumber vertices, dropping any which have been orphaned.
     unique, inverse = unique_bincount(new_faces.ravel())
     final = (
