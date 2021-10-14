@@ -91,7 +91,13 @@ def unique_bincount(values, minlength=0):
 
 
 def slice_faces_plane(
-    vertices, faces, plane_normal, plane_origin, face_index=None, cached_dots=None
+    vertices,
+    faces,
+    plane_normal,
+    plane_origin,
+    face_index=None,
+    cached_dots=None,
+    return_face_mapping=False,
 ):
     """
     Slice a mesh (given as a set of faces and vertices) with a plane, returning a
@@ -113,6 +119,9 @@ def slice_faces_plane(
     cached_dots : (n, 3) float
         If an external function has stored dot
         products pass them here to avoid recomputing
+    return_face_mapping : bool
+        When True, return the indices of the old faces to which the new faces
+        correspond.
     Returns
     ----------
     new_vertices : (n, 3) float
@@ -122,7 +131,10 @@ def slice_faces_plane(
     """
 
     if len(vertices) == 0:
-        return vertices, faces
+        if return_face_mapping:
+            return vertices, faces, np.arange(len(faces))
+        else:
+            return vertices, faces
 
     # Construct a mask for the faces to slice.
     if face_index is None:
@@ -165,16 +177,18 @@ def slice_faces_plane(
 
     # Automatically include all faces that are "inside"
     new_faces = faces[inside]
+    if return_face_mapping:
+        new_face_mapping = inside.nonzero()[0]
 
     # Separate faces on the edge into two cases: those which will become
     # quads (two vertices inside plane) and those which will become triangles
     # (one vertex inside plane)
-    triangles = vertices[faces]
-    cut_triangles = triangles[onedge]
-    cut_faces_quad = faces[np.logical_and(onedge, signs_sum < 0)]
-    cut_faces_tri = faces[np.logical_and(onedge, signs_sum >= 0)]
-    cut_signs_quad = signs[np.logical_and(onedge, signs_sum < 0)]
-    cut_signs_tri = signs[np.logical_and(onedge, signs_sum >= 0)]
+    onedge_quad = np.logical_and(onedge, signs_sum < 0).nonzero()[0]
+    cut_faces_quad = faces[onedge_quad]
+    cut_signs_quad = signs[onedge_quad]
+    onedge_tri = np.logical_and(onedge, signs_sum >= 0).nonzero()[0]
+    cut_faces_tri = faces[onedge_tri]
+    cut_signs_tri = signs[onedge_tri]
 
     # If no faces to cut, the surface is not in contact with this plane.
     # Thus, return a mesh with only the inside faces
@@ -186,18 +200,24 @@ def slice_faces_plane(
                 np.zeros((0, 3), dtype=np.float64),
                 np.zeros((0, 3), dtype=FACE_DTYPE),
             )
-            return empty
+            if return_face_mapping:
+                return *empty, new_face_mapping
+            else:
+                return empty
 
+        # Renumber vertices, dropping any which have been orphaned.
         unique, inverse = unique_bincount(new_faces.ravel())
-
-        # use the unique indices for our final vertices and faces
-        final_vert = vertices[unique]
-        final_face = inverse.reshape((-1, 3))
-
-        return final_vert, final_face
+        final = (
+            vertices[unique],
+            inverse.reshape((-1, 3)),
+        )
+        if return_face_mapping:
+            return *final, new_face_mapping
+        else:
+            return final
 
     # Extract the intersections of each triangle's edges with the plane
-    o = cut_triangles  # origins
+    o = vertices[faces][onedge]  # origins
     d = np.roll(o, -1, axis=1) - o  # directions
     num = (plane_origin - o).dot(plane_normal)  # compute num/denom
     denom = np.dot(d, plane_normal)
@@ -244,6 +264,12 @@ def slice_faces_plane(
         new_vertices = np.append(new_vertices, new_quad_vertices, axis=0)
         new_tri_faces_from_quads = quads_to_tris(new_quad_faces)
         new_faces = np.append(new_faces, new_tri_faces_from_quads, axis=0)
+        if return_face_mapping:
+            new_face_mapping = np.append(
+                new_face_mapping,
+                # Two new triangles have been added for each quad.
+                np.repeat(onedge_quad, 2),
+            )
 
     # Handle the case where a new triangle is formed by the intersection
     # First, extract the intersection points belonging to a new triangle
@@ -277,11 +303,18 @@ def slice_faces_plane(
         # Append new vertices and new faces
         new_vertices = np.append(new_vertices, new_tri_vertices, axis=0)
         new_faces = np.append(new_faces, new_tri_faces, axis=0)
+        if return_face_mapping:
+            # One triangle has been added for each quad.
+            new_face_mapping = np.append(new_face_mapping, onedge_tri)
 
     unique, inverse = unique_bincount(new_faces.ravel())
 
     # use the unique indexes for our final vertex and faces
-    final_vert = new_vertices[unique]
-    final_face = inverse.reshape((-1, 3))
-
-    return final_vert, final_face
+    final = (
+        new_vertices[unique],
+        inverse.reshape((-1, 3)),
+    )
+    if return_face_mapping:
+        return *final, new_face_mapping
+    else:
+        return final

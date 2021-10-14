@@ -26,7 +26,7 @@ import numpy as np
 from polliwog.plane import slice_triangles_by_plane
 from vg.compat import v2 as vg
 from ..shapes import rectangular_prism
-from ..tri import FACE_DTYPE
+from ..tri import FACE_DTYPE, surface_normals
 
 
 def test_slice_cube_corner():
@@ -48,6 +48,41 @@ def test_slice_cube_corner():
     np.testing.assert_array_almost_equal(np.min(sliced_vertices, axis=0), extent - 0.15)
     np.testing.assert_array_almost_equal(np.max(sliced_vertices, axis=0), extent)
     assert len(sliced_faces) == 4
+
+
+def test_slice_cube_corner_maps_faces_correctly():
+    origin = np.array([-0.5, -0.5, -0.5])
+    vertices, faces = rectangular_prism(
+        origin=origin,
+        size=np.repeat(1, 3),
+        ret_unique_vertices_and_faces=True,
+    )
+    extent = np.max(vertices, axis=0)
+
+    sliced_vertices, sliced_faces, face_mapping = slice_triangles_by_plane(
+        vertices=vertices,
+        faces=faces,
+        point_on_plane=extent - 0.05,
+        plane_normal=np.array([1, 1, 1]),
+        ret_face_mapping=True,
+    )
+
+    # Confidence check.
+    np.testing.assert_array_equal(
+        surface_normals(sliced_vertices[sliced_faces]),
+        np.array([vg.basis.y, vg.basis.x, vg.basis.z, vg.basis.z]),
+    )
+    # `faces`:
+    # 0, 1: -y
+    # 2, 3: +y
+    # 4, 5: -z
+    # 6, 7: +x
+    # 8, 9: +z
+    # 10, 11: -x
+    np.testing.assert_array_equal(
+        face_mapping,
+        np.array([2, 6, 8, 9]),
+    )
 
 
 def test_slice_cube_submesh():
