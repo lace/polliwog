@@ -278,7 +278,7 @@ def slice_faces_plane(
         new_vertices = np.append(new_vertices, new_tri_vertices, axis=0)
         new_faces = np.append(new_faces, new_tri_faces, axis=0)
 
-    unique, inverse = unique_bincount(new_faces.reshape(-1))
+    unique, inverse = unique_bincount(new_faces.ravel())
 
     # use the unique indexes for our final vertex and faces
     final_vert = new_vertices[unique]
