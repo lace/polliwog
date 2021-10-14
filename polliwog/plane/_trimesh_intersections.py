@@ -131,10 +131,11 @@ def slice_faces_plane(
     """
 
     if len(vertices) == 0:
+        empty = (vertices, faces)
         if return_face_mapping:
-            return vertices, faces, np.arange(len(faces))
+            return *empty, np.arange(len(faces))
         else:
-            return vertices, faces
+            return empty
 
     # Construct a mask for the faces to slice.
     if face_index is None:
