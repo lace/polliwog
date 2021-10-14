@@ -40,7 +40,8 @@ def slice_triangles_by_plane(
     )
 
     if ret_face_mapping:
-        vertices, faces, _ = result
+        vertices, faces, face_mapping = result
+        assert face_mapping.dtype == FACE_DTYPE
     else:
         vertices, faces = result
     assert vertices.dtype == np.float64
