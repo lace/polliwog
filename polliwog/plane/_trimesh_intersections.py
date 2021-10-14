@@ -133,7 +133,7 @@ def slice_faces_plane(
     if len(vertices) == 0:
         empty = (vertices, faces)
         if return_face_mapping:
-            return *empty, np.arange(len(faces))
+            return (*empty, np.arange(len(faces)))
         else:
             return empty
 
@@ -202,7 +202,7 @@ def slice_faces_plane(
                 np.zeros((0, 3), dtype=FACE_DTYPE),
             )
             if return_face_mapping:
-                return *empty, new_face_mapping
+                return (*empty, new_face_mapping)
             else:
                 return empty
 
@@ -213,7 +213,7 @@ def slice_faces_plane(
             inverse.reshape((-1, 3)),
         )
         if return_face_mapping:
-            return *final, new_face_mapping
+            return (*final, new_face_mapping)
         else:
             return final
 
@@ -315,6 +315,6 @@ def slice_faces_plane(
         inverse.reshape((-1, 3)),
     )
     if return_face_mapping:
-        return *final, new_face_mapping
+        return (*final, new_face_mapping)
     else:
         return final
