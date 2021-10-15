@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.1.0 (Oct. 15, 2021)
+
+## New features
+
+- `polliwog.plane.slice_triangles_by_plane()`: Optionally return mapping of new
+  faces to old.
+
+
 ## 2.0.0 (Oct. 4, 2021)
 
 ## BREAKING CHANGES
