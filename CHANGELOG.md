@@ -4,7 +4,7 @@
 
 ## New features
 
-- `polliwog.plane.slice_triangles_by_plan()`: Optionally return mapping of new
+- `polliwog.plane.slice_triangles_by_plane()`: Optionally return mapping of new
   faces to old.
 
 
