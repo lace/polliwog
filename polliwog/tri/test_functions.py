@@ -4,6 +4,7 @@ from polliwog.tri import (
     barycentric_coordinates_of_points,
     edges_of_faces,
     surface_normals,
+    surface_area,
     tri_contains_coplanar_point,
 )
 from vg.compat import v2 as vg
@@ -75,6 +76,28 @@ def test_surface_normals_from_points_vectorized():
     )
 
     np.testing.assert_allclose(surface_normals(vertices), expected_normals)
+
+
+def test_surface_area_single():
+    # Example taken from https://math.stackexchange.com/q/897071/640314
+    np.testing.assert_almost_equal(
+        surface_area(np.array([[-1, 0, 2], [2, -1, 3], [4, 0, 1]])),
+        1.5 * math.sqrt(10),
+    )
+
+
+def test_surface_area_vectorized():
+    np.testing.assert_array_almost_equal(
+        surface_area(
+            np.array(
+                [
+                    [[-1, 0, 2], [2, -1, 3], [4, 0, 1]],
+                    [[0, 0, 0], [0, 1, 0], [1, 1, 0]],
+                ]
+            )
+        ),
+        np.array([1.5 * math.sqrt(10), 0.5]),
+    )
 
 
 def test_tri_contains_coplanar_point():

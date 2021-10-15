@@ -9,6 +9,7 @@ __all__ = [
     "FACE_DTYPE",
     "edges_of_faces",
     "surface_normals",
+    "surface_area",
     "tri_contains_coplanar_point",
     "barycentric_coordinates_of_points",
 ]
@@ -53,6 +54,30 @@ def surface_normals(points, normalize=True):
         normals = vg.normalize(normals)
 
     return transform_result(normals)
+
+
+def surface_area(points):
+    """
+    Compute the surface area of a triangle.
+
+    Also works on stacked inputs (i.e. many sets of three points).
+    """
+    points, _, transform_result = columnize(points, (-1, 3, 3), name="points")
+
+    e1s = points[:, 1] - points[:, 0]
+    e2s = points[:, 2] - points[:, 0]
+
+    cross_products = np.array(
+        [
+            e1s[:, 1] * e2s[:, 2] - e1s[:, 2] * e2s[:, 1],
+            e1s[:, 2] * e2s[:, 0] - e1s[:, 0] * e2s[:, 2],
+            e1s[:, 0] * e2s[:, 1] - e1s[:, 1] * e2s[:, 0],
+        ]
+    ).T
+    areas = 0.5 * ((cross_products ** 2).sum(axis=1) ** 0.5)
+    # areas = 0.5 * np.sqrt((cross_products ** 2).sum(axis=1))
+
+    return transform_result(areas)
 
 
 def tri_contains_coplanar_point(a, b, c, point):
