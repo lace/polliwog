@@ -61,7 +61,7 @@ jobs:
       - *show_versions
 
       - run:
-          name: Check code format
+          name: Check lint
           when: always
           command: ./dev.py lint
 
