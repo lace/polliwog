@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.0 (Oct. 18, 2021)
+
+## New features
+
+- Add `polliwog.tri.surface_area()` and `polliwog.tri.sample()`
+
+
 ## 2.1.0 (Oct. 15, 2021)
 
 ## New features
