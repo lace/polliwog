@@ -193,29 +193,50 @@ def test_barycentric():
     )
 
 
-def test_sample():
+def test_sample_returns_expected_centroid():
+    # The first tri is scaled by 3x, giivng it 9x the area.
     num_samples = 100000
-    common_kwargs = dict(
-        vertices_of_tris=np.array([[[0, 0, 0], [3, 0, 0], [3, 4, 0]]]),
+    points = sample(
+        vertices_of_tris=np.array(
+            [
+                [[0, 0, 0], [9, 0, 0], [9, 12, 0]],
+                [[0, 0, 0], [3, 0, 0], [3, 4, 0]],
+            ]
+        ),
         num_samples=num_samples,
     )
-    points = sample(**common_kwargs)
 
     assert len(points) == num_samples
 
-    centroid = np.array([2, 4 / 3, 0])
+    # To compute the expected centroid, weight the centroids of each triangle by
+    # the triangle's area.
+    centroids_of_tris = np.array(
+        [
+            [6, 4, 0],
+            [2, 4 / 3, 0],
+        ]
+    )
+    expected_centroid_of_points = vg.average(
+        centroids_of_tris, weights=np.array([9, 1])
+    )
     np.testing.assert_array_almost_equal(
-        np.average(points, axis=0), centroid, decimal=2
+        vg.average(points), expected_centroid_of_points, decimal=2
     )
 
-    _, face_indices = sample(**common_kwargs, ret_face_indices=True)
+
+def test_sample_returns_expected_face_indices():
+    num_samples = 100000
+    _, face_indices = sample(
+        vertices_of_tris=np.array([[[0, 0, 0], [3, 0, 0], [3, 4, 0]]]),
+        num_samples=num_samples,
+        ret_face_indices=True,
+    )
     np.testing.assert_array_equal(face_indices, np.zeros(num_samples))
 
 
 def test_sample_is_deterministic():
-    num_samples = 100000
     common_kwargs = dict(
         vertices_of_tris=np.array([[[0, 0, 0], [3, 0, 0], [3, 4, 0]]]),
-        num_samples=num_samples,
+        num_samples=100000,
     )
     np.testing.assert_array_equal(sample(**common_kwargs), sample(**common_kwargs))
