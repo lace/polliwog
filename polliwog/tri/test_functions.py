@@ -3,8 +3,9 @@ import numpy as np
 from polliwog.tri import (
     barycentric_coordinates_of_points,
     edges_of_faces,
-    surface_normals,
+    sample,
     surface_area,
+    surface_normals,
     tri_contains_coplanar_point,
 )
 from vg.compat import v2 as vg
@@ -190,3 +191,31 @@ def test_barycentric():
     np.testing.assert_array_almost_equal(
         barycentric_coordinates_of_points(tiled_triangle, points_of_interest), expected
     )
+
+
+def test_sample():
+    num_samples = 100000
+    common_kwargs = dict(
+        vertices_of_tris=np.array([[[0, 0, 0], [3, 0, 0], [3, 4, 0]]]),
+        num_samples=num_samples,
+    )
+    points = sample(**common_kwargs)
+
+    assert len(points) == num_samples
+
+    centroid = np.array([2, 4 / 3, 0])
+    np.testing.assert_array_almost_equal(
+        np.average(points, axis=0), centroid, decimal=2
+    )
+
+    _, face_indices = sample(**common_kwargs, ret_face_indices=True)
+    np.testing.assert_array_equal(face_indices, np.zeros(num_samples))
+
+
+def test_sample_is_deterministic():
+    num_samples = 100000
+    common_kwargs = dict(
+        vertices_of_tris=np.array([[[0, 0, 0], [3, 0, 0], [3, 4, 0]]]),
+        num_samples=num_samples,
+    )
+    np.testing.assert_array_equal(sample(**common_kwargs), sample(**common_kwargs))
