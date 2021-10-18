@@ -201,7 +201,7 @@ def sample(
     if weights is None:
         weights = surface_area(vertices_of_tris)
     else:
-        vg.shape.check(locals(), "weights", (k, 3))
+        vg.shape.check(locals(), "weights", (k,))
 
     if k == 0:
         empty_samples = np.zeros((0, 3), dtype=np.float64)
