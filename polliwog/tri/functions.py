@@ -83,8 +83,7 @@ def surface_area(vertices_of_tris):
             e1s[:, 0] * e2s[:, 1] - e1s[:, 1] * e2s[:, 0],
         ]
     ).T
-    areas = 0.5 * ((cross_products ** 2).sum(axis=1) ** 0.5)
-    # areas = 0.5 * np.sqrt((cross_products ** 2).sum(axis=1))
+    areas = 0.5 * np.sqrt((cross_products ** 2).sum(axis=1))
 
     return transform_result(areas)
 
