@@ -3,9 +3,12 @@ import numpy as np
 from polliwog.tri import (
     barycentric_coordinates_of_points,
     edges_of_faces,
+    sample,
+    surface_area,
     surface_normals,
     tri_contains_coplanar_point,
 )
+import pytest
 from vg.compat import v2 as vg
 
 
@@ -75,6 +78,28 @@ def test_surface_normals_from_points_vectorized():
     )
 
     np.testing.assert_allclose(surface_normals(vertices), expected_normals)
+
+
+def test_surface_area_single():
+    # Example taken from https://math.stackexchange.com/q/897071/640314
+    np.testing.assert_almost_equal(
+        surface_area(np.array([[-1, 0, 2], [2, -1, 3], [4, 0, 1]])),
+        1.5 * math.sqrt(10),
+    )
+
+
+def test_surface_area_vectorized():
+    np.testing.assert_array_almost_equal(
+        surface_area(
+            np.array(
+                [
+                    [[-1, 0, 2], [2, -1, 3], [4, 0, 1]],
+                    [[0, 0, 0], [0, 1, 0], [1, 1, 0]],
+                ]
+            )
+        ),
+        np.array([1.5 * math.sqrt(10), 0.5]),
+    )
 
 
 def test_tri_contains_coplanar_point():
@@ -167,3 +192,114 @@ def test_barycentric():
     np.testing.assert_array_almost_equal(
         barycentric_coordinates_of_points(tiled_triangle, points_of_interest), expected
     )
+
+
+def test_sample_returns_expected_centroid():
+    # The first tri is scaled by 3x, giivng it 9x the area.
+    num_samples = 100000
+    points = sample(
+        vertices_of_tris=np.array(
+            [
+                [[0, 0, 0], [9, 0, 0], [9, 12, 0]],
+                [[0, 0, 0], [3, 0, 0], [3, 4, 0]],
+            ]
+        ),
+        num_samples=num_samples,
+    )
+
+    assert len(points) == num_samples
+
+    # To compute the expected centroid, weight the centroids of each triangle by
+    # the triangle's area.
+    centroids_of_tris = np.array(
+        [
+            [6, 4, 0],
+            [2, 4 / 3, 0],
+        ]
+    )
+    expected_centroid_of_points = vg.average(
+        centroids_of_tris, weights=np.array([9, 1])
+    )
+    np.testing.assert_array_almost_equal(
+        vg.average(points), expected_centroid_of_points, decimal=2
+    )
+
+
+def test_sample_weights():
+    # The first tri is scaled by 3x, giivng it 9x the area, but we override the weights.
+    num_samples = 100000
+    weights = np.array([1, 4])
+    points = sample(
+        vertices_of_tris=np.array(
+            [
+                [[0, 0, 0], [9, 0, 0], [9, 12, 0]],
+                [[0, 0, 0], [3, 0, 0], [3, 4, 0]],
+            ]
+        ),
+        num_samples=num_samples,
+        weights=weights,
+    )
+
+    assert len(points) == num_samples
+
+    # To compute the expected centroid, weight the centroids of each triangle by
+    # the triangle's area.
+    centroids_of_tris = np.array(
+        [
+            [6, 4, 0],
+            [2, 4 / 3, 0],
+        ]
+    )
+    expected_centroid_of_points = vg.average(centroids_of_tris, weights=weights)
+    np.testing.assert_array_almost_equal(
+        vg.average(points), expected_centroid_of_points, decimal=2
+    )
+
+
+def test_sample_returns_expected_face_indices():
+    num_samples = 100000
+    _, face_indices = sample(
+        vertices_of_tris=np.array([[[0, 0, 0], [3, 0, 0], [3, 4, 0]]]),
+        num_samples=num_samples,
+        ret_face_indices=True,
+    )
+    np.testing.assert_array_equal(face_indices, np.zeros(num_samples))
+
+
+def test_sample_is_deterministic():
+    common_kwargs = dict(
+        vertices_of_tris=np.array([[[0, 0, 0], [3, 0, 0], [3, 4, 0]]]),
+        num_samples=100000,
+    )
+    np.testing.assert_array_equal(sample(**common_kwargs), sample(**common_kwargs))
+
+
+def test_sample_empty():
+    points = sample(
+        vertices_of_tris=np.zeros((0, 3, 3)),
+        num_samples=10000,
+    )
+    np.testing.assert_array_equal(points, np.zeros((0, 3)))
+
+    _, face_indices = sample(
+        vertices_of_tris=np.zeros((0, 3, 3)),
+        num_samples=10000,
+        ret_face_indices=True,
+    )
+    np.testing.assert_array_equal(face_indices, np.zeros((0,)))
+
+
+def test_sample_errors():
+    with pytest.raises(ValueError, match="Expected num_samples to be an int"):
+        sample(
+            vertices_of_tris=np.array([[[0, 0, 0], [3, 0, 0], [3, 4, 0]]]),
+            num_samples="nope",
+        )
+    with pytest.raises(
+        ValueError, match="Expected rng to be an instance of np.random.Generator"
+    ):
+        sample(
+            vertices_of_tris=np.array([[[0, 0, 0], [3, 0, 0], [3, 4, 0]]]),
+            num_samples=10000,
+            rng="nope",
+        )
