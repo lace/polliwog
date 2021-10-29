@@ -2,6 +2,13 @@ import numpy as np
 from vg.compat import v2 as vg
 
 
+def path_centroid(segments):
+    vg.shape.check(locals(), "segments", (-1, 2, 3))
+    segment_centers = np.average(segments, axis=1)
+    segment_lengths = vg.euclidean_distance(segments[:, 0], segments[:, 1])
+    return np.average(segment_centers, weights=segment_lengths, axis=0)
+
+
 def subdivide_segment(p1, p2, num_points, endpoint=True):
     """
     For two points in n-space, return an np.ndarray of equidistant partition

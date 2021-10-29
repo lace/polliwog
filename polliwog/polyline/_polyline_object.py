@@ -177,8 +177,9 @@ class Polyline(object):
         """
         The weighted average of all the points along the edges of the polyline.
         """
-        edge_centers = np.average(self.segments, axis=1)
-        return np.average(edge_centers, weights=self.segment_lengths, axis=0)
+        from ..segment import path_centroid
+
+        return path_centroid(self.segments)
 
     @property
     def bounding_box(self):

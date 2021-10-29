@@ -1,10 +1,25 @@
 import numpy as np
 from polliwog.segment import (
     closest_point_of_line_segment,
+    path_centroid,
     subdivide_segment,
     subdivide_segments,
 )
 import pytest
+
+
+def test_path_centroid():
+    vertices = np.array(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 5.0, 0.0], [0.0, 5.0, 0.0]]
+    )
+    num_edges = 4
+    edges = np.vstack([np.arange(num_edges), np.arange(num_edges) + 1]).T
+    edges[-1][1] = 0
+    segments = vertices[edges]
+    np.testing.assert_array_almost_equal(
+        path_centroid(segments),
+        np.array([0.5, 2.5, 0]),
+    )
 
 
 def test_subdivide_segment_raises_exception_for_invalid_partition_size_type():
