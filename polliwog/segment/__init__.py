@@ -5,4 +5,9 @@ from ._segment_functions import (
     subdivide_segments,
 )
 
-__all__ = ["closest_point_of_line_segment", "subdivide_segment", "subdivide_segments"]
+__all__ = [
+    "closest_point_of_line_segment",
+    "path_centroid",
+    "subdivide_segment",
+    "subdivide_segments",
+]
