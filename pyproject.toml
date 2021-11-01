@@ -29,7 +29,7 @@ vg = ">=2.0.0"
 
 [tool.poetry.dev-dependencies]
 black = "21.9b0"
-click = "8.0.1"
+click = "8.0.3"
 coverage = "5.5"
 executor = "23.2"
 flake8 = "3.9.2"
