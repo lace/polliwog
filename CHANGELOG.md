@@ -1,10 +1,18 @@
 # Changelog
 
+## 2.3.1 (Nov. 29, 2021)
+
+## Bug fixes
+
+-  Fix issue where `flipped()` creates non-contiguous arrays.
+
+
 ## 2.3.0 (Oct. 29, 2021)
 
 ## New features
 
 - Add `polliwog.segment.path_centroid()`.
+
 
 ## 2.2.0 (Oct. 18, 2021)
 
