@@ -615,8 +615,8 @@ def test_flipped_preserves_flags():
         ),
         is_closed=True,
     )
-    assert original.v.flags['C_CONTIGUOUS'] is True
-    assert original.flipped().v.flags['C_CONTIGUOUS'] is True
+    assert original.v.flags["C_CONTIGUOUS"] is True
+    assert original.flipped().v.flags["C_CONTIGUOUS"] is True
 
 
 def test_aligned_with():
