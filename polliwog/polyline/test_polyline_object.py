@@ -601,6 +601,24 @@ def test_flipped():
     np.testing.assert_array_almost_equal(flipped.v, expected_v)
 
 
+def test_flipped_preserves_flags():
+    original = Polyline(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [1.0, 7.0, 0.0],
+                [1.0, 8.0, 0.0],
+                [0.0, 8.0, 0.0],
+            ]
+        ),
+        is_closed=True,
+    )
+    assert original.v.flags["C_CONTIGUOUS"] is True
+    assert original.flipped().v.flags["C_CONTIGUOUS"] is True
+
+
 def test_aligned_with():
     original = Polyline(
         np.array(
