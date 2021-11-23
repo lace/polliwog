@@ -252,9 +252,7 @@ class Polyline(object):
         """
         Flip the polyline from end to end. Return a new polyline.
         """
-        return Polyline(
-            v=np.ascontiguousarray(np.flipud(self.v)), is_closed=self.is_closed
-        )
+        return Polyline(v=np.flipud(self.v), is_closed=self.is_closed)
 
     def aligned_with(self, vector):
         """
