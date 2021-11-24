@@ -1,10 +1,17 @@
 # Changelog
 
-## 2.3.1 (Nov. 29, 2021)
+## 2.3.2 (Nov. 23, 2021)
 
 ## Bug fixes
 
--  Fix issue where `flipped()` creates non-contiguous arrays.
+- Revert bug fix from 2.3.1.
+
+
+## 2.3.1 (Nov. 19, 2021)
+
+## Bug fixes
+
+- Fix issue where `flipped()` creates non-contiguous arrays.
 
 
 ## 2.3.0 (Oct. 29, 2021)
