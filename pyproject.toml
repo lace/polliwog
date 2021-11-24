@@ -30,7 +30,7 @@ vg = ">=2.0.0"
 [tool.poetry.dev-dependencies]
 black = "21.11b0"
 click = "8.0.3"
-coverage = "6.1.1"
+coverage = "6.1.2"
 executor = "23.2"
 flake8 = "4.0.1"
 flake8-import-order = "0.18.1"
