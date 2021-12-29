@@ -254,6 +254,13 @@ class Polyline(object):
         """
         return Polyline(v=np.flipud(self.v), is_closed=self.is_closed)
 
+    def flipped_if(self, condition):
+        """
+        Conditionally flip the polyline from end to end, returning `self` or a
+        new polyline.
+        """
+        return self.flipped() if condition else self
+
     def aligned_with(self, vector):
         """
         Flip the polyline if necessary, so it's aligned with the given

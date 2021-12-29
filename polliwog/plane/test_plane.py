@@ -19,9 +19,12 @@ def test_repr():
 
 
 def test_flipped():
-    np.testing.assert_array_equal(
-        Plane(np.array([0, 10, 0]), vg.basis.y).flipped().normal, vg.basis.neg_y
-    )
+    original = Plane(np.array([0, 10, 0]), vg.basis.y)
+
+    np.testing.assert_array_equal(original.flipped().normal, vg.basis.neg_y)
+    np.testing.assert_array_equal(original.flipped_if(True).normal, vg.basis.neg_y)
+
+    assert original.flipped_if(False) is original
 
 
 def test_returns_signed_distances_for_xz_plane_at_origin():
