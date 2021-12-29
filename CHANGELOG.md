@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.4.0 (Dec. 9, 2021)
+
+## New features
+
+- Polyline, Plane: Add `flipped_if()` method.
+
+
 ## 2.3.2 (Nov. 23, 2021)
 
 ## Bug fixes
