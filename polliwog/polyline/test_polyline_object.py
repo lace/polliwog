@@ -600,6 +600,13 @@ def test_flipped():
     assert flipped is not original
     np.testing.assert_array_almost_equal(flipped.v, expected_v)
 
+    flipped = original.flipped_if(True)
+
+    assert flipped is not original
+    np.testing.assert_array_almost_equal(flipped.v, expected_v)
+
+    assert original.flipped_if(False) is original
+
 
 def test_aligned_with():
     original = Polyline(

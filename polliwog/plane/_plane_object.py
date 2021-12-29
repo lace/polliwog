@@ -138,6 +138,13 @@ class Plane(object):
         """
         return Plane(point_on_plane=self._r0, unit_normal=-self._n)
 
+    def flipped_if(self, condition):
+        """
+        Conditionally flip the plane, returning `self` or a new Plane with an
+        inverted orientation.
+        """
+        return self.flipped() if condition else self
+
     def sign(self, points):
         """
         Given an array of points, return an array with +1 for points in front
