@@ -46,7 +46,7 @@ def test_surface_normals_from_points_single():
     points = np.array([[3.0, 0.0, 0.0], [0.0, 3.0, 0.0], [0.0, 0.0, 3.0]])
 
     np.testing.assert_allclose(
-        surface_normals(points), np.array([3 ** -0.5, 3 ** -0.5, 3 ** -0.5])
+        surface_normals(points), np.array([3**-0.5, 3**-0.5, 3**-0.5])
     )
 
     np.testing.assert_allclose(
