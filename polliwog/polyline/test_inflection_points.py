@@ -21,25 +21,25 @@ InflectionPointExample = namedtuple(
 
 examples = [
     InflectionPointExample(
-        fn=lambda x: (x ** 6) / 30 - (x ** 5) / 20 - (x ** 4) + 3 * x + 20,
+        fn=lambda x: (x**6) / 30 - (x**5) / 20 - (x**4) + 3 * x + 20,
         domain=(-10, 10),
         inflection_points=np.array([-3.0, 4.0]),
         point_of_max_acceleration=9.8,
     ),
     InflectionPointExample(
-        fn=lambda x: x ** 4,
+        fn=lambda x: x**4,
         domain=(-3, 3),
         inflection_points=np.array([]),
         point_of_max_acceleration=2.8,
     ),
     InflectionPointExample(
-        fn=lambda x: x ** 3,
+        fn=lambda x: x**3,
         domain=(-3, 3),
         inflection_points=np.array([0.0]),
         point_of_max_acceleration=2.8,
     ),
     InflectionPointExample(
-        fn=lambda x: x ** 3 - 3 * x ** 2 - 144 * x + 432,
+        fn=lambda x: x**3 - 3 * x**2 - 144 * x + 432,
         domain=(-12, 12),
         inflection_points=np.array([1.0]),
         point_of_max_acceleration=11.8,
@@ -51,7 +51,7 @@ examples = [
         point_of_max_acceleration=5.5,
     ),
     InflectionPointExample(
-        fn=lambda x: -(x ** 2),
+        fn=lambda x: -(x**2),
         domain=(0, 5),
         inflection_points=np.array([]),
         point_of_max_acceleration=None,

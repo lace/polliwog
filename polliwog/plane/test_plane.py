@@ -85,7 +85,7 @@ def test_returns_unsigned_distances_for_diagonal_plane_at_origin():
 
     pts = np.array([[425.0, 425.0, 25.0], [-500.0, -500.0, 25.0]])
 
-    expected = np.array([math.sqrt(2 * (425.0 ** 2)), math.sqrt(2 * (500.0 ** 2))])
+    expected = np.array([math.sqrt(2 * (425.0**2)), math.sqrt(2 * (500.0**2))])
 
     np.testing.assert_array_almost_equal(expected, plane.distance(pts))
 
