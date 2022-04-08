@@ -91,6 +91,29 @@ class Plane(object):
 
         return cls(centroid, normal)
 
+    def rounded(self, position_decimals=None, direction_decimals=None):
+        """
+        Return a copy of this plane, with the reference point and normal rounded
+        to the specified precision.
+
+        Args:
+            position_decimals (int): The desired number of decimal places for
+                the reference point. The default is `DEFAULT_POSITION_DECIMALS`.
+            direction_decimals (int): The desired number of decimal places for
+                the normal. The default is `DEFAULT_DIRECTION_DECIMALS`.
+
+        Returns:
+            Plane: The rounded plane.
+        """
+        if position_decimals is None:
+            position_decimals = self.DEFAULT_POSITION_DECIMALS
+        if direction_decimals is None:
+            direction_decimals = self.DEFAULT_DIRECTION_DECIMALS
+        return Plane(
+            point_on_plane=np.around(self.reference_point, position_decimals),
+            unit_normal=np.around(self.normal, direction_decimals),
+        )
+
     def serialize(self, position_decimals=None, direction_decimals=None):
         """
         Return a JSON representation of this plane, with the reference point and
@@ -107,15 +130,12 @@ class Plane(object):
         Returns:
             dict: The JSON representation.
         """
-        if position_decimals is None:
-            position_decimals = self.DEFAULT_POSITION_DECIMALS
-        if direction_decimals is None:
-            direction_decimals = self.DEFAULT_DIRECTION_DECIMALS
+        rounded = self.rounded(
+            position_decimals=position_decimals, direction_decimals=direction_decimals
+        )
         return {
-            "referencePoint": np.around(
-                self.reference_point, position_decimals
-            ).tolist(),
-            "unitNormal": np.around(self.normal, direction_decimals).tolist(),
+            "referencePoint": rounded.reference_point.tolist(),
+            "unitNormal": rounded.normal.tolist(),
         }
 
     @classmethod
