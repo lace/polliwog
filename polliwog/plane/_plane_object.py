@@ -92,6 +92,21 @@ class Plane(object):
         return cls(centroid, normal)
 
     def serialize(self, position_decimals=None, direction_decimals=None):
+        """
+        Return a JSON representation of this plane, with the reference point and
+        normal rounded to the specified precision.
+
+        The schema is defined in `types/src/schema.json`.
+
+        Args:
+            position_decimals (int): The desired number of decimal places for
+                the reference point. The default is `DEFAULT_POSITION_DECIMALS`.
+            direction_decimals (int): The desired number of decimal places for
+                the normal. The default is `DEFAULT_DIRECTION_DECIMALS`.
+
+        Returns:
+            dict: The JSON representation.
+        """
         if position_decimals is None:
             position_decimals = self.DEFAULT_POSITION_DECIMALS
         if direction_decimals is None:
@@ -104,9 +119,14 @@ class Plane(object):
         }
 
     @classmethod
-    def validate(cls, json_data):
+    def validate(cls, data):
         """
-        Validate the JSON representation.
+        Validate a plane JSON representation.
+
+        The schema is defined in `types/src/schema.json`.
+
+        Args:
+            data (dict): The JSON representation.
         """
         from .._common.pathlib import SCHEMA_PATH
         from .._common.serialization import validator_for
@@ -122,10 +142,21 @@ class Plane(object):
                 ref="#/definitions/Plane",
             )
 
-        validator.validate(json_data)
+        validator.validate(data)
 
     @classmethod
     def deserialize(cls, data):
+        """
+        Create a Plane from the given JSON representation.
+
+        The schema is defined in `types/src/schema.json`.
+
+        Args:
+            data (dict): The JSON representation.
+
+        Returns:
+            Plane: The deserialized plane.
+        """
         cls.validate(data)
 
         return cls(

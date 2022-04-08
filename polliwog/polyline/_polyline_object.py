@@ -104,7 +104,7 @@ class Polyline(object):
     @classmethod
     def validate(cls, data):
         """
-        Validate a Polyline JSON representation.
+        Validate a polyline JSON representation.
 
         The schema is defined in `types/src/schema.json`.
 
