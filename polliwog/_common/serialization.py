@@ -1,18 +1,17 @@
-def try_load_jsonschema():
+def try_load_jsonschema_and_simplejson():
     try:
         import jsonschema
+        import simplejson
     except ImportError:  # pragma: no cover
         raise ImportError(
             "To deserialize objects, install polliwog with the serialization extra: "
             + "`pip install entente[serialization]`"
         )
-    return jsonschema
+    return jsonschema, simplejson
 
 
 def validator_for(schema_path, ref):
-    import simplejson as json
-
-    jsonschema = try_load_jsonschema()
+    jsonschema, json = try_load_jsonschema_and_simplejson()
 
     with open(schema_path, "r") as f:
         schema = json.load(f)
