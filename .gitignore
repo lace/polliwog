@@ -160,3 +160,4 @@ pip-selfcheck.json
 # End of https://www.gitignore.io/api/osx,python
 
 doc/api/
+types/node_modules/

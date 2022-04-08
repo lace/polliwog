@@ -46,24 +46,51 @@ def test_repr():
     )
 
 
-def test_to_dict():
-    example_vs = np.array(
-        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
-    )
-    expected_dict = {
-        "vertices": [
-            [0.0, 0.0, 0.0],
-            [1.0, 0.0, 0.0],
-            [1.0, 1.0, 0.0],
-            [1.0, 2.0, 0.0],
-        ],
-        "edges": [[0, 1], [1, 2], [2, 3], [3, 0]],
+def test_serialize():
+    vertices = [
+        [0.0, 0.0, 0.0],
+        [1.0, 0.0, 0.0],
+        [1.0, 1.0, 0.0],
+        [1.0, 2.0, 0.0],
+    ]
+
+    serialized = Polyline(np.array(vertices), is_closed=True).serialize()
+
+    assert serialized == {
+        "vertices": vertices,
+        "isClosed": True,
     }
-    actual_dict = Polyline(example_vs, is_closed=True).to_dict(decimals=3)
-    # TODO Is there a cleaner way to assert deep equal?
-    assert set(actual_dict.keys()) == set(expected_dict.keys())
-    np.testing.assert_array_equal(expected_dict["vertices"], actual_dict["vertices"])
-    np.testing.assert_array_equal(expected_dict["edges"], actual_dict["edges"])
+
+    Polyline.validate(serialized)
+
+
+def test_serialize_decimals():
+    assert Polyline(
+        np.array([[0.1234, 0.0, 0.0], [0.2345, 0.0, 0.0]]), is_closed=True
+    ).serialize(decimals=1) == {
+        "vertices": [[0.1, 0.0, 0.0], [0.2, 0.0, 0.0]],
+        "isClosed": True,
+    }
+
+
+def test_deserialize():
+    vertices = [
+        [0.0, 0.0, 0.0],
+        [1.0, 0.0, 0.0],
+        [1.0, 1.0, 0.0],
+        [1.0, 2.0, 0.0],
+    ]
+
+    deserialized = Polyline.deserialize(
+        {
+            "vertices": vertices,
+            "isClosed": True,
+        }
+    )
+
+    assert isinstance(deserialized, Polyline)
+    np.testing.assert_array_equal(deserialized.v, np.array(vertices))
+    assert deserialized.is_closed is True
 
 
 def test_copy():

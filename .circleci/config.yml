@@ -1,8 +1,11 @@
 version: 2.1
 
+orbs:
+  node: circleci/node@4.1.0
+
 with_python: &with_python
   docker:
-    - image: circleci/python:3.7
+    - image: cimg/python:3.7
 
 install_poetry: &install_poetry
   run:
@@ -29,7 +32,9 @@ jobs:
       - checkout
 
       - *install_poetry
-      - *install_python_deps
+      - run:
+          name: Install python dependencies
+          command: poetry install --no-ansi --no-interaction --extras serialization
       - *show_versions
 
       - run:
@@ -64,6 +69,20 @@ jobs:
           name: Check lint
           when: always
           command: ./dev.py lint
+
+      - node/install
+
+      - run:
+          name: Install Node dependencies
+          when: always
+          working_directory: types
+          command: npm ci
+
+      - run:
+          name: Check that schema are up to date
+          when: always
+          working_directory: types
+          command: npm run schema:check
 
   format:
     <<: *with_python

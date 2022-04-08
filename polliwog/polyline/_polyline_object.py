@@ -15,6 +15,9 @@ class Polyline(object):
     you can mutate a polyline by updating `polyline.v` or `polyline.is_closed`.
     """
 
+    POSITION_DTYPE = np.float64
+    DEFAULT_DECIMALS = 6
+
     def __init__(self, v, is_closed=False):
         """
         v: np.array containing points in 3-space.
@@ -76,11 +79,73 @@ class Polyline(object):
         v = None if self.v is None else np.copy(self.v)
         return self.__class__(v, is_closed=self.is_closed)
 
-    def to_dict(self, decimals=3):
+    def serialize(self, decimals=None):
+        """
+        Return a JSON representation of this polyline, with vertices rounded to
+        the specified precision.
+
+        The schema is defined in `types/src/schema.json`.
+
+        Args:
+            decimals (int): The desired number of decimal places. The default is
+            `DEFAULT_DECIMALS`.
+
+        Returns:
+            dict: The JSON representation.
+        """
+        if decimals is None:
+            decimals = self.DEFAULT_DECIMALS
+
         return {
-            "vertices": [np.around(v, decimals=decimals).tolist() for v in self.v],
-            "edges": self.e,
+            "vertices": np.around(self.v, decimals).tolist(),
+            "isClosed": self.is_closed,
         }
+
+    @classmethod
+    def validate(cls, data):
+        """
+        Validate a polyline JSON representation.
+
+        The schema is defined in `types/src/schema.json`.
+
+        Args:
+            data (dict): The JSON representation.
+        """
+        from .._common.pathlib import SCHEMA_PATH
+        from .._common.serialization import validator_for
+
+        try:
+            validator = cls._validator
+        except AttributeError:
+            validator = None
+
+        if validator is None:
+            validator = cls._validator = validator_for(
+                schema_path=SCHEMA_PATH,
+                ref="#/definitions/Polyline",
+            )
+
+        validator.validate(data)
+
+    @classmethod
+    def deserialize(cls, data):
+        """
+        Create a Polyline from the given JSON representation.
+
+        The schema is defined in `types/src/schema.json`.
+
+        Args:
+            data (dict): The JSON representation.
+
+        Returns:
+            Polyline: The deserialized polyline.
+        """
+        cls.validate(data)
+
+        return cls(
+            v=np.array(data["vertices"], dtype=cls.POSITION_DTYPE),
+            is_closed=data["isClosed"],
+        )
 
     def _update_edges(self):
         if self.v is None:
@@ -355,7 +420,8 @@ class Polyline(object):
                     itertools.chain(
                         *zip(
                             splits_of_original_vs,
-                            vs_to_insert + [np.empty((0, 3), dtype=np.float64)],
+                            vs_to_insert
+                            + [np.empty((0, 3), dtype=self.POSITION_DTYPE)],
                         )
                     )
                 )

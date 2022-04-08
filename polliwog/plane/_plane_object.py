@@ -19,6 +19,10 @@ class Plane(object):
             array with three coordinates.
     """
 
+    POSITION_DTYPE = np.float64
+    DEFAULT_POSITION_DECIMALS = 6
+    DEFAULT_DIRECTION_DECIMALS = 6
+
     def __init__(self, point_on_plane, unit_normal):
         vg.shape.check(locals(), "point_on_plane", (3,))
         vg.shape.check(locals(), "unit_normal", (3,))
@@ -86,6 +90,79 @@ class Plane(object):
         centroid = points.mean(axis=0)
 
         return cls(centroid, normal)
+
+    def serialize(self, position_decimals=None, direction_decimals=None):
+        """
+        Return a JSON representation of this plane, with the reference point and
+        normal rounded to the specified precision.
+
+        The schema is defined in `types/src/schema.json`.
+
+        Args:
+            position_decimals (int): The desired number of decimal places for
+                the reference point. The default is `DEFAULT_POSITION_DECIMALS`.
+            direction_decimals (int): The desired number of decimal places for
+                the normal. The default is `DEFAULT_DIRECTION_DECIMALS`.
+
+        Returns:
+            dict: The JSON representation.
+        """
+        if position_decimals is None:
+            position_decimals = self.DEFAULT_POSITION_DECIMALS
+        if direction_decimals is None:
+            direction_decimals = self.DEFAULT_DIRECTION_DECIMALS
+        return {
+            "referencePoint": np.around(
+                self.reference_point, position_decimals
+            ).tolist(),
+            "unitNormal": np.around(self.normal, direction_decimals).tolist(),
+        }
+
+    @classmethod
+    def validate(cls, data):
+        """
+        Validate a plane JSON representation.
+
+        The schema is defined in `types/src/schema.json`.
+
+        Args:
+            data (dict): The JSON representation.
+        """
+        from .._common.pathlib import SCHEMA_PATH
+        from .._common.serialization import validator_for
+
+        try:
+            validator = cls._validator
+        except AttributeError:
+            validator = None
+
+        if validator is None:
+            validator = cls._validator = validator_for(
+                schema_path=SCHEMA_PATH,
+                ref="#/definitions/Plane",
+            )
+
+        validator.validate(data)
+
+    @classmethod
+    def deserialize(cls, data):
+        """
+        Create a Plane from the given JSON representation.
+
+        The schema is defined in `types/src/schema.json`.
+
+        Args:
+            data (dict): The JSON representation.
+
+        Returns:
+            Plane: The deserialized plane.
+        """
+        cls.validate(data)
+
+        return cls(
+            point_on_plane=np.array(data["referencePoint"]),
+            unit_normal=np.array(data["unitNormal"]),
+        )
 
     @property
     def equation(self):

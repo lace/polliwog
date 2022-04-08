@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.0-alpha.0 (Apr. 8, 2022)
+
+- Rework serialization and deserialization
+    - Publish JSON Schema and TypeScript types.
+    - Change `Polyline.to_dict()` to `Polyline.serialize()`.
+    - Instead of serializing polyline edges, serialize `is_closed`.
+
+
 ## 2.4.0 (Dec. 9, 2021)
 
 ## New features
