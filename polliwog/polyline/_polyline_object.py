@@ -79,15 +79,13 @@ class Polyline(object):
         v = None if self.v is None else np.copy(self.v)
         return self.__class__(v, is_closed=self.is_closed)
 
-        if decimals is None:
-            decimals = self.DEFAULT_DECIMALS
     def serialize(self, decimals=None):
         """
         Return a JSON representation of this polyline, with vertices rounded to
         the specified precision.
 
         The schema is defined in `types/src/schema.json`.
-        
+
         Args:
             decimals (int): The desired number of decimal places. The default is
             `DEFAULT_DECIMALS`.
@@ -95,6 +93,9 @@ class Polyline(object):
         Returns:
             dict: The JSON representation.
         """
+        if decimals is None:
+            decimals = self.DEFAULT_DECIMALS
+
         rounded = self.rounded(decimals=decimals)
         return {
             "vertices": rounded.v.tolist(),
@@ -133,7 +134,7 @@ class Polyline(object):
         Create a Polyline from the given JSON representation.
 
         The schema is defined in `types/src/schema.json`.
-        
+
         Args:
             data (dict): The JSON representation.
 
