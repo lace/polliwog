@@ -4,14 +4,14 @@
     "Plane": {
       "additionalProperties": false,
       "properties": {
-        "normal": {
+        "referencePoint": {
           "$ref": "#/definitions/Vector3"
         },
-        "referencePoint": {
+        "unitNormal": {
           "$ref": "#/definitions/Vector3"
         }
       },
-      "required": ["referencePoint", "normal"],
+      "required": ["referencePoint", "unitNormal"],
       "type": "object"
     },
     "Polyline": {

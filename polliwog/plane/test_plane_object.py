@@ -279,6 +279,47 @@ def test_fit_from_points():
     assert angle % np.pi < 1e-6
 
 
+def test_serialize():
+    reference_point = [1.0, 2.0, 3.0]
+    normal = [0.0, 1.0, 0.0]
+
+    serialized = Plane(np.array(reference_point), np.array(normal)).serialize()
+
+    assert serialized == {
+        "referencePoint": reference_point,
+        "unitNormal": normal,
+    }
+
+    Plane.validate(serialized)
+
+
+def test_serialize_decimals():
+    assert Plane(
+        np.array([0.1234567, 0.0, 0.0]), np.array([1.000000005, 0.0, 0.0])
+    ).serialize(position_decimals=1, direction_decimals=2) == {
+        "referencePoint": [0.1, 0.0, 0.0],
+        "unitNormal": [1.0, 0.0, 0.0],
+    }
+
+
+def test_deserialize():
+    reference_point = [1.0, 2.0, 3.0]
+    normal = [0.0, 1.0, 0.0]
+
+    deserialized = Plane.deserialize(
+        {
+            "referencePoint": reference_point,
+            "unitNormal": normal,
+        }
+    )
+
+    assert isinstance(deserialized, Plane)
+    np.testing.assert_array_equal(
+        deserialized.reference_point, np.array(reference_point)
+    )
+    np.testing.assert_array_equal(deserialized.normal, np.array(normal))
+
+
 def test_line_plane_intersection():
     # x-z plane
     normal = np.array([0.0, 1.0, 0.0])

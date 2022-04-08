@@ -7,5 +7,5 @@ export interface Polyline {
 
 export interface Plane {
   referencePoint: Vector3
-  normal: Vector3
+  unitNormal: Vector3
 }
