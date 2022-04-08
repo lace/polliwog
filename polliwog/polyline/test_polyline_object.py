@@ -743,13 +743,13 @@ def test_intersect_plane():
 
     expected = np.array([[1.0, 7.5, 0.0], [0.0, 7.5, 0.0]])
     actual = polyline.intersect_plane(
-        Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
+        Plane(reference_point=np.array([0.0, 7.5, 0.0]), normal=vg.basis.y)
     )
 
     np.testing.assert_array_equal(actual, expected)
 
     intersection_points, edge_indices = polyline.intersect_plane(
-        Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y),
+        Plane(reference_point=np.array([0.0, 7.5, 0.0]), normal=vg.basis.y),
         ret_edge_indices=True,
     )
     np.testing.assert_array_equal(intersection_points, expected)
@@ -777,7 +777,7 @@ def test_intersect_plane_with_vertex_on_plane():
 
     expected = np.array([[1.0, 7.5, 0.0], [0.0, 7.5, 0.0]])
     actual = polyline.intersect_plane(
-        Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
+        Plane(reference_point=np.array([0.0, 7.5, 0.0]), normal=vg.basis.y)
     )
 
     np.testing.assert_array_equal(actual, expected)
@@ -803,7 +803,7 @@ def test_sliced_by_plane_closed():
         is_closed=False,
     )
     actual = original.sliced_by_plane(
-        Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
+        Plane(reference_point=np.array([0.0, 7.5, 0.0]), normal=vg.basis.y)
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected.v)
@@ -823,7 +823,7 @@ def test_sliced_by_plane_closed():
         is_closed=False,
     )
     actual = original.sliced_by_plane(
-        Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.neg_y)
+        Plane(reference_point=np.array([0.0, 7.5, 0.0]), normal=vg.basis.neg_y)
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected.v)
@@ -837,14 +837,14 @@ def test_sliced_by_plane_closed():
         ValueError, match="Polyline intersects the plane too many times"
     ):
         zigzag.sliced_by_plane(
-            Plane(point_on_plane=np.array([2.5, 0.0, 0.0]), unit_normal=vg.basis.x)
+            Plane(reference_point=np.array([2.5, 0.0, 0.0]), normal=vg.basis.x)
         )
 
     with pytest.raises(
         ValueError, match="Polyline has no vertices in front of the plane"
     ):
         original.sliced_by_plane(
-            Plane(point_on_plane=np.array([10.0, 0.0, 0.0]), unit_normal=vg.basis.x)
+            Plane(reference_point=np.array([10.0, 0.0, 0.0]), normal=vg.basis.x)
         )
 
 
@@ -875,7 +875,7 @@ def test_sliced_by_plane_closed_on_vertex():
         is_closed=False,
     )
     actual = original.sliced_by_plane(
-        Plane(point_on_plane=np.array([0.0, 1.0, 0.0]), unit_normal=vg.basis.y)
+        Plane(reference_point=np.array([0.0, 1.0, 0.0]), normal=vg.basis.y)
     )
     np.testing.assert_array_almost_equal(actual.v, expected.v)
     assert actual.is_closed is False
@@ -887,7 +887,7 @@ def test_sliced_by_plane_closed_one_vertex():
         ValueError, match="Polyline has no vertices in front of the plane"
     ):
         original.sliced_by_plane(
-            Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
+            Plane(reference_point=np.array([0.0, 7.5, 0.0]), normal=vg.basis.y)
         )
 
 
@@ -907,7 +907,7 @@ def test_sliced_by_plane_open():
 
     expected_vs = np.array([[1.0, 7.5, 0.0], [1.0, 8.0, 0.0]])
     actual = original.sliced_by_plane(
-        Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.y)
+        Plane(reference_point=np.array([0.0, 7.5, 0.0]), normal=vg.basis.y)
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected_vs)
@@ -923,7 +923,7 @@ def test_sliced_by_plane_open():
         ]
     )
     actual = original.sliced_by_plane(
-        Plane(point_on_plane=np.array([0.0, 7.5, 0.0]), unit_normal=vg.basis.neg_y)
+        Plane(reference_point=np.array([0.0, 7.5, 0.0]), normal=vg.basis.neg_y)
     )
 
     np.testing.assert_array_almost_equal(actual.v, expected_vs)
@@ -931,13 +931,13 @@ def test_sliced_by_plane_open():
 
     with pytest.raises(ValueError):
         original.sliced_by_plane(
-            Plane(point_on_plane=np.array([0.0, 15.0, 0.0]), unit_normal=vg.basis.neg_y)
+            Plane(reference_point=np.array([0.0, 15.0, 0.0]), normal=vg.basis.neg_y)
         )
 
     actual = original.sliced_by_plane(
         Plane(
-            point_on_plane=np.array([0.5, 0.0, 0.0]),
-            unit_normal=vg.normalize(np.array([1.0, -1.0, 0.0])),
+            reference_point=np.array([0.5, 0.0, 0.0]),
+            normal=vg.normalize(np.array([1.0, -1.0, 0.0])),
         )
     )
     expected_vs = np.array([[0.5, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.5, 0.0]])

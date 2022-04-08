@@ -6,7 +6,7 @@ from ..tri import FACE_DTYPE
 def slice_triangles_by_plane(
     vertices,
     faces,
-    point_on_plane,
+    plane_reference_point,
     plane_normal,
     faces_to_slice=None,
     ret_face_mapping=False,
@@ -24,7 +24,7 @@ def slice_triangles_by_plane(
 
     vg.shape.check(locals(), "vertices", (-1, 3))
     vg.shape.check(locals(), "faces", (-1, 3))
-    vg.shape.check(locals(), "point_on_plane", (3,))
+    vg.shape.check(locals(), "plane_reference_point", (3,))
     vg.shape.check(locals(), "plane_normal", (3,))
     if faces_to_slice is not None:
         vg.shape.check(locals(), "faces_to_slice", (-1,))
@@ -34,7 +34,7 @@ def slice_triangles_by_plane(
         vertices=vertices,
         faces=faces,
         plane_normal=plane_normal,
-        plane_origin=point_on_plane,
+        plane_origin=plane_reference_point,
         face_index=None if faces_to_slice is None else faces_to_slice.nonzero()[0],
         return_face_mapping=ret_face_mapping,
     )

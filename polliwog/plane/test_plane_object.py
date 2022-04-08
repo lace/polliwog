@@ -91,7 +91,7 @@ def test_returns_unsigned_distances_for_diagonal_plane_at_origin():
 
 
 def test_signed_distance_validation():
-    plane = Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y)
+    plane = Plane(reference_point=np.array([0, 10, 0]), normal=vg.basis.y)
 
     with pytest.raises(ValueError):
         plane.signed_distance(np.array([[[1.0]]]))
@@ -223,25 +223,25 @@ def test_canonical_point():
 
 def test_project_point():
     np.testing.assert_array_equal(
-        Plane(
-            point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
-        ).project_point(np.array([10, 20, -5])),
+        Plane(reference_point=np.array([0, 10, 0]), normal=vg.basis.y).project_point(
+            np.array([10, 20, -5])
+        ),
         np.array([10, 10, -5]),
     )
 
 
 def test_project_point_vectorized():
     np.testing.assert_array_equal(
-        Plane(
-            point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
-        ).project_point(np.array([[10, 20, -5], [2, 7, 203]])),
+        Plane(reference_point=np.array([0, 10, 0]), normal=vg.basis.y).project_point(
+            np.array([[10, 20, -5], [2, 7, 203]])
+        ),
         np.array([[10, 10, -5], [2, 10, 203]]),
     )
 
 
 def test_mirror_point():
     np.testing.assert_array_equal(
-        Plane(point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y).mirror_point(
+        Plane(reference_point=np.array([0, 10, 0]), normal=vg.basis.y).mirror_point(
             np.array([10, 20, -5])
         ),
         np.array([10, 0, -5]),
