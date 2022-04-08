@@ -100,7 +100,7 @@ class Plane(object):
             "referencePoint": np.around(
                 self.reference_point, position_decimals
             ).tolist(),
-            "unitNormal": np.around(self.normal, position_decimals).tolist(),
+            "unitNormal": np.around(self.normal, direction_decimals).tolist(),
         }
 
     @classmethod
