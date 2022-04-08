@@ -10,7 +10,7 @@ from ._apply import apply_transform
 from ._rotation import rotation_from_up_and_look
 
 
-class CompositeTransform(object):
+class CompositeTransform:
     """
     Composite transform using homogeneous coordinates.
 
