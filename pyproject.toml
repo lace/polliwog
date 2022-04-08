@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "polliwog"
-version = "3.0.0-alpha.0"
+version = "2.4.0"
 description = "2D and 3D computational geometry library"
 authors = ["Paul Melnikow <github@paulmelnikow.com>", "Metabolize, Body Labs, and other contributors"]
 license = "BSD-2-Clause"
