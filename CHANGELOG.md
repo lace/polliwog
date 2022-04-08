@@ -2,10 +2,10 @@
 
 ## 3.0.0-alpha.0 (Apr. 8, 2022)
 
-- Polyline, Plane: Rework serialization and deserialization.
-    - Change `to_dict()` to `serialize()`.
-    - Instead of serializing edges, serialize `is_closed` (as `isClosed`).
+- Rework serialization and deserialization
     - Publish JSON Schema and TypeScript types.
+    - Change `Polyline.to_dict()` to `Polyline.serialize()`.
+    - Instead of serializing polyline edges, serialize `is_closed`.
 
 
 ## 2.4.0 (Dec. 9, 2021)
