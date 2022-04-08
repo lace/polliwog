@@ -15,6 +15,8 @@ class Polyline(object):
     you can mutate a polyline by updating `polyline.v` or `polyline.is_closed`.
     """
 
+    DEFAULT_DECIMALS = 6
+
     def __init__(self, v, is_closed=False):
         """
         v: np.array containing points in 3-space.
@@ -76,11 +78,23 @@ class Polyline(object):
         v = None if self.v is None else np.copy(self.v)
         return self.__class__(v, is_closed=self.is_closed)
 
-    def to_dict(self, decimals=3):
+    def serialize(self, decimals=DEFAULT_DECIMALS):
         return {
-            "vertices": [np.around(v, decimals=decimals).tolist() for v in self.v],
-            "edges": self.e,
+            "vertices": np.around(self.v, decimals).tolist(),
+            "is_closed": self.is_closed,
         }
+
+    @classmethod
+    def deserialize(cls, data):
+        assert set(data.keys()) == set(["vertices", "is_closed"])
+
+        vertices = np.array(data["vertices"])
+        vg.shape.check_value(vertices, (-1, 3))
+
+        is_closed = data["is_closed"]
+        assert isinstance(is_closed, bool)
+
+        return cls(vertices=vertices, is_closed=is_closed)
 
     def _update_edges(self):
         if self.v is None:

@@ -1,0 +1,30 @@
+{
+  "name": "polliwog-types",
+  "version": "0.1.0",
+  "description": "TypeScript types and JSON Schema for polliwog, the Python 2D and 3D computational geometry library",
+  "main": "src",
+  "scripts": {
+    "schema:check": "1schema check",
+    "schema:update": "1schema update",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "check-package-version": "if [ $(cd .. && poetry version --short) = $(node -e \"console.log(require('./package.json').version)\") ]; then exit 0; else echo 'Package versions are not in sync'; exit 1; fi;",
+    "prepublishOnly": "npm run check-package-version"
+  },
+  "files": [
+    "src/*.ts",
+    "src/generated/*.json"
+  ],
+  "author": "Metabolize",
+  "license": "MIT",
+  "repository": "metabolize/werkit",
+  "keywords": [
+    "computational-geometry",
+    "geometry",
+    "2d-geometry",
+    "3d-geometry",
+    "polyline"
+  ],
+  "devDependencies": {
+    "1schema": "^0.1.5"
+  }
+}
