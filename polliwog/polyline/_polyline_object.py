@@ -96,10 +96,9 @@ class Polyline(object):
         if decimals is None:
             decimals = self.DEFAULT_DECIMALS
 
-        rounded = self.rounded(decimals=decimals)
         return {
-            "vertices": rounded.v.tolist(),
-            "isClosed": rounded.is_closed,
+            "vertices": np.around(self.v, decimals).tolist(),
+            "isClosed": self.is_closed,
         }
 
     @classmethod
