@@ -15,7 +15,7 @@
     "src/generated/*.json"
   ],
   "author": "Metabolize",
-  "license": "MIT",
+  "license": "BSD-2-Clause",
   "repository": "metabolize/werkit",
   "keywords": [
     "computational-geometry",

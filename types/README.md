@@ -25,4 +25,4 @@ Pull requests welcome!
 
 ## License
 
-The project is licensed under the MIT License.
+The project is licensed under the two-clause BSD license.
