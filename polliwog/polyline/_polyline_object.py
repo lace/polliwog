@@ -15,6 +15,7 @@ class Polyline(object):
     you can mutate a polyline by updating `polyline.v` or `polyline.is_closed`.
     """
 
+    POSITION_DTYPE = np.float64
     DEFAULT_DECIMALS = 6
 
     def __init__(self, v, is_closed=False):
@@ -78,23 +79,40 @@ class Polyline(object):
         v = None if self.v is None else np.copy(self.v)
         return self.__class__(v, is_closed=self.is_closed)
 
-    def serialize(self, decimals=DEFAULT_DECIMALS):
+    def serialize(self, decimals=None):
+        if decimals is None:
+            decimals = self.DEFAULT_DECIMALS
         return {
             "vertices": np.around(self.v, decimals).tolist(),
-            "is_closed": self.is_closed,
+            "isClosed": self.is_closed,
         }
 
     @classmethod
+    def validate(cls, json_data):
+        """
+        Validate the JSON representation.
+        """
+        from .._common.pathlib import SCHEMA_PATH
+        from .._common.serialization import validator_for
+
+        try:
+            validator = cls._validator
+        except AttributeError:
+            validator = cls._validator = validator_for(
+                schema_path=SCHEMA_PATH,
+                ref="#/definitions/Polyline",
+            )
+
+        validator.validate(json_data)
+
+    @classmethod
     def deserialize(cls, data):
-        assert set(data.keys()) == set(["vertices", "is_closed"])
+        cls.validate(data)
 
-        vertices = np.array(data["vertices"])
-        vg.shape.check_value(vertices, (-1, 3))
-
-        is_closed = data["is_closed"]
-        assert isinstance(is_closed, bool)
-
-        return cls(vertices=vertices, is_closed=is_closed)
+        return cls(
+            v=np.array(data["vertices"], dtype=cls.POSITION_DTYPE),
+            is_closed=data["isClosed"],
+        )
 
     def _update_edges(self):
         if self.v is None:
@@ -369,7 +387,8 @@ class Polyline(object):
                     itertools.chain(
                         *zip(
                             splits_of_original_vs,
-                            vs_to_insert + [np.empty((0, 3), dtype=np.float64)],
+                            vs_to_insert
+                            + [np.empty((0, 3), dtype=self.POSITION_DTYPE)],
                         )
                     )
                 )
