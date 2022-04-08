@@ -98,6 +98,9 @@ class Polyline(object):
         try:
             validator = cls._validator
         except AttributeError:
+            validator = None
+
+        if validator is None:
             validator = cls._validator = validator_for(
                 schema_path=SCHEMA_PATH,
                 ref="#/definitions/Polyline",
