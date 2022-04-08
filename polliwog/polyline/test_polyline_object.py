@@ -54,7 +54,7 @@ def test_serialize():
         [1.0, 2.0, 0.0],
     ]
 
-    serialized = Polyline(np.array(vertices), is_closed=True).serialize(decimals=3)
+    serialized = Polyline(np.array(vertices), is_closed=True).serialize()
 
     assert serialized == {
         "vertices": vertices,
@@ -62,6 +62,15 @@ def test_serialize():
     }
 
     Polyline.validate(serialized)
+
+
+def test_serialize_decimals():
+    assert Polyline(
+        np.array([[0.1234, 0.0, 0.0], [0.2345, 0.0, 0.0]]), is_closed=True
+    ).serialize(decimals=1) == {
+        "vertices": [[0.1, 0.0, 0.0], [0.2, 0.0, 0.0]],
+        "isClosed": True,
+    }
 
 
 def test_deserialize():
