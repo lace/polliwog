@@ -79,18 +79,37 @@ class Polyline(object):
         v = None if self.v is None else np.copy(self.v)
         return self.__class__(v, is_closed=self.is_closed)
 
-    def serialize(self, decimals=None):
         if decimals is None:
             decimals = self.DEFAULT_DECIMALS
+    def serialize(self, decimals=None):
+        """
+        Return a JSON representation of this polyline, with vertices rounded to
+        the specified precision.
+
+        The schema is defined in `types/src/schema.json`.
+        
+        Args:
+            decimals (int): The desired number of decimal places. The default is
+            `DEFAULT_DECIMALS`.
+
+        Returns:
+            dict: The JSON representation.
+        """
+        rounded = self.rounded(decimals=decimals)
         return {
-            "vertices": np.around(self.v, decimals).tolist(),
-            "isClosed": self.is_closed,
+            "vertices": rounded.v.tolist(),
+            "isClosed": rounded.is_closed,
         }
 
     @classmethod
-    def validate(cls, json_data):
+    def validate(cls, data):
         """
-        Validate the JSON representation.
+        Validate a Polyline JSON representation.
+
+        The schema is defined in `types/src/schema.json`.
+
+        Args:
+            data (dict): The JSON representation.
         """
         from .._common.pathlib import SCHEMA_PATH
         from .._common.serialization import validator_for
@@ -106,10 +125,21 @@ class Polyline(object):
                 ref="#/definitions/Polyline",
             )
 
-        validator.validate(json_data)
+        validator.validate(data)
 
     @classmethod
     def deserialize(cls, data):
+        """
+        Create a Polyline from the given JSON representation.
+
+        The schema is defined in `types/src/schema.json`.
+        
+        Args:
+            data (dict): The JSON representation.
+
+        Returns:
+            Polyline: The deserialized polyline.
+        """
         cls.validate(data)
 
         return cls(
