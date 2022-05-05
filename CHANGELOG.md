@@ -1,7 +1,5 @@
 # Changelog
 
-## 3.0.0-alpha.1 (Apr. 13, 2022)
-
 ## 3.0.0-alpha.0 (Apr. 8, 2022)
 
 - Rework serialization and deserialization
