@@ -2,7 +2,7 @@ from vg.compat import v2 as vg
 from ._composite_transform import CompositeTransform
 
 
-class CoordinateManager(object):
+class CoordinateManager:
     """
     Example:
         >>> coordinate_manager = CoordinateManager()

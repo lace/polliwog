@@ -3,7 +3,7 @@ from vg.compat import v2 as vg
 from ..plane._plane_object import Plane
 
 
-class Box(object):
+class Box:
     """
     An axis-aligned cuboid or rectangular prism. It's defined by an origin
     point, which is its minimum point in each dimension, and non-negative size

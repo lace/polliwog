@@ -93,17 +93,17 @@ def test_deserialize():
     assert deserialized.is_closed is True
 
 
-def test_copy():
-    original_vs = np.array(
+def test_immutability():
+    vertices = np.array(
         [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
     )
-    polyline = Polyline(v=original_vs.copy(), is_closed=False)
-    copy_of_polyline = polyline.copy()
-    assert polyline is not copy_of_polyline
-    assert polyline.is_closed == copy_of_polyline.is_closed
-    np.testing.assert_array_equal(polyline.v, copy_of_polyline.v)
-    polyline.v[0] = np.array([2.0, 3.0, 4.0])
-    np.testing.assert_array_equal(copy_of_polyline.v, original_vs)
+    working_copy = vertices.copy()
+
+    polyline = Polyline(v=working_copy, is_closed=False)
+    np.testing.assert_array_equal(polyline.v, vertices)
+
+    working_copy[0] = np.array([2.0, 3.0, 4.0])
+    np.testing.assert_array_equal(polyline.v, vertices)
 
 
 def test_bounding_box():
@@ -193,18 +193,6 @@ def test_with_insertions():
     )
 
 
-def test_update_is_closed():
-    example_vs = np.array(
-        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
-    )
-    polyline = Polyline(example_vs, is_closed=False)
-    assert polyline.num_e == 3
-    assert polyline.is_closed is False
-    polyline.is_closed = True
-    assert polyline.num_e == 4
-    assert polyline.is_closed is True
-
-
 def test_num_v_num_e():
     example_vs = np.array(
         [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]]
@@ -282,10 +270,10 @@ def test_path_centroid():
 
 
 def test_length_of_empty_polyline():
-    polyline = Polyline(None)
+    polyline = Polyline(np.zeros((0, 3)))
     assert polyline.total_length == 0
 
-    polyline = Polyline(None, is_closed=True)
+    polyline = Polyline(np.zeros((0, 3)), is_closed=True)
     assert polyline.total_length == 0
 
 

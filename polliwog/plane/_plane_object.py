@@ -8,7 +8,7 @@ from ._plane_functions import (
 )
 
 
-class Plane(object):
+class Plane:
     """
     An immutable 2D plane (not a hyperplane) in 3D space.
 
