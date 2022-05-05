@@ -17,6 +17,9 @@ class Plane:
             NumPy array with three coordinates.
         normal (np.ndarray): The plane normal vector, with unit length, as a
             NumPy array with three coordinates.
+        direction_decimals (int): The desired number of decimal places for
+            validating that `normal` has unit length. The default is
+            `DEFAULT_DIRECTION_DECIMALS`.
 
     Note:
         To construct a plane from a non-unit length normal, use
@@ -27,13 +30,14 @@ class Plane:
     DEFAULT_POSITION_DECIMALS = 6
     DEFAULT_DIRECTION_DECIMALS = 6
 
-    def __init__(self, reference_point, normal):
+    def __init__(self, reference_point, normal, direction_decimals=None):
+        if direction_decimals is None:
+            direction_decimals = self.DEFAULT_DIRECTION_DECIMALS
+
         vg.shape.check(locals(), "reference_point", (3,))
         vg.shape.check(locals(), "normal", (3,))
 
-        if not vg.almost_unit_length(
-            normal, atol=0.1**self.DEFAULT_DIRECTION_DECIMALS
-        ):
+        if not vg.almost_unit_length(normal, atol=0.1**direction_decimals):
             raise ValueError("normal should have unit length")
 
         self.reference_point = np.copy(reference_point)
