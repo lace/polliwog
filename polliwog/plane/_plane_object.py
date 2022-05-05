@@ -8,7 +8,7 @@ from ._plane_functions import (
 )
 
 
-class Plane(object):
+class Plane:
     """
     A 2-D plane in 3-space (not a hyperplane).
 

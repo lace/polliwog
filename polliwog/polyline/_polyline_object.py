@@ -1,18 +1,17 @@
 import numpy as np
 from vg.compat import v2 as vg
+from ._edges import edges_for
 
 
-class Polyline(object):
+class Polyline:
     """
-    Represent the geometry of a polygonal chain in 3-space. The chain may be
-    open or closed.
+    An immutable polygonal chain in 3-space, which may be open or closed.
 
     There are no constraints on the geometry. For example, the chain may be
     simple or self-intersecting, and the points need not be unique.
 
     The methods do not mutate; they create new polylines which exhibit the
-    requested mutation. However, immutability is not enforced. If you wish
-    you can mutate a polyline by updating `polyline.v` or `polyline.is_closed`.
+    requested mutation.
     """
 
     POSITION_DTYPE = np.float64
@@ -20,15 +19,22 @@ class Polyline(object):
 
     def __init__(self, v, is_closed=False):
         """
-        v: np.array containing points in 3-space.
-        is_closed: True indicates a closed chain, which has an extra
-          segment connecting the last point back to the first
-          point.
+        Args:
+            v (np.ndarray): The points in 3-space.
+            is_closed (bool): `True` indicates a closed chain, which has an
+                extra segment connecting the last point back to the first
+                point.
 
         """
-        # Avoid invoking _update_edges before setting closed and v.
-        self.__dict__["is_closed"] = is_closed
+        num_v = vg.shape.check(locals(), "v", (-1, 3))
+        v = np.copy(v)
+        v.setflags(write=False)
         self.v = v
+
+        self.is_closed = is_closed
+
+        self.e = edges_for(num_v=num_v, is_closed=is_closed)
+        self.e.setflags(write=False)
 
     @classmethod
     def join(cls, *polylines, is_closed=False):
@@ -70,14 +76,6 @@ class Polyline(object):
         Return the number of segments in the polyline.
         """
         return len(self.e)
-
-    def copy(self):
-        """
-        Return a copy of this polyline.
-
-        """
-        v = None if self.v is None else np.copy(self.v)
-        return self.__class__(v, is_closed=self.is_closed)
 
     def rounded(self, decimals=None):
         """
@@ -161,61 +159,6 @@ class Polyline(object):
             is_closed=data["isClosed"],
         )
 
-    def _update_edges(self):
-        if self.v is None:
-            self.__dict__["e"] = None
-            return
-
-        num_vertices = self.v.shape[0]
-        num_edges = num_vertices if self.is_closed else num_vertices - 1
-
-        edges = np.vstack([np.arange(num_edges), np.arange(num_edges) + 1]).T
-
-        if self.is_closed:
-            edges[-1][1] = 0
-
-        edges.flags.writeable = False
-
-        self.__dict__["e"] = edges
-
-    @property
-    def v(self):
-        return self.__dict__["v"]
-
-    @v.setter
-    def v(self, new_v):
-        """
-        Update the vertices to a new array-like thing containing points
-        in 3D space. Set to None for an empty polyline.
-
-        """
-        if new_v is not None:
-            vg.shape.check_value(new_v, (-1, 3))
-        self.__dict__["v"] = new_v
-        self._update_edges()
-
-    @property
-    def is_closed(self):
-        return self.__dict__["is_closed"]
-
-    @is_closed.setter
-    def is_closed(self, new_is_closed):
-        """
-        Update whether the polyline is closed or open.
-
-        """
-        self.__dict__["is_closed"] = new_is_closed
-        self._update_edges()
-
-    @property
-    def e(self):
-        """
-        Return the edges of the polyline: an array containing a pair of
-        vertex indices for each edge. This is derived automatically from
-        `self.v` and `self.is_closed` whenever those values are set.
-        """
-        return self.__dict__["e"]
-
     @property
     def segments(self):
         """
@@ -234,14 +177,11 @@ class Polyline(object):
     @property
     def segment_lengths(self):
         """
-        The length of each of the segments.
+        The lengths of each segment.
 
         """
-        if self.e is None:
-            return np.zeros(0)
-        else:
-            segments = self.segments
-            return vg.euclidean_distance(segments[:, 0], segments[:, 1])
+        segments = self.segments
+        return vg.euclidean_distance(segments[:, 0], segments[:, 1])
 
     @property
     def total_length(self):
