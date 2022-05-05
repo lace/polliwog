@@ -50,7 +50,7 @@ class Plane:
         return "<Plane of {} through {}>".format(self.normal, self.reference_point)
 
     @classmethod
-    def from_point_and_normal(cls, reference_point, normal):
+    def from_point_and_normal(cls, reference_point, normal, direction_decimals=None):
         """
         Create a plane using the given reference point and normal vector, which
         will be normalized for you.
@@ -60,11 +60,18 @@ class Plane:
                 NumPy array with three coordinates.
             normal (np.ndarray): The plane normal vector, with unit length, as a
                 NumPy array with three coordinates.
+            direction_decimals (int): The desired number of decimal places for
+                validating that `normal` has unit length. The default is
+                `DEFAULT_DIRECTION_DECIMALS`.
 
         Returns:
             Plane: The requested plane.
         """
-        return cls(reference_point=reference_point, normal=vg.normalize(normal))
+        return cls(
+            reference_point=reference_point,
+            normal=vg.normalize(normal),
+            direction_decimals=direction_decimals,
+        )
 
     @classmethod
     def from_points(cls, p1, p2, p3):
@@ -80,7 +87,7 @@ class Plane:
         return cls(reference_point=p1, normal=plane_normal_from_points(points))
 
     @classmethod
-    def from_points_and_vector(cls, p1, p2, vector):
+    def from_points_and_vector(cls, p1, p2, vector, direction_decimals=None):
         """
         Compute a plane which contains two given points and the given
         vector. Its reference point will be p1.
@@ -94,13 +101,20 @@ class Plane:
         your result plane should be perpendicular, and specify vector
         as its normal vector.
 
+        Args:
+            direction_decimals (int): The desired number of decimal places for
+                validating that `normal` has unit length. The default is
+                `DEFAULT_DIRECTION_DECIMALS`.
+
         """
         vg.shape.check(locals(), "p1", (3,))
         vg.shape.check(locals(), "p2", (3,))
         vg.shape.check(locals(), "vector", (3,))
 
         return cls.from_point_and_normal(
-            reference_point=p1, normal=np.cross(p2 - p1, vector)
+            reference_point=p1,
+            normal=np.cross(p2 - p1, vector),
+            direction_decimals=direction_decimals,
         )
 
     @classmethod
