@@ -119,8 +119,8 @@ def test_signed_distances_for_diagonal_plane():
             points=np.array([[425.0, 425.0, 25.0], [-500.0, -500.0, 25.0]]),
             # Diagonal plane @ origin - draw a picture!
             plane_equations=Plane(
-                point_on_plane=np.array([1.0, 1.0, 0.0]),
-                unit_normal=vg.normalize(np.array([1.0, 1.0, 0.0])),
+                reference_point=np.array([1.0, 1.0, 0.0]),
+                normal=vg.normalize(np.array([1.0, 1.0, 0.0])),
             ).equation,
         ),
         np.array(
@@ -144,7 +144,7 @@ def test_project_point_to_plane():
         project_point_to_plane(
             points=np.array([10, 20, -5]),
             plane_equations=Plane(
-                point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                reference_point=np.array([0, 10, 0]), normal=vg.basis.y
             ).equation,
         ),
         np.array([10, 10, -5]),
@@ -156,7 +156,7 @@ def test_project_point_to_plane_vectorized_points():
         project_point_to_plane(
             points=np.array([[10, 20, -5], [2, 7, 203]]),
             plane_equations=Plane(
-                point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                reference_point=np.array([0, 10, 0]), normal=vg.basis.y
             ).equation,
         ),
         np.array([[10, 10, -5], [2, 10, 203]]),
@@ -170,10 +170,10 @@ def test_project_point_to_plane_vectorized_planes():
             plane_equations=np.array(
                 [
                     Plane(
-                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                        reference_point=np.array([0, 10, 0]), normal=vg.basis.y
                     ).equation,
                     Plane(
-                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                        reference_point=np.array([0, 10, 0]), normal=vg.basis.y
                     ).equation,
                 ]
             ),
@@ -189,10 +189,10 @@ def test_project_point_to_plane_vectorized_both():
             plane_equations=np.array(
                 [
                     Plane(
-                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                        reference_point=np.array([0, 10, 0]), normal=vg.basis.y
                     ).equation,
                     Plane(
-                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                        reference_point=np.array([0, 10, 0]), normal=vg.basis.y
                     ).equation,
                 ]
             ),
@@ -209,7 +209,7 @@ def test_project_point_to_plane_validation():
         project_point_to_plane(
             points=np.array([[[1.0]]]),
             plane_equations=Plane(
-                point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                reference_point=np.array([0, 10, 0]), normal=vg.basis.y
             ).equation,
         )
 
@@ -222,10 +222,10 @@ def test_project_point_to_plane_validation():
             plane_equations=np.array(
                 [
                     Plane(
-                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                        reference_point=np.array([0, 10, 0]), normal=vg.basis.y
                     ).equation,
                     Plane(
-                        point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                        reference_point=np.array([0, 10, 0]), normal=vg.basis.y
                     ).equation,
                 ]
             ),
@@ -237,7 +237,7 @@ def test_mirror_point_across_plane_vectorized_points():
         mirror_point_across_plane(
             points=np.array([[10, 20, -5], [2, 7, 203]]),
             plane_equations=Plane(
-                point_on_plane=np.array([0, 10, 0]), unit_normal=vg.basis.y
+                reference_point=np.array([0, 10, 0]), normal=vg.basis.y
             ).equation,
         ),
         np.array([[10, 0, -5], [2, 13, 203]]),

@@ -48,7 +48,7 @@ def test_slice_cube_corner():
     common_kwargs = dict(
         vertices=cube_vertices,
         faces=cube_faces,
-        point_on_plane=cube_extent - 0.05,
+        plane_reference_point=cube_extent - 0.05,
         plane_normal=np.array([1, 1, 1]),
     )
 
@@ -91,7 +91,7 @@ def test_slice_cube_submesh():
     _, sliced_faces = slice_triangles_by_plane(
         vertices=cube_vertices,
         faces=cube_faces,
-        point_on_plane=cube_extent - 0.05,
+        plane_reference_point=cube_extent - 0.05,
         plane_normal=np.array([1, 1, 1]),
         faces_to_slice=mask,
     )
@@ -107,7 +107,7 @@ def test_slice_cube_top():
     common_kwargs = dict(
         vertices=cube_vertices,
         faces=cube_faces,
-        point_on_plane=cube_extent - 0.05,
+        plane_reference_point=cube_extent - 0.05,
         plane_normal=vg.basis.z,
     )
 
@@ -160,10 +160,10 @@ def test_slice_cube_edge_multiple_planes():
         *slice_triangles_by_plane(
             vertices=cube_vertices,
             faces=cube_faces,
-            point_on_plane=cube_extent - 0.05,
+            plane_reference_point=cube_extent - 0.05,
             plane_normal=vg.basis.z,
         ),
-        point_on_plane=cube_extent - 0.05,
+        plane_reference_point=cube_extent - 0.05,
         plane_normal=vg.basis.y,
     )
 
@@ -178,7 +178,7 @@ def test_slice_cube_all_in_front():
     common_kwargs = dict(
         vertices=cube_vertices,
         faces=cube_faces,
-        point_on_plane=cube_origin,
+        plane_reference_point=cube_origin,
         plane_normal=vg.basis.x,
     )
 
@@ -201,7 +201,7 @@ def test_slice_cube_all_in_back():
     common_kwargs = dict(
         vertices=cube_vertices,
         faces=cube_faces,
-        point_on_plane=cube_origin + 5,
+        plane_reference_point=cube_origin + 5,
         plane_normal=vg.basis.x,
     )
 
@@ -223,7 +223,7 @@ def test_slice_empty():
     common_kwargs = dict(
         vertices=np.zeros((0, 3), dtype=np.float64),
         faces=np.zeros((0, 3), dtype=FACE_DTYPE),
-        point_on_plane=np.zeros(3),
+        plane_reference_point=np.zeros(3),
         plane_normal=vg.basis.x,
     )
 

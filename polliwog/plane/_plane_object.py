@@ -10,33 +10,68 @@ from ._plane_functions import (
 
 class Plane:
     """
-    A 2-D plane in 3-space (not a hyperplane).
+    An immutable 2D plane (not a hyperplane) in 3D space.
 
     Args:
-        point_on_plane (np.arraylike): A reference point on the plane, as a
+        reference_point (np.ndarray): A reference point on the plane, as a
             NumPy array with three coordinates.
-        unit_normal (np.arraylike): The plane normal vector, as a NumPy
-            array with three coordinates.
+        normal (np.ndarray): The plane normal vector, with unit length, as a
+            NumPy array with three coordinates.
+        direction_decimals (int): The desired number of decimal places for
+            validating that `normal` has unit length. The default is
+            `DEFAULT_DIRECTION_DECIMALS`.
+
+    Note:
+        To construct a plane from a non-unit length normal, use
+        `Plane.from_point_and_normal()`.
     """
 
     POSITION_DTYPE = np.float64
     DEFAULT_POSITION_DECIMALS = 6
     DEFAULT_DIRECTION_DECIMALS = 6
 
-    def __init__(self, point_on_plane, unit_normal):
-        vg.shape.check(locals(), "point_on_plane", (3,))
-        vg.shape.check(locals(), "unit_normal", (3,))
+    def __init__(self, reference_point, normal, direction_decimals=None):
+        if direction_decimals is None:
+            direction_decimals = self.DEFAULT_DIRECTION_DECIMALS
 
-        if vg.almost_zero(unit_normal):
-            raise ValueError("unit_normal should not be the zero vector")
+        vg.shape.check(locals(), "reference_point", (3,))
+        vg.shape.check(locals(), "normal", (3,))
 
-        unit_normal = vg.normalize(unit_normal)
+        if not vg.almost_unit_length(normal, atol=0.1**direction_decimals):
+            raise ValueError("normal should have unit length")
 
-        self._r0 = np.asarray(point_on_plane)
-        self._n = np.asarray(unit_normal)
+        self.reference_point = np.copy(reference_point)
+        self.reference_point.setflags(write=False)
+
+        self.normal = np.copy(normal)
+        self.normal.setflags(write=False)
 
     def __repr__(self):
         return "<Plane of {} through {}>".format(self.normal, self.reference_point)
+
+    @classmethod
+    def from_point_and_normal(cls, reference_point, normal, direction_decimals=None):
+        """
+        Create a plane using the given reference point and normal vector, which
+        will be normalized for you.
+
+        Args:
+            reference_point (np.ndarray): A reference point on the plane, as a
+                NumPy array with three coordinates.
+            normal (np.ndarray): The plane normal vector, with unit length, as a
+                NumPy array with three coordinates.
+            direction_decimals (int): The desired number of decimal places for
+                validating that `normal` has unit length. The default is
+                `DEFAULT_DIRECTION_DECIMALS`.
+
+        Returns:
+            Plane: The requested plane.
+        """
+        return cls(
+            reference_point=reference_point,
+            normal=vg.normalize(normal),
+            direction_decimals=direction_decimals,
+        )
 
     @classmethod
     def from_points(cls, p1, p2, p3):
@@ -49,10 +84,10 @@ class Plane:
         vg.shape.check(locals(), "p2", (3,))
         vg.shape.check(locals(), "p3", (3,))
         points = np.array([p1, p2, p3])
-        return cls(point_on_plane=p1, unit_normal=plane_normal_from_points(points))
+        return cls(reference_point=p1, normal=plane_normal_from_points(points))
 
     @classmethod
-    def from_points_and_vector(cls, p1, p2, vector):
+    def from_points_and_vector(cls, p1, p2, vector, direction_decimals=None):
         """
         Compute a plane which contains two given points and the given
         vector. Its reference point will be p1.
@@ -66,14 +101,21 @@ class Plane:
         your result plane should be perpendicular, and specify vector
         as its normal vector.
 
+        Args:
+            direction_decimals (int): The desired number of decimal places for
+                validating that `normal` has unit length. The default is
+                `DEFAULT_DIRECTION_DECIMALS`.
+
         """
         vg.shape.check(locals(), "p1", (3,))
         vg.shape.check(locals(), "p2", (3,))
         vg.shape.check(locals(), "vector", (3,))
 
-        normal = np.cross(p2 - p1, vector)
-
-        return cls(point_on_plane=p1, unit_normal=normal)
+        return cls.from_point_and_normal(
+            reference_point=p1,
+            normal=np.cross(p2 - p1, vector),
+            direction_decimals=direction_decimals,
+        )
 
     @classmethod
     def fit_from_points(cls, points):
@@ -110,8 +152,8 @@ class Plane:
         if direction_decimals is None:
             direction_decimals = self.DEFAULT_DIRECTION_DECIMALS
         return Plane(
-            point_on_plane=np.around(self.reference_point, position_decimals),
-            unit_normal=np.around(self.normal, direction_decimals),
+            reference_point=np.around(self.reference_point, position_decimals),
+            normal=np.around(self.normal, direction_decimals),
         )
 
     def serialize(self, position_decimals=None, direction_decimals=None):
@@ -180,8 +222,8 @@ class Plane:
         cls.validate(data)
 
         return cls(
-            point_on_plane=np.array(data["referencePoint"]),
-            unit_normal=np.array(data["unitNormal"]),
+            reference_point=np.array(data["referencePoint"]),
+            normal=np.array(data["unitNormal"]),
         )
 
     @property
@@ -193,18 +235,10 @@ class Plane:
 
         defines the plane.
         """
-        A, B, C = self._n
-        D = -self._r0.dot(self._n)
+        A, B, C = self.normal
+        D = -self.reference_point.dot(self.normal)
 
         return np.array([A, B, C, D])
-
-    @property
-    def reference_point(self):
-        """
-        The point used to create this plane.
-
-        """
-        return self._r0
 
     @property
     def canonical_point(self):
@@ -219,21 +253,13 @@ class Plane:
         as we do when searching for planar cross sections.
 
         """
-        return self._r0.dot(self._n) * self._n
-
-    @property
-    def normal(self):
-        """
-        Return the plane's normal vector.
-
-        """
-        return self._n
+        return self.reference_point.dot(self.normal) * self.normal
 
     def flipped(self):
         """
         Creates a new Plane with an inverted orientation.
         """
-        return Plane(point_on_plane=self._r0, unit_normal=-self._n)
+        return Plane(reference_point=self.reference_point, normal=-self.normal)
 
     def flipped_if(self, condition):
         """
@@ -426,12 +452,12 @@ class Plane:
             angle=angle_between_vectors,
             units="rad",
         )
-        return Plane(point_on_plane=coplanar_point, unit_normal=new_normal)
+        return Plane(reference_point=coplanar_point, normal=new_normal)
 
 
-Plane.xy = Plane(point_on_plane=np.zeros(3), unit_normal=vg.basis.z)
+Plane.xy = Plane(reference_point=np.zeros(3), normal=vg.basis.z)
 Plane.xy.__doc__ = "The `xy`-plane."
-Plane.xz = Plane(point_on_plane=np.zeros(3), unit_normal=vg.basis.y)
+Plane.xz = Plane(reference_point=np.zeros(3), normal=vg.basis.y)
 Plane.xz.__doc__ = "The `xz`-plane."
-Plane.yz = Plane(point_on_plane=np.zeros(3), unit_normal=vg.basis.x)
+Plane.yz = Plane(reference_point=np.zeros(3), normal=vg.basis.x)
 Plane.yz.__doc__ = "The `yz`-plane."
