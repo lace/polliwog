@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.0.0-alpha.1 (May 5, 2022)
+
+- Make Polyline immutable.
+- Change Plane constructor:
+  - Match names of constructor parameters to names of properties.
+  - Enforce immutability.
+  - Do not normalize in the constructor. This enables idempotent serialization
+    and deserialization.
+- Plane, Polyline: Add `rounded()` method.
+
+
+
 ## 3.0.0-alpha.0 (Apr. 8, 2022)
 
 - Rework serialization and deserialization
