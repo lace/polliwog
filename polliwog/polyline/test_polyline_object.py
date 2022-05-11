@@ -561,18 +561,19 @@ def test_with_segments_bisected():
                 [1.0, 1.0, 0.0],
                 [1.0, 1.5, 0.0],
                 [1.0, 2.0, 0.0],
+                [1.0, 2.5, 0.0],
                 [1.0, 3.0, 0.0],
             ]
         )
     )
 
-    expected_indices_of_original_vertices = np.array([0, 1, 3, 5, 6])
+    expected_indices_of_original_vertices = np.array([0, 1, 3, 5, 7])
 
     (
         with_segments_bisected,
         indices_of_original_vertices,
         indices_of_inserted_points,
-    ) = original.with_segments_bisected([1, 2], ret_new_indices=True)
+    ) = original.with_segments_bisected([1, 2, 3], ret_new_indices=True)
 
     np.testing.assert_array_almost_equal(with_segments_bisected.v, expected.v)
     np.testing.assert_array_equal(with_segments_bisected.e, expected.e)

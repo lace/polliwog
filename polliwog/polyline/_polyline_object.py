@@ -416,8 +416,9 @@ class Polyline:
         With `ret_new_indices=True`, also returns the new indices of the
         original vertices and the new indices of the inserted points.
         """
+        geometric_midpoints = np.average(self.segments[segment_indices], axis=1)
         return self.with_insertions(
-            points=np.mean(self.segments[segment_indices], axis=0),
+            points=geometric_midpoints,
             indices=self.e[segment_indices][:, 1],
             ret_new_indices=ret_new_indices,
         )
