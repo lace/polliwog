@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0-alpha.2 (May 11, 2022)
+
+- Fix bug in `Polyline.with_segments_bisected()`.
+
+
 ## 3.0.0-alpha.1 (May 5, 2022)
 
 - Make Polyline immutable.
@@ -9,7 +14,6 @@
   - Do not normalize in the constructor. This enables idempotent serialization
     and deserialization.
 - Plane, Polyline: Add `rounded()` method.
-
 
 
 ## 3.0.0-alpha.0 (Apr. 8, 2022)

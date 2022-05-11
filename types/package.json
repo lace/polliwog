@@ -1,6 +1,6 @@
 {
   "name": "polliwog-types",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.2",
   "description": "TypeScript types and JSON Schema for polliwog, the Python 2D and 3D computational geometry library",
   "main": "src",
   "scripts": {
