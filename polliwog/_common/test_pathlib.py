@@ -1,6 +1,6 @@
 import simplejson as json
 
-from .pathlib import project_relative_path, SCHEMA_PATH
+from .pathlib import SCHEMA_PATH, project_relative_path
 
 
 def test_schema_matches_types_package():
