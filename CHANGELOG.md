@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0-alpha.3 (May 16, 2022)
+
+- Fix file not found loading schema during deserialization.
+
+
 ## 3.0.0-alpha.2 (May 11, 2022)
 
 - Fix bug in `Polyline.with_segments_bisected()`.
