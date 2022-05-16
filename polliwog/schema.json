@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "Plane": {
+      "additionalProperties": false,
+      "properties": {
+        "referencePoint": {
+          "$ref": "#/definitions/Vector3"
+        },
+        "unitNormal": {
+          "$ref": "#/definitions/Vector3"
+        }
+      },
+      "required": ["referencePoint", "unitNormal"],
+      "type": "object"
+    },
+    "Polyline": {
+      "additionalProperties": false,
+      "properties": {
+        "isClosed": {
+          "type": "boolean"
+        },
+        "vertices": {
+          "items": {
+            "$ref": "#/definitions/Vector3"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["vertices", "isClosed"],
+      "type": "object"
+    },
+    "Vector3": {
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    }
+  }
+}
