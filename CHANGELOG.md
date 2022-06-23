@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0-alpha.4 (Jun. 22, 2022)
+
+- CompositeTransform: Pass through `treat_input_as_vector` kwarg.
+
+
 ## 3.0.0-alpha.3 (May 16, 2022)
 
 - Fix file not found loading schema during deserialization.
