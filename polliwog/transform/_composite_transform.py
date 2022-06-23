@@ -55,8 +55,8 @@ class CompositeTransform:
             discard_z_coord (bool): When `True`, discard the `z` coordinate of
                 the result. This is useful when applying viewport
                 transformations.
-            treat_input_as_vector (bool): When `True`, do not use the
-                homogeneous coordinate, and therefore ignores translation.
+            treat_input_as_vector (bool): When `True`, transform a vector
+                instead of a point.
 
         """
         return apply_transform(
