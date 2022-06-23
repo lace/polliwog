@@ -34,7 +34,14 @@ class CompositeTransform:
         # List of tuples, containing forward and reverse matrices.
         self.transforms = []
 
-    def __call__(self, points, from_range=None, reverse=False, discard_z_coord=False):
+    def __call__(
+        self,
+        points,
+        from_range=None,
+        reverse=False,
+        discard_z_coord=False,
+        treat_input_as_vector=False,
+    ):
         """
         Args:
             points (np.arraylike): Points to transform, as a 3xn array.
@@ -45,11 +52,20 @@ class CompositeTransform:
                 in reverse. This has no effect on how range is interpreted,
                 only whether the selected transformations apply in the forward
                 or reverse mode.
+            discard_z_coord (bool): When `True`, discard the `z` coordinate of
+                the result. This is useful when applying viewport
+                transformations.
+            treat_input_as_vector (bool): When `True`, transform a vector
+                instead of a point.
 
         """
         return apply_transform(
             self.transform_matrix_for(from_range=from_range, reverse=reverse)
-        )(points, discard_z_coord=discard_z_coord)
+        )(
+            points,
+            discard_z_coord=discard_z_coord,
+            treat_input_as_vector=treat_input_as_vector,
+        )
 
     def transform_matrix_for(self, from_range=None, reverse=False):
         """
