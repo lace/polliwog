@@ -515,7 +515,7 @@ class Polyline:
             working_v = self.v[start:stop]
         return Polyline(v=working_v, is_closed=False)
 
-    def nearest(self, points, ret_segment_indices=False):
+    def nearest(self, points, ret_segment_indices=False, ret_distances=False):
         """
         For the given query point or points, return the nearest point on the
         polyline. With `ret_segment_indices=True`, also return the segment
@@ -553,11 +553,13 @@ class Polyline:
             axis=1,
         ).reshape(num_points, 3)
 
-        if ret_segment_indices:
-            return (
-                transform_result(closest_points_of_polyline),
-                transform_result(indices_of_nearest_segments),
-            )
+        if ret_segment_indices or ret_distances:
+            result = [transform_result(closest_points_of_polyline)]
+            if ret_segment_indices:
+                result.append(transform_result(indices_of_nearest_segments))
+            if ret_distances:
+                result.append(distance_to_closest_points_of_segments)
+            return tuple(result)
         else:
             return transform_result(closest_points_of_polyline)
 
