@@ -558,7 +558,7 @@ class Polyline:
             if ret_segment_indices:
                 result.append(transform_result(indices_of_nearest_segments))
             if ret_distances:
-                result.append(distance_to_closest_points_of_segments)
+                result.append(transform_result(distance_to_closest_points_of_segments)[indices_of_nearest_segments])
             return tuple(result)
         else:
             return transform_result(closest_points_of_polyline)
