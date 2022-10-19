@@ -301,7 +301,7 @@ class Polyline:
         else:
             return self
 
-    def aligned_using_points(self, p1: np.ndarray, p2: np.ndarray):
+    def aligned_using_points(self, p1, p2):
         """
         Return a new Polyline which is conditionally flipped so that p1 is
         sequentially before p2.
