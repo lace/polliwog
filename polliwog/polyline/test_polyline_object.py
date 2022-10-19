@@ -660,15 +660,28 @@ def test_aligned_with_degenerate():
     original = Polyline(np.array([[1.0, 2.0, 3.0]]), is_closed=False)
     assert original.aligned_with(vg.basis.y) is original
 
+
 def test_aligned_using_points():
     p1 = np.array([0.0, 0.0, 0.0])
     p4 = np.array([1.0, 7.0, 0.0])
-    verts = np.array([p1, [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], p4, [1.0, 8.0, 0.0], [0.0, 8.0, 0.0], ])
+    verts = np.array(
+        [
+            p1,
+            [1.0, 0.0, 0.0],
+            [1.0, 1.0, 0.0],
+            p4,
+            [1.0, 8.0, 0.0],
+            [0.0, 8.0, 0.0],
+        ]
+    )
     original_open = Polyline(verts, is_closed=False)
     original_closed = Polyline(verts, is_closed=True)
     for original in [original_open, original_closed]:
         assert original.aligned_using_points(p1, p4) is original
-        np.testing.assert_array_equal(original.aligned_using_points(p4, p1).v, original.flipped().v)
+        np.testing.assert_array_equal(
+            original.aligned_using_points(p4, p1).v, original.flipped().v
+        )
+
 
 def test_reindexed():
     original = Polyline(
@@ -1042,7 +1055,7 @@ def test_polyline_nearest():
     expected_closest_points = as_3d(
         np.array([[2.5, 8], [7, 2], [115.0 / 17.0, 50.0 / 17.0], [10, 9]])
     )
-    expected_distances_of_closest_points = np.array([.5, 9.05, 0.24, 7.07])
+    expected_distances_of_closest_points = np.array([0.5, 9.05, 0.24, 7.07])
 
     points, segment_indices = chomper.nearest(query_points, ret_segment_indices=True)
     np.testing.assert_array_equal(segment_indices, expected_segment_indices)
@@ -1059,9 +1072,9 @@ def test_polyline_nearest():
         chomper.nearest(query_points[0], ret_segment_indices=False),
         expected_closest_points[0],
     )
-    np.testing.assert_almost_equal(chomper.nearest(
-        query_points[0], ret_distances=True)[1],
-        expected_distances_of_closest_points[0]
+    np.testing.assert_almost_equal(
+        chomper.nearest(query_points[0], ret_distances=True)[1],
+        expected_distances_of_closest_points[0],
     )
 
 

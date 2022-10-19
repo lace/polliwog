@@ -301,9 +301,7 @@ class Polyline:
         else:
             return self
 
-    def aligned_using_points(
-        self, p1: np.ndarray, p2: np.ndarray
-    ):
+    def aligned_using_points(self, p1: np.ndarray, p2: np.ndarray):
         """
         Return a new Polyline which is conditionally flipped so that p1 is
         sequentially before p2.
@@ -570,7 +568,11 @@ class Polyline:
             if ret_segment_indices:
                 result.append(transform_result(indices_of_nearest_segments))
             if ret_distances:
-                result.append(transform_result(distance_to_closest_points_of_segments)[indices_of_nearest_segments])
+                result.append(
+                    transform_result(distance_to_closest_points_of_segments)[
+                        indices_of_nearest_segments
+                    ]
+                )
             return tuple(result)
         else:
             return transform_result(closest_points_of_polyline)
