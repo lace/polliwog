@@ -301,6 +301,18 @@ class Polyline:
         else:
             return self
 
+    def aligned_using_points(
+        self, p1: np.ndarray, p2: np.ndarray
+    ):
+        """
+        Return a new Polyline which is conditionally flipped so that p1 is
+        sequentially before p2.
+        """
+        return self.flipped_if(
+            self.nearest(p2, ret_segment_indices=True)[1]
+            <= self.nearest(p1, ret_segment_indices=True)[1]
+        )
+
     def rolled(self, index, ret_edge_mapping=False):
         """
         Return a new Polyline which reindexes the callee polyline, which much
