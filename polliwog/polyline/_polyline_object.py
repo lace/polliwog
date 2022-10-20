@@ -301,15 +301,22 @@ class Polyline:
         else:
             return self
 
-    def aligned_using_points(self, p1, p2):
+    def aligned_along_subsegment(self, p1, p2):
         """
-        Return a new Polyline which is conditionally flipped so that p1 is
-        sequentially before p2.
+        Return a new Polyline which is conditionally flipped so that the vertext closest to
+        the first point appears before the vertex closest to the second point. If the polyline
+        is closed, it aligns the polyline so that from p1 to p2 is the shortest distance.
         """
-        return self.flipped_if(
-            self.nearest(p2, ret_segment_indices=True)[1]
-            <= self.nearest(p1, ret_segment_indices=True)[1]
-        )
+        if self.is_closed:
+            return self.flipped_if(
+                self.sliced_at_points(p2, p1).total_length
+                < self.sliced_at_points(p1, p2).total_length
+            )
+        else:
+            return self.flipped_if(
+                self.nearest(p2, ret_segment_indices=True)[1]
+                <= self.nearest(p1, ret_segment_indices=True)[1]
+            )
 
     def rolled(self, index, ret_edge_mapping=False):
         """
