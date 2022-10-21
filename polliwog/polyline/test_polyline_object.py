@@ -686,8 +686,22 @@ def test_aligned_along_subsegment():
             polyline.flipped().v,
         )
 
+
+def test_aligned_along_subsegment_when_shortest_path_wraps_around_end():
     # Handle closed polylines where the shortest path between the query points wraps
     # around the end.
+    closed_polyline = Polyline(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [0.0, 1.0, 0.0],
+            ]
+        ),
+        is_closed=True,
+    )
+
     assert (
         closed_polyline.aligned_along_subsegment(
             np.array([0.0, 0.7, 0.0]), np.array([0.5, 0.0, 0.0])
