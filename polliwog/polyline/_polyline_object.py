@@ -327,7 +327,7 @@ class Polyline:
                 p2, ret_segment_indices=True, ret_distances=True
             )
             if p1_index == p2_index:
-                pass
+                return self.flipped_if(p1_distance < p2_distance)
             else:
                 return self.flipped_if(p2_index < p1_index)
 
