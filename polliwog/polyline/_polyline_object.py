@@ -305,10 +305,10 @@ class Polyline:
         """
         Flip an open polyline if necessary so the point nearest to `p1` is ordered before the
         point nearest to `p2`.
-        
+
         Flip a closed polyline if necessary to keep the path from the point nearest `p1` to
         the point nearest `p2` _shorter_. This path may wrap around the end.
-        
+
         Note:
             In conjunction with `.sliced_at_points()`, this method is useful for selecting a
             particular subsection of a path whose orientation through the region of interest
@@ -320,10 +320,12 @@ class Polyline:
                 < self.sliced_at_points(p1, p2).total_length
             )
         else:
-            return self.flipped_if(
-                self.nearest(p2, ret_segment_indices=True)[1]
-                <= self.nearest(p1, ret_segment_indices=True)[1]
-            )
+            p1_index = self.nearest(p1, ret_segment_indices=True)[1]
+            p2_index = self.nearest(p2, ret_segment_indices=True)[1]
+            if p1_index == p2_index:
+                pass
+            else:
+                return self.flipped_if(p2_index < p1_index)
 
     def rolled(self, index, ret_edge_mapping=False):
         """
