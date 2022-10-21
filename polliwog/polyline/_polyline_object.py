@@ -320,8 +320,12 @@ class Polyline:
                 < self.sliced_at_points(p1, p2).total_length
             )
         else:
-            p1_index = self.nearest(p1, ret_segment_indices=True)[1]
-            p2_index = self.nearest(p2, ret_segment_indices=True)[1]
+            _, p1_index, p1_distance = self.nearest(
+                p1, ret_segment_indices=True, ret_distances=True
+            )
+            _, p2_index, p2_distance = self.nearest(
+                p2, ret_segment_indices=True, ret_distances=True
+            )
             if p1_index == p2_index:
                 pass
             else:
@@ -545,7 +549,8 @@ class Polyline:
         """
         For the given query point or points, return the nearest point on the
         polyline. With `ret_segment_indices=True`, also return the segment
-        indices of those points.
+        indices of those points. With 'ret_distances=True, also return the
+        distance to the nearest point.
         """
         from .._common.shape import columnize
         from ..segment import closest_point_of_line_segment
