@@ -715,7 +715,7 @@ def test_aligned_along_subsegment_when_shortest_path_wraps_around_end():
         closed_polyline.flipped().v,
     )
 
-    # Handle case where both boths are on the same segment
+    # Handle case where both points are on the same segment
     assert (
         closed_polyline.aligned_along_subsegment(
             np.array([0.1, 0.0, 0.0]), np.array([0.3, 0.0, 0.0])
