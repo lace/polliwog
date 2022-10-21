@@ -303,9 +303,16 @@ class Polyline:
 
     def aligned_along_subsegment(self, p1, p2):
         """
-        Return a new Polyline which is conditionally flipped so that the vertext closest to
-        the first point appears before the vertex closest to the second point. If the polyline
-        is closed, it aligns the polyline so that from p1 to p2 is the shortest distance.
+        Flip an open polyline if necessary so the point nearest to `p1` is ordered before the
+        point nearest to `p2`.
+        
+        Flip a closed polyline if necessary to keep the path from the point nearest `p1` to
+        the point nearest `p2` _shorter_. This path may wrap around the end.
+        
+        Note:
+            In conjunction with `.sliced_at_points()`, this method is useful for selecting a
+            particular subsection of a path whose orientation through the region of interest
+            is unknown.
         """
         if self.is_closed:
             return self.flipped_if(
