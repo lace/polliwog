@@ -203,9 +203,12 @@ def test_closest_point_of_line_segment():
             p2,
         ]
     )
-    closest_points = closest_point_of_line_segment(
+    expected_t_values = np.array([40 / 48, 28 / 48, 0, 0, 1, 1, 1, 1])
+    closest_points, t_values = closest_point_of_line_segment(
         points=query_points,
         start_points=np.broadcast_to(p1, query_points.shape),
         segment_vectors=np.broadcast_to(segment_vector, query_points.shape),
+        ret_t_values=True,
     )
     np.testing.assert_array_almost_equal(closest_points, expected_closest_points)
+    np.testing.assert_array_almost_equal(t_values, expected_t_values)

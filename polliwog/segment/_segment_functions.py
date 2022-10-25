@@ -76,7 +76,9 @@ def subdivide_segments(v, num_subdivisions=5):
     return np.vstack((filled, v[-1]))
 
 
-def closest_point_of_line_segment(points, start_points, segment_vectors):
+def closest_point_of_line_segment(
+    points, start_points, segment_vectors, ret_t_values=False
+):
     """
     Compute pairwise the point on each line segment that is nearest to the
     corresponding query point.
@@ -100,14 +102,7 @@ def closest_point_of_line_segment(points, start_points, segment_vectors):
     # the segment end.
     #
     # Start with the `0 <= t <= 1 case`, then use masks to apply the clamp.
+    t = np.clip(t, 0, 1)
     result = start_points + t.reshape(-1, 1) * segment_vectors
 
-    clamped_to_start_point = t < 0
-    result[clamped_to_start_point] = start_points[clamped_to_start_point]
-
-    clamped_to_end_point = t > 1
-    result[clamped_to_end_point] = (
-        start_points[clamped_to_end_point] + segment_vectors[clamped_to_end_point]
-    )
-
-    return result
+    return (result, t) if ret_t_values else result
