@@ -686,8 +686,22 @@ def test_aligned_along_subsegment():
             polyline.flipped().v,
         )
 
+    # Handle case where both points are on the same segment
+    assert (
+        open_polyline.aligned_along_subsegment(
+            np.array([0.1, -0.05, 0.0]), np.array([0.3, 0.05, 0.0])
+        )
+        is open_polyline
+    )
+    np.testing.assert_array_equal(
+        open_polyline.aligned_along_subsegment(
+            np.array([0.3, -0.05, 0.0]), np.array([0.1, 0.05, 0.0])
+        ).v,
+        open_polyline.flipped().v,
+    )
 
-def test_aligned_along_subsegment_when_shortest_path_wraps_around_end():
+
+def test_aligned_along_subsegment_edge_cases():
     # Handle closed polylines where the shortest path between the query points wraps
     # around the end.
     closed_polyline = Polyline(
@@ -711,20 +725,6 @@ def test_aligned_along_subsegment_when_shortest_path_wraps_around_end():
     np.testing.assert_array_equal(
         closed_polyline.aligned_along_subsegment(
             np.array([0.5, 0.0, 0.0]), np.array([0.0, 0.7, 0.0])
-        ).v,
-        closed_polyline.flipped().v,
-    )
-
-    # Handle case where both points are on the same segment
-    assert (
-        closed_polyline.aligned_along_subsegment(
-            np.array([0.1, 0.0, 0.0]), np.array([0.3, 0.0, 0.0])
-        )
-        is closed_polyline
-    )
-    np.testing.assert_array_equal(
-        closed_polyline.aligned_along_subsegment(
-            np.array([0.3, 0.0, 0.0]), np.array([0.1, 0.0, 0.0])
         ).v,
         closed_polyline.flipped().v,
     )
