@@ -546,7 +546,7 @@ class Polyline:
         return Polyline(v=working_v, is_closed=False)
 
     def nearest(
-        self, points, ret_segment_indices=False, ret_distances=False, ret_t_value=False
+        self, points, ret_segment_indices=False, ret_distances=False, ret_t_values=False
     ):
         """
         For the given query point or points, return the nearest point on the
