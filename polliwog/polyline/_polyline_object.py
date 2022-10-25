@@ -321,10 +321,10 @@ class Polyline:
             )
         else:
             _, p1_index, p1_t_value = self.nearest(
-                p1, ret_segment_indices=True, ret_t_value=True
+                p1, ret_segment_indices=True, ret_t_values=True
             )
             _, p2_index, p2_t_value = self.nearest(
-                p2, ret_segment_indices=True, ret_t_value=True
+                p2, ret_segment_indices=True, ret_t_values=True
             )
             if p1_index == p2_index:
                 return self.flipped_if(p2_t_value < p1_t_value)
@@ -603,7 +603,7 @@ class Polyline:
                         indices_of_nearest_segments
                     ]
                 )
-            if ret_t_value:
+            if ret_t_values:
                 result.append(transform_result(t_values_of_closest_points))
             return tuple(result)
         else:
