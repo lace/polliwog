@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.0-alpha.5 (Jun. 22, 2022)
+
+- Polyline:
+  - Add aligned_along_subsegment
+  - Add ret_distances parameter to nearest()
+
+
 ## 3.0.0-alpha.4 (Jun. 22, 2022)
 
 - CompositeTransform: Pass through `treat_input_as_vector` kwarg.
