@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.0.0-alpha.5 (Oct. 26, 2022)
+
+- Polyline:
+  - Add `aligned_along_subsegment()`
+  - Add optional parameters to `nearest()`
+    - `ret_distances`
+    - `ret_t_values`
+- `polliwog.polyline.closest_point_of_line_segment()`: Add `ret_t_values`
+
+
 ## 3.0.0-alpha.4 (Jun. 22, 2022)
 
 - CompositeTransform: Pass through `treat_input_as_vector` kwarg.
