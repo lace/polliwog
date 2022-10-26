@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.0.0-alpha.5 (Jun. 22, 2022)
+## 3.0.0-alpha.5 (Oct. 26, 2022)
 
 - Polyline:
   - Add aligned_along_subsegment
