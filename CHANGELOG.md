@@ -4,7 +4,9 @@
 
 - Polyline:
   - Add aligned_along_subsegment
-  - Add ret_distances parameter to nearest()
+  - Add optional parameters to nearest()
+    - ret_distances
+    - ret_t_values
 
 
 ## 3.0.0-alpha.4 (Jun. 22, 2022)
