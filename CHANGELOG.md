@@ -7,6 +7,7 @@
   - Add optional parameters to `nearest()`
     - `ret_distances`
     - `ret_t_values`
+- Add `ret_t_values` to `closest_point_of_line_segment`
 
 
 ## 3.0.0-alpha.4 (Jun. 22, 2022)
