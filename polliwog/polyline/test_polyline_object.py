@@ -661,6 +661,75 @@ def test_aligned_with_degenerate():
     assert original.aligned_with(vg.basis.y) is original
 
 
+def test_aligned_along_subsegment():
+    verts = np.array(
+        [
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [1.0, 1.0, 0.0],
+            [0.0, 1.0, 0.0],
+        ]
+    )
+    open_polyline = Polyline(verts, is_closed=False)
+    closed_polyline = Polyline(verts, is_closed=True)
+    for polyline in [open_polyline, closed_polyline]:
+        assert (
+            polyline.aligned_along_subsegment(
+                np.array([0.7, 0.0, 0.0]), np.array([1.0, 1.2, 0.0])
+            )
+            is polyline
+        )
+        np.testing.assert_array_equal(
+            polyline.aligned_along_subsegment(
+                np.array([1.0, 1.2, 0.0]), np.array([0.7, 0.0, 0.0])
+            ).v,
+            polyline.flipped().v,
+        )
+
+    # Handle case where both points are on the same segment
+    assert (
+        open_polyline.aligned_along_subsegment(
+            np.array([0.1, -0.05, 0.0]), np.array([0.3, 0.05, 0.0])
+        )
+        is open_polyline
+    )
+    np.testing.assert_array_equal(
+        open_polyline.aligned_along_subsegment(
+            np.array([0.3, -0.05, 0.0]), np.array([0.1, 0.05, 0.0])
+        ).v,
+        open_polyline.flipped().v,
+    )
+
+
+def test_aligned_along_subsegment_edge_cases():
+    # Handle closed polylines where the shortest path between the query points wraps
+    # around the end.
+    closed_polyline = Polyline(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [0.0, 1.0, 0.0],
+            ]
+        ),
+        is_closed=True,
+    )
+
+    assert (
+        closed_polyline.aligned_along_subsegment(
+            np.array([0.0, 0.7, 0.0]), np.array([0.5, 0.0, 0.0])
+        )
+        is closed_polyline
+    )
+    np.testing.assert_array_equal(
+        closed_polyline.aligned_along_subsegment(
+            np.array([0.5, 0.0, 0.0]), np.array([0.0, 0.7, 0.0])
+        ).v,
+        closed_polyline.flipped().v,
+    )
+
+
 def test_reindexed():
     original = Polyline(
         np.array(

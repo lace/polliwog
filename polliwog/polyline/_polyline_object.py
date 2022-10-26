@@ -301,6 +301,36 @@ class Polyline:
         else:
             return self
 
+    def aligned_along_subsegment(self, p1, p2):
+        """
+        Flip an open polyline if necessary so the point nearest to `p1` is ordered before the
+        point nearest to `p2`.
+
+        Flip a closed polyline if necessary to keep the path from the point nearest `p1` to
+        the point nearest `p2` _shorter_. This path may wrap around the end.
+
+        Note:
+            In conjunction with `.sliced_at_points()`, this method is useful for selecting a
+            particular subsection of a path whose orientation through the region of interest
+            is unknown.
+        """
+        if self.is_closed:
+            return self.flipped_if(
+                self.sliced_at_points(p2, p1).total_length
+                < self.sliced_at_points(p1, p2).total_length
+            )
+        else:
+            _, p1_index, p1_t_value = self.nearest(
+                p1, ret_segment_indices=True, ret_t_values=True
+            )
+            _, p2_index, p2_t_value = self.nearest(
+                p2, ret_segment_indices=True, ret_t_values=True
+            )
+            if p1_index == p2_index:
+                return self.flipped_if(p2_t_value < p1_t_value)
+            else:
+                return self.flipped_if(p2_index < p1_index)
+
     def rolled(self, index, ret_edge_mapping=False):
         """
         Return a new Polyline which reindexes the callee polyline, which much
@@ -515,11 +545,14 @@ class Polyline:
             working_v = self.v[start:stop]
         return Polyline(v=working_v, is_closed=False)
 
-    def nearest(self, points, ret_segment_indices=False, ret_distances=False):
+    def nearest(
+        self, points, ret_segment_indices=False, ret_distances=False, ret_t_values=False
+    ):
         """
         For the given query point or points, return the nearest point on the
         polyline. With `ret_segment_indices=True`, also return the segment
-        indices of those points.
+        indices of those points. With 'ret_distances=True, also return the
+        distance to the nearest point.
         """
         from .._common.shape import columnize
         from ..segment import closest_point_of_line_segment
@@ -528,10 +561,11 @@ class Polyline:
         num_points = len(points)
 
         stacked_points = np.repeat(points, self.num_e, axis=0)
-        closest_points_of_segments = closest_point_of_line_segment(
+        closest_points_of_segments, t_values = closest_point_of_line_segment(
             points=stacked_points,
             start_points=np.tile(self.segments[:, 0], (num_points, 1)),
             segment_vectors=np.tile(self.segment_vectors, (num_points, 1)),
+            ret_t_values=True,
         )
         distance_to_closest_points_of_segments = vg.euclidean_distance(
             stacked_points, closest_points_of_segments
@@ -540,6 +574,7 @@ class Polyline:
         closest_points_of_segments = closest_points_of_segments.reshape(
             num_points, self.num_e, 3
         )
+        t_values = t_values.reshape(num_points, self.num_e)
         distance_to_closest_points_of_segments = (
             distance_to_closest_points_of_segments.reshape(num_points, self.num_e)
         )
@@ -552,6 +587,11 @@ class Polyline:
             indices_of_nearest_segments.reshape(num_points, 1, 1),
             axis=1,
         ).reshape(num_points, 3)
+        t_values_of_closest_points = np.take_along_axis(
+            t_values,
+            indices_of_nearest_segments.reshape(num_points, 1),
+            axis=1,
+        )
 
         if ret_segment_indices or ret_distances:
             result = [transform_result(closest_points_of_polyline)]
@@ -563,6 +603,8 @@ class Polyline:
                         indices_of_nearest_segments
                     ]
                 )
+            if ret_t_values:
+                result.append(transform_result(t_values_of_closest_points))
             return tuple(result)
         else:
             return transform_result(closest_points_of_polyline)
