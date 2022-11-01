@@ -1122,16 +1122,12 @@ def test_polyline_nearest():
     np.testing.assert_almost_equal(
         chomper.nearest(query_points[0], ret_distances=True)[1],
         expected_distances_of_closest_points[0],
+        decimal=2,
     )
     np.testing.assert_almost_equal(
         chomper.nearest(query_points, ret_distances=True)[1],
         expected_distances_of_closest_points,
-        decimal=1,
-    )
-    np.testing.assert_almost_equal(
-        chomper.nearest(query_points[0], ret_distances=True)[1],
-        expected_distances_of_closest_points[0],
-        decimal=1,
+        decimal=2,
     )
 
 
