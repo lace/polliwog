@@ -587,11 +587,6 @@ class Polyline:
             indices_of_nearest_segments.reshape(num_points, 1, 1),
             axis=1,
         ).reshape(num_points, 3)
-        t_values_of_closest_points = np.take_along_axis(
-            t_values,
-            indices_of_nearest_segments.reshape(num_points, 1),
-            axis=1,
-        )
 
         if ret_segment_indices or ret_distances:
             result = [transform_result(closest_points_of_polyline)]
@@ -608,7 +603,15 @@ class Polyline:
                     )
                 )
             if ret_t_values:
-                result.append(transform_result(t_values_of_closest_points))
+                result.append(
+                    transform_result(
+                        np.take_along_axis(
+                            t_values,
+                            indices_of_nearest_segments.reshape(num_points, 1),
+                            axis=1,
+                        )
+                    )
+                )
             return tuple(result)
         else:
             return transform_result(closest_points_of_polyline)
