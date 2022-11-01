@@ -1123,6 +1123,16 @@ def test_polyline_nearest():
         chomper.nearest(query_points[0], ret_distances=True)[1],
         expected_distances_of_closest_points[0],
     )
+    np.testing.assert_almost_equal(
+        chomper.nearest(query_points, ret_distances=True)[1],
+        expected_distances_of_closest_points,
+        decimal=1,
+    )
+    np.testing.assert_almost_equal(
+        chomper.nearest(query_points[0], ret_distances=True)[1],
+        expected_distances_of_closest_points[0],
+        decimal=1,
+    )
 
 
 def test_slice_at_points():

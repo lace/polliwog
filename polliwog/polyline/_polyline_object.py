@@ -1,3 +1,4 @@
+from turtle import pd
 import numpy as np
 from vg.compat import v2 as vg
 from ._edges import edges_for
@@ -599,9 +600,13 @@ class Polyline:
                 result.append(transform_result(indices_of_nearest_segments))
             if ret_distances:
                 result.append(
-                    transform_result(distance_to_closest_points_of_segments)[
-                        indices_of_nearest_segments
-                    ]
+                    transform_result(
+                        np.take_along_axis(
+                            distance_to_closest_points_of_segments,
+                            indices_of_nearest_segments.reshape(num_points, 1),
+                            axis=1,
+                        ).flatten()
+                    )
                 )
             if ret_t_values:
                 result.append(transform_result(t_values_of_closest_points))
