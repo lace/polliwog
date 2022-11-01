@@ -1,4 +1,3 @@
-from turtle import pd
 import numpy as np
 from vg.compat import v2 as vg
 from ._edges import edges_for
