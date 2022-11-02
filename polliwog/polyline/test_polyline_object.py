@@ -1103,6 +1103,7 @@ def test_polyline_nearest():
         np.array([[2.5, 8], [7, 2], [115.0 / 17.0, 50.0 / 17.0], [10, 9]])
     )
     expected_distances_of_closest_points = np.array([0.5, 9.05, 0.24, 7.07])
+    expected_t_values = np.array([7, 2, -2.5])
 
     points, segment_indices = chomper.nearest(query_points, ret_segment_indices=True)
     np.testing.assert_array_equal(segment_indices, expected_segment_indices)
@@ -1122,6 +1123,16 @@ def test_polyline_nearest():
     np.testing.assert_almost_equal(
         chomper.nearest(query_points[0], ret_distances=True)[1],
         expected_distances_of_closest_points[0],
+        decimal=2,
+    )
+    np.testing.assert_almost_equal(
+        chomper.nearest(query_points, ret_distances=True)[1],
+        expected_distances_of_closest_points,
+        decimal=2,
+    )
+    np.testing.assert_array_equal(
+        chomper.nearest(query_points, ret_t_values=True)[1],
+        expected_t_values,
     )
 
 
