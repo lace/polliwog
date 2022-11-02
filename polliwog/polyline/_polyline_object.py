@@ -609,7 +609,7 @@ class Polyline:
                             t_values,
                             indices_of_nearest_segments.reshape(num_points, 1),
                             axis=1,
-                        )
+                        ).flatten()
                     )
                 )
             return tuple(result)
