@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0-alpha.6 (Nov. 2, 2022)
+
+- Polyline:
+  - Fix bug in `nearest()` so that `ret_distances` and `ret_t_values` work as intended
+
+
 ## 3.0.0-alpha.5 (Oct. 26, 2022)
 
 - Polyline:
