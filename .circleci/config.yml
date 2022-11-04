@@ -11,7 +11,7 @@ install_poetry: &install_poetry
   run:
     name: Install Poetry
     command: |
-      pip install poetry==1.1.7
+      pip install poetry==1.2.2
       poetry --version
 
 install_python_deps: &install_python_deps
