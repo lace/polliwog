@@ -1,5 +1,5 @@
 # Imported from code.
-numpy==1.21.0
+numpy==1.23.0
 ounce>=1.1.0,<2.0
 vg>=1.5.0
 
