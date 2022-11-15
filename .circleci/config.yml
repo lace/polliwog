@@ -22,6 +22,7 @@ install_python_deps: &install_python_deps
 show_versions: &show_versions
   run:
     name: Show versions
+    command: poetry show
 
 jobs:
   main:
