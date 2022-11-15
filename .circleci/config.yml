@@ -28,7 +28,6 @@ jobs:
             . venv/bin/activate
             ./dev.py coverage
 
-
       - run:
           name: Run the doc build
           when: always
