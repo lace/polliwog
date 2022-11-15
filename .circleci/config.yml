@@ -5,19 +5,13 @@ orbs:
 
 with_python: &with_python
   docker:
-    - image: circleci/python:3.7.12
+    - image: cimg/python:3.7
 
 install_poetry: &install_poetry
   run:
     name: Install Poetry
     command: |
-      sudo pip uninstall --yes poetry
-      pip install --upgrade pip
-      echo 1
-      pip --version
-      echo 2
       pip install poetry==1.2.2
-      echo 3
       poetry --version
 
 install_python_deps: &install_python_deps
@@ -28,7 +22,6 @@ install_python_deps: &install_python_deps
 show_versions: &show_versions
   run:
     name: Show versions
-    command: poetry show --latest
 
 jobs:
   main:
