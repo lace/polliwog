@@ -11,6 +11,7 @@ install_poetry: &install_poetry
   run:
     name: Install Poetry
     command: |
+      pip uninstall --yes poetry
       pip install --upgrade pip
       echo 1
       pip --version
