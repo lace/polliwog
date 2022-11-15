@@ -12,6 +12,7 @@ install_poetry: &install_poetry
     name: Install Poetry
     command: |
       pip install --upgrade pip
+      pip --version
       pip install poetry==1.2.2
       poetry --version
 
