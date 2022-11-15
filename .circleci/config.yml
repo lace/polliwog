@@ -36,10 +36,6 @@ jobs:
           name: Install python dependencies
           command: poetry install --no-ansi --no-interaction --extras serialization
       - *show_versions
-      - run:
-          command: |
-            poetry run python --version
-            poetry run pip list
 
       - run:
           name: Run tests
