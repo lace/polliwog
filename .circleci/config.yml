@@ -51,6 +51,12 @@ jobs:
           name: Run the doc build
           when: always
           command: ./dev.py doc
+      
+      - run:
+          name: run tests on latest numpy
+          command: |
+            pip install numpy==1.23.4
+            ./dev.py coverage
 
       - store_artifacts:
           path: dist
