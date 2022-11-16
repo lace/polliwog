@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.0-alpha.7 (Nov. 16, 2022)
+
+- Update dev dependencies
+- Update poetry
+- Relax numpy version constraint and test two versions
+- Test in Python 3.9
+- Fix Netlify build
+
+
 ## 3.0.0-alpha.6 (Nov. 2, 2022)
 
 - Polyline:
