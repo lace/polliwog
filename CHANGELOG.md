@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0-alpha.7 (Nov. 16, 2022)
+
+- Allow any version of numpy
+- Test in Python 3.9
+
+
 ## 3.0.0-alpha.6 (Nov. 2, 2022)
 
 - Polyline:
