@@ -107,10 +107,9 @@ def test_immutability():
 
 
 def test_array_is_contiguous():
-    polyline = Polyline(
-        np.flipud(np.array([[5.5, 0.5, 0.0], [5.5, 0.75, 0.0], [5.5, 0.5, -0.5]])),
-        is_closed=True,
-    )
+    verts = np.flipud(np.array([[5.5, 0.5, 0.0], [5.5, 0.75, 0.0], [5.5, 0.5, -0.5]]))
+    assert verts.flags["C_CONTIGUOUS"] is False
+    polyline = Polyline(verts, is_closed=True)
     assert polyline.v.flags["C_CONTIGUOUS"] is True
 
 
