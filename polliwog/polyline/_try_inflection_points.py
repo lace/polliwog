@@ -52,7 +52,7 @@ def main():
                 subdivide_by_length=0.001,
             )
             result_points.append(result)
-        except ValueError:
+        except ValueError("No point of max acceleration found"):
             pass
 
     add_landmark_points(mesh, result_points)
