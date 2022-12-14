@@ -106,6 +106,14 @@ def test_immutability():
     np.testing.assert_array_equal(polyline.v, vertices)
 
 
+def test_array_is_contiguous():
+    # Issue with pycollada compatability https://github.com/lace/polliwog/pull/272
+    verts = np.flipud(np.array([[5.5, 0.5, 0.0], [5.5, 0.75, 0.0], [5.5, 0.5, -0.5]]))
+    assert verts.flags["C_CONTIGUOUS"] is False
+    polyline = Polyline(verts, is_closed=True)
+    assert polyline.v.flags["C_CONTIGUOUS"] is True
+
+
 def test_bounding_box():
     bounding_box = Polyline(
         np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [1.0, 2.0, 0.0]])
