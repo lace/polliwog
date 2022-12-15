@@ -53,7 +53,8 @@ def main():
             )
             result_points.append(result)
         except ValueError:
-            return None
+            print("no point of max acceleration found.")
+            pass
 
     add_landmark_points(mesh, result_points)
     mesh.write("with_inflection.dae")
