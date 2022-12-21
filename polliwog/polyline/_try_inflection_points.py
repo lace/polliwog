@@ -53,6 +53,7 @@ def main():
             )
             result_points.append(result)
         except ValueError:
+            # No-op if this point doesn't exist.
             pass
 
     add_landmark_points(mesh, result_points)
