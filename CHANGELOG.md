@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0-alpha.8 (Jan 18, 2023)
+
+- Support NumPy 1.24+
+
+
 ## 3.0.0-alpha.7 (Nov. 16, 2022)
 
 - Allow any version of numpy
