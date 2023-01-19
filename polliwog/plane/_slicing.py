@@ -28,7 +28,7 @@ def slice_triangles_by_plane(
     vg.shape.check(locals(), "plane_normal", (3,))
     if faces_to_slice is not None:
         vg.shape.check(locals(), "faces_to_slice", (-1,))
-        assert faces_to_slice.dtype == np.bool
+        assert faces_to_slice.dtype == bool
 
     result = slice_faces_plane(
         vertices=vertices,

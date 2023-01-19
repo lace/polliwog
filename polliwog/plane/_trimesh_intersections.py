@@ -139,9 +139,9 @@ def slice_faces_plane(
 
     # Construct a mask for the faces to slice.
     if face_index is None:
-        mask = np.ones(len(faces), dtype=np.bool)
+        mask = np.ones(len(faces), dtype=bool)
     else:
-        mask = np.zeros(len(faces), dtype=np.bool)
+        mask = np.zeros(len(faces), dtype=bool)
         mask[face_index] = True
 
     if cached_dots is not None:  # pragma: no cover
