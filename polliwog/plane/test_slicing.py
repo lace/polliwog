@@ -85,7 +85,7 @@ def test_slice_cube_corner():
 
 def test_slice_cube_submesh():
     # Only act on the top of the cube.
-    mask = np.zeros(len(cube_faces), dtype=np.bool)
+    mask = np.zeros(len(cube_faces), dtype=bool)
     mask[[2, 3]] = True
 
     _, sliced_faces = slice_triangles_by_plane(

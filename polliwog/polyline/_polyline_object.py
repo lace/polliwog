@@ -371,7 +371,7 @@ class Polyline:
         from ..segment import subdivide_segment
 
         if edges_to_subdivide is None:
-            edges_to_subdivide = np.ones(self.num_e, dtype=np.bool)
+            edges_to_subdivide = np.ones(self.num_e, dtype=bool)
         else:
             vg.shape.check(locals(), "edges_to_subdivide", (self.num_e,))
 
@@ -387,7 +387,7 @@ class Polyline:
             subdivide_segment(
                 self.v[self.e[old_e_index][0]],
                 self.v[self.e[old_e_index][1]],
-                np.int(num_segments_needed[old_e_index]),
+                int(num_segments_needed[old_e_index]),
                 endpoint=False,
             )[
                 # Exclude the start point, which like the endpoint, is already
