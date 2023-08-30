@@ -8,27 +8,29 @@ def rotation_from_up_and_look(up, look):
     result is a rotation matrix that will make up along +y and look along +z
     (i.e. facing towards a default opengl camera).
 
-    up: The direction you want to become `+y`.
-    look: The direction you want to become `+z`.
+    Args:
+        up (np.ndarray): The direction you want to become `+y`.
+        look (np.ndarray): The direction you want to become `+z`.
 
+    Returns:
+        np.ndarray: A `3x3` rotation matrix.
     """
     vg.shape.check(locals(), "up", (3,))
     vg.shape.check(locals(), "look", (3,))
 
     up, look = [np.asarray(vector, dtype=np.float64) for vector in (up, look)]
 
-    if np.linalg.norm(up) == 0:
+    if vg.almost_zero(up):
         raise ValueError("Singular up")
-    if np.linalg.norm(look) == 0:
+    if vg.almost_zero(look):
         raise ValueError("Singular look")
+    if vg.almost_collinear(up, look):
+        raise ValueError("`up` and `look` are almost collinear")
 
-    y = up / np.linalg.norm(up)
-    z = look - np.dot(look, y) * y
-    if np.linalg.norm(z) == 0:
-        raise ValueError("up and look are collinear")
-    z = z / np.linalg.norm(z)
-    x = np.cross(y, z)
-    return np.array([x, y, z])
+    up = vg.normalize(up)
+    recomputed_look = vg.normalize(vg.reject(look, from_v=up))
+    right = np.cross(up, recomputed_look)
+    return np.array([right, up, recomputed_look])
 
 
 def euler(xyz, order="xyz", units="deg"):
