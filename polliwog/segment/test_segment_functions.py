@@ -1,11 +1,13 @@
 import numpy as np
 from polliwog.segment import (
     closest_point_of_line_segment,
+    is_point_on_line_segment,
     path_centroid,
     subdivide_segment,
     subdivide_segments,
 )
 import pytest
+from vg.compat import v2 as vg
 
 
 def test_path_centroid():
@@ -218,3 +220,118 @@ def test_closest_point_of_line_segment():
         ret_t_values=True,
     )
     np.testing.assert_array_almost_equal(t_values, expected_t_values)
+
+
+def test_closest_point_of_degenerate_line_segment():
+    p = np.array([-3.0, -2.0, -1.0])
+    segment_vector = np.zeros(3)
+
+    query_points = np.array(
+        [
+            [7, -2, -1],
+            [1, 5, -5],
+            [-7, -10, -4],
+            [-4, -7, -8],
+            [-6, 5, 7],
+            [1, 6, 8],
+            [7, 8, 5],
+            [5, 5, 3],
+        ]
+    )
+
+    closest_points, t_values = closest_point_of_line_segment(
+        points=query_points,
+        start_points=np.broadcast_to(p, query_points.shape),
+        segment_vectors=np.broadcast_to(segment_vector, query_points.shape),
+        ret_t_values=True,
+    )
+    np.testing.assert_array_equal(
+        closest_points, np.broadcast_to(p, query_points.shape)
+    )
+    np.testing.assert_array_equal(t_values, np.zeros(len(query_points)))
+
+
+def test_is_point_on_line_segment():
+    start_point = np.zeros(3)
+    segment_vector = vg.basis.x
+    epsilon = 1e-6
+
+    query_points = np.array(
+        [
+            # On the line, but not on the line segment.
+            [-0.5, 0, 0],
+            [-2 * epsilon, 0, 0],
+            # On the line within epsilon of the line segment.
+            [-epsilon, 0, 0],
+            # Within the line segment.
+            [0, 0, 0],
+            [epsilon, 0, 0],
+            [0.5, 0, 0],
+            [1 - epsilon, 0, 0],
+            [1, 0, 0],
+            # On the line within epsilon of the line segment.
+            [1 + epsilon, 0, 0],  # This test doesn't work with epsilon < 1e-6.
+            # On the line, but not on the line segment.
+            [2, 0, 0],
+            # Not near the line segment.
+            [-0.5, epsilon, 0],
+            # A little too far from the line segment.
+            [-2 * epsilon, epsilon, 0],
+            [-epsilon, epsilon, 0],
+            # Within epsilon of the line segment.
+            [0, epsilon, 0],
+            [epsilon / 2, epsilon / 2, 0],
+            [0.5, epsilon, 0],
+            [1 - epsilon, epsilon, 0],
+            # Within epsilon of the line segment.
+            [1, epsilon, 0],
+            # A little too far.
+            [1 + epsilon, epsilon, 0],
+            # Not near the line segment.
+            [2, epsilon, 0],
+        ]
+    )
+
+    np.testing.assert_array_equal(
+        is_point_on_line_segment(
+            query_points=query_points,
+            start_points=np.broadcast_to(start_point, query_points.shape),
+            segment_vectors=np.broadcast_to(segment_vector, query_points.shape),
+            epsilon=epsilon,
+        ),
+        np.array(
+            [
+                # On the line, but not on the line segment.
+                False,
+                False,
+                # On the line within epsilon of the line segment.
+                True,
+                # Within the line segment.
+                True,
+                True,
+                True,
+                True,
+                True,
+                # On the line within epsilon of the line segment.
+                True,
+                # On the line, but not on the line segment.
+                False,
+                # Not near the line segment.
+                False,
+                # A little too far from the line segment.
+                False,
+                False,
+                # Within epsilon of the line segment.
+                True,
+                True,
+                True,
+                True,
+                # Within epsilon of the line segment.
+                True,
+                # A little too far.
+                False,
+                # Not near the line segment.
+                False,
+            ]
+        ),
+    )

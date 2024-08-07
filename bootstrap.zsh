@@ -9,3 +9,4 @@ python -m venv .venv
 echo 'Installing packages'
 . .venv/bin/activate
 poetry install
+./dev.py install

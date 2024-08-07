@@ -106,3 +106,41 @@ def closest_point_of_line_segment(
     result = start_points + t.reshape(-1, 1) * segment_vectors
 
     return (result, t) if ret_t_values else result
+
+
+def is_point_on_line_segment(query_points, start_points, segment_vectors, epsilon):
+    """
+    Check pairwise if each query point (`points`) is on the given line segment,
+    within the given tolerance (`epsilon`).
+    """
+    from ..line._line_functions import project_point_to_line
+
+    # Adapted from public domain algorithm
+    # https://gdbooks.gitbooks.io/3dcollisions/content/Chapter1/point_on_line.html
+    k = vg.shape.check(locals(), "query_points", (-1, 3))
+    vg.shape.check(locals(), "start_points", (k, 3))
+    vg.shape.check(locals(), "segment_vectors", (k, 3))
+    assert isinstance(epsilon, float)
+
+    # There are two parts here to validating that the point is on a line
+    # segment. The point must be close to its projection to the line, and it's
+    # `t` value along the segment must be `0 <= t <= 1`.
+    #
+    # Due to the amount of floating-point multiplication and division,
+    # `closest_point_of_line_segment()` introduces errors in the projected
+    # points. To allow this function to be more sensitive, we instead compute
+    # and validate the `t` values and use the more accurate projected points to
+    # compute the distance. This approach could also be taken in closest_point_of_segment, but
+
+    # floating-point division, we validate these two conditions separately
+    # compute the `t` values to validate the point is
+    # within the segment but validate the distance check using the projected
+    # point, which is more precise.
+
+    closest_points = closest_point_of_line_segment(
+        points=query_points,
+        start_points=start_points,
+        segment_vectors=segment_vectors,
+    )
+    square_distance = np.sum(np.square(closest_points - query_points), axis=1)
+    return square_distance <= epsilon**2
