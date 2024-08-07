@@ -113,8 +113,6 @@ def is_point_on_line_segment(query_points, start_points, segment_vectors, epsilo
     Check pairwise if each query point (`points`) is on the given line segment,
     within the given tolerance (`epsilon`).
     """
-    from ..line._line_functions import project_point_to_line
-
     # Adapted from public domain algorithm
     # https://gdbooks.gitbooks.io/3dcollisions/content/Chapter1/point_on_line.html
     k = vg.shape.check(locals(), "query_points", (-1, 3))

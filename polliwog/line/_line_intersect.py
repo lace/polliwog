@@ -35,7 +35,9 @@ def intersect_lines(p0, q0, p1, q1):
     if np.dot(g, k) != 0:
         return None
 
-    l = e * h_ / k_
+    l = (  # noqa: E741 This variable name is non-descriptive in addition to being ambiguous.
+        h_ / k_ * e
+    )
     sign = -1 if np.all(h / h_ == k / k_) else +1
     return p0 + sign * l
 
