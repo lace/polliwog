@@ -120,21 +120,6 @@ def is_point_on_line_segment(query_points, start_points, segment_vectors, epsilo
     vg.shape.check(locals(), "segment_vectors", (k, 3))
     assert isinstance(epsilon, float)
 
-    # There are two parts here to validating that the point is on a line
-    # segment. The point must be close to its projection to the line, and it's
-    # `t` value along the segment must be `0 <= t <= 1`.
-    #
-    # Due to the amount of floating-point multiplication and division,
-    # `closest_point_of_line_segment()` introduces errors in the projected
-    # points. To allow this function to be more sensitive, we instead compute
-    # and validate the `t` values and use the more accurate projected points to
-    # compute the distance. This approach could also be taken in closest_point_of_segment, but
-
-    # floating-point division, we validate these two conditions separately
-    # compute the `t` values to validate the point is
-    # within the segment but validate the distance check using the projected
-    # point, which is more precise.
-
     closest_points = closest_point_of_line_segment(
         points=query_points,
         start_points=start_points,
