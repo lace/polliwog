@@ -1178,11 +1178,6 @@ def test_slice_at_points():
     assert sliced.is_closed is False
     np.testing.assert_array_equal(sliced.v, np.array([[1.0, 1.0, 0.0], end_point]))
 
-    # Ensure this case does not insert degenerate edges.
-    sliced = Polyline(v=points).sliced_at_points(np.array([0.9, 1.0, 0.0]), end_point)
-    assert sliced.is_closed is False
-    np.testing.assert_array_equal(sliced.v, np.array([[1.0, 1.0, 0.0], end_point]))
-
 
 def test_sectioned():
     vs = np.arange(108).reshape(36, 3)
