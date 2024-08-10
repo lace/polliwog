@@ -194,7 +194,6 @@ def slice_faces_plane(
     # If no faces to cut, the surface is not in contact with this plane.
     # Thus, return a mesh with only the inside faces
     if len(cut_faces_quad) + len(cut_faces_tri) == 0:
-
         if len(new_faces) == 0:
             # if no new faces at all return empty arrays
             empty = (

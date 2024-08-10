@@ -159,7 +159,10 @@ def test_with_insertions():
     expected_indices_of_original_vertices = np.array([0, 2, 3, 5])
     expected_indices_of_inserted_points = np.array([1, 4])
 
-    polyline = Polyline(v=original_points, is_closed=True,).with_insertions(
+    polyline = Polyline(
+        v=original_points,
+        is_closed=True,
+    ).with_insertions(
         points=points_to_insert,
         indices=before_indices,
     )
