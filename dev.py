@@ -20,7 +20,7 @@ def cli():
 
 @cli.command()
 def install():
-    execute("poetry install --remove-untracked --extras serialization")
+    execute("poetry install --sync --extras serialization")
 
 
 @cli.command()
