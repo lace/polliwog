@@ -106,3 +106,24 @@ def closest_point_of_line_segment(
     result = start_points + t.reshape(-1, 1) * segment_vectors
 
     return (result, t) if ret_t_values else result
+
+
+def is_point_on_line_segment(query_points, start_points, segment_vectors, epsilon):
+    """
+    Check pairwise if each query point (`points`) is on the given line segment,
+    within the given tolerance (`epsilon`).
+    """
+    # Adapted from public domain algorithm
+    # https://gdbooks.gitbooks.io/3dcollisions/content/Chapter1/point_on_line.html
+    k = vg.shape.check(locals(), "query_points", (-1, 3))
+    vg.shape.check(locals(), "start_points", (k, 3))
+    vg.shape.check(locals(), "segment_vectors", (k, 3))
+    assert isinstance(epsilon, float)
+
+    closest_points = closest_point_of_line_segment(
+        points=query_points,
+        start_points=start_points,
+        segment_vectors=segment_vectors,
+    )
+    square_distance = np.sum(np.square(closest_points - query_points), axis=1)
+    return square_distance <= epsilon**2

@@ -1,4 +1,5 @@
 import numpy as np
+from vg.compat import v2 as vg
 
 
 def intersect_lines(p0, q0, p1, q1):
@@ -23,8 +24,8 @@ def intersect_lines(p0, q0, p1, q1):
     g = p0 - p1  # line between to complete a triangle
     h = np.cross(f, g)
     k = np.cross(f, e)
-    h_ = np.linalg.norm(h)
-    k_ = np.linalg.norm(k)
+    h_ = vg.magnitude(h)
+    k_ = vg.magnitude(k)
     if h_ == 0 or k_ == 0:
         # There is no intesection; either parallel (k=0) or collinear (both=0) lines.
         return None
@@ -34,7 +35,9 @@ def intersect_lines(p0, q0, p1, q1):
     if np.dot(g, k) != 0:
         return None
 
-    l = h_ / k_ * e  # noqa: E741
+    l = (  # noqa: E741 This variable name is non-descriptive in addition to being ambiguous.
+        h_ / k_ * e
+    )
     sign = -1 if np.all(h / h_ == k / k_) else +1
     return p0 + sign * l
 
