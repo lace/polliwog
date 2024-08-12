@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0-alpha.9 (Aug 10, 2024)
+
+- Add `polliwog.segment.is_point_on_line_segment()`
+- `Polyline.sliced_at_points()`: Avoid inserting degenerate segments
+
+
 ## 3.0.0-alpha.8 (Jan 18, 2023)
 
 - Support NumPy 1.24+
