@@ -623,31 +623,34 @@ class Polyline:
         (or near to but not directly on a segment) a new point is inserted
         at exactly the given point.
         """
+        # TODO: Use or remove unused `atol`` parameter.
         vg.shape.check(locals(), "start_point", (3,))
         vg.shape.check(locals(), "end_point", (3,))
 
         working_polyline = self
 
+        # Check if the nearest point is already a vertex. If it is, great.  If
+        # not, insert it.
+        nearest_point, segment_index = working_polyline.nearest(
+            start_point, ret_segment_indices=True
+        )
         try:
             # Check if the start point intersects a vertex. If it does, great;
             # if not, insert it.
-            start_v_index = working_polyline.index_of_vertex(start_point)
+            start_v_index = working_polyline.index_of_vertex(nearest_point)
         except ValueError:
-            nearest_point, segment_index = working_polyline.nearest(
-                start_point, ret_segment_indices=True
-            )
             (_, start_v_index) = working_polyline.e[segment_index]
             working_polyline = working_polyline.with_insertions(
                 points=nearest_point.reshape(-1, 3),
                 indices=np.array([start_v_index]),
             )
 
+        nearest_point, segment_index = working_polyline.nearest(
+            end_point, ret_segment_indices=True
+        )
         try:
-            end_v_index = working_polyline.index_of_vertex(end_point)
+            end_v_index = working_polyline.index_of_vertex(nearest_point)
         except ValueError:
-            nearest_point, segment_index = working_polyline.nearest(
-                end_point, ret_segment_indices=True
-            )
             (_, end_v_index) = working_polyline.e[segment_index]
             (
                 working_polyline,
