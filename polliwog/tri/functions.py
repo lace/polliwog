@@ -25,10 +25,8 @@ def edges_of_faces(faces, normalize=True):
     vg.shape.check(locals(), "faces", (-1, 3))
     assert faces.dtype == FACE_DTYPE
 
-    # TODO: It's probably possible to accomplish this more efficiently. Maybe
-    # with `np.pick()`?
     interleaved_edges = np.stack(
-        [faces[:, 0:2], faces[:, 1:3], np.roll(faces, 1, axis=1)[:, 0:2]]
+        [faces[:, (0, 1)], faces[:, (1, 2)], faces[:, (2, 0)]]
     )
     flattened_edges = np.swapaxes(interleaved_edges, 0, 1).reshape(-1, 2)
     return np.sort(flattened_edges, axis=1) if normalize else flattened_edges
