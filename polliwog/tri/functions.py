@@ -25,9 +25,7 @@ def edges_of_faces(faces, normalize=True):
     vg.shape.check(locals(), "faces", (-1, 3))
     assert faces.dtype == FACE_DTYPE
 
-    interleaved_edges = np.stack(
-        [faces[:, (0, 1)], faces[:, (1, 2)], faces[:, (2, 0)]]
-    )
+    interleaved_edges = np.stack([faces[:, (0, 1)], faces[:, (1, 2)], faces[:, (2, 0)]])
     flattened_edges = np.swapaxes(interleaved_edges, 0, 1).reshape(-1, 2)
     return np.sort(flattened_edges, axis=1) if normalize else flattened_edges
 
