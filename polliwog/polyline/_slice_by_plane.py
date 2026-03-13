@@ -42,7 +42,8 @@ def slice_open_polyline_by_plane(vertices, plane):
         # When we have no intersection, assume t is either very close to 0 or 1.
         # When 0, add the entire segment. When 1, do nothing.
         if np.isnan(prepend).any() and t < 0.5:
-            prepend = adjacent_vertex
+            raise ValueError('found it')
+            # prepend = adjacent_vertex
     else:
         prepend = np.zeros((0, 3))
 
