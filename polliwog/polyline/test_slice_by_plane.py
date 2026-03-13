@@ -66,6 +66,16 @@ def test_open_starts_in_front_ends_in_back_with_vertex_on_plane():
     np.testing.assert_array_equal(result, vertices[signs >= 0])
 
 
+def test_open_starts_in_front_ends_in_back_with_vertex_barely_on_plane():
+    signs = np.array([1, 1, 1, 0, -1, -1, -1, -1])
+    vertices = vertices_with_signs(signs)
+    # vertices[signs == 0] += 1e-12 * plane_normal
+
+    result = slice_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_equal(result, vertices[signs >= 0])
+
+
 def test_open_starts_in_back_ends_in_front():
     signs = np.array([-1, -1, 1])
     vertices = vertices_with_signs(signs)
