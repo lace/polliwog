@@ -13,9 +13,9 @@ def rand_nonzero(rng, shape):
     return 128 * rng.random(shape) + 1e-6
 
 
-def vertices_with_signs(signs):
+def vertices_with_signs(signs, rng_seed=7):
     num_verts = len(signs)
-    rng = np.random.default_rng(5002)
+    rng = np.random.default_rng(rng_seed)
     random_points_on_plane = plane.project_point(rand_nonzero(rng, (num_verts, 3)))
     random_displacement_along_normal = (
         rand_nonzero(rng, (num_verts, 1)) * plane_normal
@@ -84,9 +84,12 @@ def test_open_starts_in_front_ends_in_back_with_vertex_barely_in_front_of_plane(
 
 def test_open_starts_in_front_ends_in_back_with_vertex_barely_behind_plane():
     signs = np.array([1, 1, 1, 0, -1, -1, -1, -1])
-    vertices = vertices_with_signs(signs)
-    fiddle_with = signs == 0
-    vertices[fiddle_with][0] -= 1e-15 * plane_normal[0]
+    # Edge case found through experimentally-determined seed.
+    vertices = vertices_with_signs(signs, rng_seed=14)
+
+    new_reference_point = point_on_plane.copy()
+    new_reference_point[0] += 1e-15 
+    plane = Plane(reference_point=new_reference_point, normal=plane_normal)
 
     result = slice_open_polyline_by_plane(vertices, plane)
 
