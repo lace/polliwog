@@ -66,14 +66,30 @@ def test_open_starts_in_front_ends_in_back_with_vertex_on_plane():
     np.testing.assert_array_equal(result, vertices[signs >= 0])
 
 
-def test_open_starts_in_front_ends_in_back_with_vertex_barely_on_plane():
+def test_open_starts_in_front_ends_in_back_with_vertex_barely_in_front_of_plane():
     signs = np.array([1, 1, 1, 0, -1, -1, -1, -1])
     vertices = vertices_with_signs(signs)
-    # vertices[signs == 0] += 1e-12 * plane_normal
+    fiddle_with = signs == 0
+    vertices[fiddle_with] += 1e-12 * plane_normal
 
     result = slice_open_polyline_by_plane(vertices, plane)
 
-    np.testing.assert_array_equal(result, vertices[signs >= 0])
+    # A final point will be added whcih is not exactly the same as the original
+    # vertex, but very close.
+    expected_vertices = np.vstack([vertices[signs >= 0], vertices[signs >= 0][-1]])
+    assert not (result == expected_vertices).all()
+
+    np.testing.assert_array_almost_equal(result, expected_vertices)
+
+def test_open_starts_in_front_ends_in_back_with_vertex_barely_behind_plane():
+    signs = np.array([1, 1, 1, 0, -1, -1, -1, -1])
+    vertices = vertices_with_signs(signs)
+    fiddle_with = signs == 0
+    vertices[fiddle_with] -= 1e-12 * plane_normal
+
+    result = slice_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_almost_equal(result, vertices[signs >= 0])
 
 
 def test_open_starts_in_back_ends_in_front():
