@@ -4,11 +4,14 @@ from .._common.shape import columnize
 
 
 def intersect_segment_with_plane(
-    start_points, segment_vectors, points_on_plane, plane_normals
+    start_points, segment_vectors, points_on_plane, plane_normals, ret_t_value=False
 ):
     """
     Check for intersections between a line segment and a plane, or pairwise
     between a stack of line segments and a stack of planes.
+
+    When `ret_t_value` is true, also return the `t` values, which are the ratio
+    of the segment where the intersection occurs or would occur.
     """
     orig_shape = start_points.shape
     start_points, _, transform_result = columnize(
@@ -31,4 +34,8 @@ def intersect_segment_with_plane(
     intersection_points[t < 0] = np.nan
     intersection_points[t > 1] = np.nan
 
-    return transform_result(intersection_points)
+    intersection = transform_result(intersection_points)
+    if ret_t_value:
+        return intersection, transform_result(t)
+    else:
+        return intersection

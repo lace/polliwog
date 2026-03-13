@@ -9,16 +9,15 @@ plane_normal = vg.normalize(np.array([3.0, 4.0, 5.0]))
 plane = Plane(reference_point=point_on_plane, normal=plane_normal)
 
 
-def rand_nonzero(*shape):
-    return 128 * np.random.rand(*shape) + 1e-6
+def rand_nonzero(rng, shape):
+    return 128 * rng.random(shape) + 1e-6
 
 
-def vertices_with_signs(signs):
+def vertices_with_signs(signs, rng_seed=7):
     num_verts = len(signs)
-    random_points_on_plane = plane.project_point(rand_nonzero(num_verts, 3))
-    random_displacement_along_normal = (
-        rand_nonzero(num_verts).reshape(-1, 1) * plane_normal
-    )
+    rng = np.random.default_rng(rng_seed)
+    random_points_on_plane = plane.project_point(rand_nonzero(rng, (num_verts, 3)))
+    random_displacement_along_normal = rand_nonzero(rng, (num_verts, 1)) * plane_normal
     vertices = (
         random_points_on_plane + signs.reshape(-1, 1) * random_displacement_along_normal
     )
@@ -63,7 +62,51 @@ def test_open_starts_in_front_ends_in_back_with_vertex_on_plane():
 
     result = slice_open_polyline_by_plane(vertices, plane)
 
-    np.testing.assert_array_equal(result, vertices[signs >= 0])
+    np.testing.assert_array_almost_equal(result, vertices[signs >= 0])
+
+
+def test_open_starts_in_front_ends_in_back_with_vertex_barely_in_front_of_plane():
+    signs = np.array([1, 1, 1, 0, -1, -1, -1, -1])
+    vertices = vertices_with_signs(signs)
+    fiddle_with = signs == 0
+    vertices[fiddle_with][0] += 1e-15 * plane_normal[0]
+
+    result = slice_open_polyline_by_plane(vertices, plane)
+
+    # Depending on the random values, this test might generate an extra point at
+    # the end that is very close to the last point.
+    # expected_vertices = np.vstack([vertices[signs >= 0], vertices[signs >= 0][-1]])
+    expected_vertices = vertices[signs >= 0]
+
+    np.testing.assert_array_almost_equal(result, expected_vertices)
+
+
+def test_open_starts_in_front_ends_in_back_with_vertex_barely_behind_plane():
+    signs = np.array([1, 1, 1, 0, -1, -1, -1, -1])
+    # Edge case found through experimentally-determined seed.
+    vertices = vertices_with_signs(signs, rng_seed=14)
+
+    new_reference_point = point_on_plane.copy()
+    new_reference_point[0] += 1e-15
+    plane = Plane(reference_point=new_reference_point, normal=plane_normal)
+
+    result = slice_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_almost_equal(result, vertices[signs >= 0])
+
+
+def test_open_starts_in_back_ends_in_back_with_vertex_barely_in_front_of_plane():
+    signs = np.array([1, 0, -1, -1, -1, 0, 1, 1, 1])
+    vertices = vertices_with_signs(signs, rng_seed=1)
+    vertices[1] -= 1e-15 * plane_normal
+
+    plane = Plane(reference_point=point_on_plane, normal=-plane_normal)
+
+    result = slice_open_polyline_by_plane(vertices, plane)
+
+    expected_vertices = np.vstack([vertices[signs <= 0]])
+
+    np.testing.assert_array_almost_equal(result, expected_vertices)
 
 
 def test_open_starts_in_back_ends_in_front():
@@ -126,7 +169,7 @@ def test_open_starts_in_front_ends_on_plane():
 
     result = slice_open_polyline_by_plane(vertices, plane)
 
-    np.testing.assert_array_equal(result, vertices)
+    np.testing.assert_array_almost_equal(result, vertices)
 
 
 def test_open_starts_in_front_ends_with_edges_along_plane():
@@ -135,7 +178,7 @@ def test_open_starts_in_front_ends_with_edges_along_plane():
 
     result = slice_open_polyline_by_plane(vertices, plane)
 
-    np.testing.assert_array_equal(result, vertices[:-1])
+    np.testing.assert_array_almost_equal(result, vertices[:-1])
 
 
 def test_open_in_back_then_ends_on_plane():
@@ -200,7 +243,7 @@ def test_open_starts_in_front_then_along_plane_then_in_back():
 
     result = slice_open_polyline_by_plane(vertices, plane)
 
-    np.testing.assert_array_equal(result, vertices[0:3])
+    np.testing.assert_array_almost_equal(result, vertices[0:3])
 
 
 def test_open_all_in_front():

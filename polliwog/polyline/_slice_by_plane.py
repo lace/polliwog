@@ -32,33 +32,37 @@ def slice_open_polyline_by_plane(vertices, plane):
     # Prepend the plane intersection point with the previous component.
     if component_in_front > 0:
         adjacent_vertex = components[component_in_front - 1][-1]
-        sign_of_adjacent_vertex = component_signs[component_in_front - 1]
-        if sign_of_adjacent_vertex == 0:
-            prepend = adjacent_vertex
-        else:
-            prepend = intersect_segment_with_plane(
-                start_points=adjacent_vertex,
-                segment_vectors=verts_in_front[0] - adjacent_vertex,
-                points_on_plane=plane.reference_point,
-                plane_normals=plane.normal,
-            )
+        prepend, t = intersect_segment_with_plane(
+            start_points=adjacent_vertex,
+            segment_vectors=verts_in_front[0] - adjacent_vertex,
+            points_on_plane=plane.reference_point,
+            plane_normals=plane.normal,
+            ret_t_value=True,
+        )
+        # When we have no intersection, assume t is 0 or 1. Assert it is 1 and
+        # do nothing.
+        if np.isnan(prepend).any():
+            assert t > 0.5
+            prepend = np.zeros((0, 3))
     else:
         prepend = np.zeros((0, 3))
 
     # Append the plane intersection point with the next component.
     if component_in_front + 1 < len(components):
         adjacent_vertex = components[component_in_front + 1][0]
-        sign_of_adjacent_vertex = component_signs[component_in_front + 1]
-        if sign_of_adjacent_vertex == 0:
+        last_vert = verts_in_front[-1]
+        append, t = intersect_segment_with_plane(
+            start_points=last_vert,
+            segment_vectors=adjacent_vertex - last_vert,
+            points_on_plane=plane.reference_point,
+            plane_normals=plane.normal,
+            ret_t_value=True,
+        )
+        # When we have no intersection, assume t is 0 or 1. Assert it is 1 and
+        # add the entire segment.
+        if np.isnan(append).any():
+            assert t > 0.5
             append = adjacent_vertex
-        else:
-            last_vert = verts_in_front[-1]
-            append = intersect_segment_with_plane(
-                start_points=last_vert,
-                segment_vectors=adjacent_vertex - last_vert,
-                points_on_plane=plane.reference_point,
-                plane_normals=plane.normal,
-            )
     else:
         append = np.zeros((0, 3))
 
