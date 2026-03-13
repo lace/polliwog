@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0-alpha.10
+
+- `polliwog.plane.intersect_segment_with_plane()`: Add ret_t_value parameter
+- `polliwog.polyline.slice_open_polyline_by_plane()`: Fix edge case producing nan's
+
+
 ## 3.0.0-alpha.9 (Aug 10, 2024)
 
 - Add `polliwog.segment.is_point_on_line_segment()`
