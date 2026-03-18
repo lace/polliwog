@@ -48,7 +48,7 @@ jobs:
     - name: Set up Node
       uses: actions/setup-node@v4
       with:
-        node-version: 'lts/*'
+        node-version-file: '.nvmrc'
 
     - name: Install Node dependencies
       working-directory: types

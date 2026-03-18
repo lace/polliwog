@@ -47,7 +47,7 @@ runs:
     - name: Install dependencies (excluding numpy)
       shell: bash
       run: |
-        poetry export -f requirements.txt ${{ inputs.extras-param }} --without-hashes | \
+        poetry export -f requirements.txt --with dev ${{ inputs.extras-param }} --without-hashes | \
           grep -v "^numpy" | \
           ./.venv/bin/pip install -r /dev/stdin
         . .venv/bin/activate && pip install -e . --no-deps
