@@ -1,3 +1,5 @@
+import numbers
+
 import numpy as np
 from vg.compat import v2 as vg
 
@@ -82,8 +84,8 @@ def cube(origin, size, ret_unique_vertices_and_faces=False):
     Args:
         origin (np.ndarray): A 3D point vector containing the point on the
             prism with the minimum x, y, and z coords.
-        size (float): The length, width, and height of the cube, which should
-            be positive.
+        size (numbers.Number): The length, width, and height of the cube,
+            which should be positive.
         ret_unique_vertices_and_faces (bool): When `True` return a vertex
             array containing the unique vertices and an array of faces (i.e.
             vertex indices). When `False`, return a flattened array of
@@ -98,7 +100,7 @@ def cube(origin, size, ret_unique_vertices_and_faces=False):
           flattened triangle coordinates.
     """
     vg.shape.check(locals(), "origin", (3,))
-    if not isinstance(size, float):
+    if not isinstance(size, numbers.Number):
         raise ValueError("`size` should be a number")
 
     return rectangular_prism(
@@ -118,7 +120,8 @@ def triangular_prism(p1, p2, p3, height, ret_unique_vertices_and_faces=False):
         p1 (np.ndarray): A 3D point on the base of the prism.
         p2 (np.ndarray): A 3D point on the base of the prism.
         p3 (np.ndarray): A 3D point on the base of the prism.
-        height (float): The height of the prism, which should be positive.
+        height (numbers.Number): The height of the prism, which should be
+            positive.
         ret_unique_vertices_and_faces (bool): When `True` return a vertex
             array containing the unique vertices and an array of faces (i.e.
             vertex indices). When `False`, return a flattened array of
@@ -137,7 +140,7 @@ def triangular_prism(p1, p2, p3, height, ret_unique_vertices_and_faces=False):
     vg.shape.check(locals(), "p1", (3,))
     vg.shape.check(locals(), "p2", (3,))
     vg.shape.check(locals(), "p3", (3,))
-    if not isinstance(height, float):
+    if not isinstance(height, numbers.Number):
         raise ValueError("`height` should be a number")
 
     base_plane = Plane.from_points(p1, p2, p3)

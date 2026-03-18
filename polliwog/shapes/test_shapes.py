@@ -64,6 +64,11 @@ def test_cube():
     with pytest.raises(ValueError, match="`size` should be a number"):
         cube(origin=origin, size="not a number")
 
+    # Integer size should be accepted.
+    # See https://github.com/lace/polliwog/issues/281
+    flattened_vertices = cube(origin=origin, size=2)
+    np.testing.assert_array_equal(flattened_vertices[0], expected_first_triangle)
+
 
 def test_triangular_prism():
     p1 = np.array([3.0, 0.0, 0.0])
@@ -77,3 +82,8 @@ def test_triangular_prism():
 
     with pytest.raises(ValueError, match="`height` should be a number"):
         triangular_prism(p1, p2, p3, "not-a-number")
+
+    # Integer height should be accepted.
+    # See https://github.com/lace/polliwog/issues/281
+    flattened_vertices = triangular_prism(p1, p2, p3, 1)
+    np.testing.assert_array_equal(flattened_vertices[0], expected_first_triangle)
