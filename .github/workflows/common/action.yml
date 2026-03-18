@@ -1,0 +1,54 @@
+name: Prepare environment
+
+inputs:
+  python-version:
+    required: false
+    default: '3.9'
+  poetry-version:
+    required: false
+    default: '1.8.5'
+  numpy-version:
+    required: false
+    default: '1.26.4'
+  extras-param:
+    required: false
+    default: ''
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install Poetry ${{ inputs.poetry-version }}
+      uses: abatilo/actions-poetry@v4
+      with:
+        poetry-version: ${{ inputs.poetry-version }}
+
+    - name: Define a cache for the virtual environment
+      uses: actions/cache@v4
+      with:
+        path: .venv
+        key: venv-v1-${{ runner.os }}-${{ inputs.python-version }}-${{ inputs.numpy-version }}-${{ inputs.extras-param }}-${{ hashFiles('poetry.lock') }}
+
+    - name: Create the in-project virtualenv if it doesn't exist
+      shell: bash
+      run: test -d .venv || python -m venv .venv
+
+    - name: Install NumPy ${{ inputs.numpy-version }}
+      shell: bash
+      run: |
+        . .venv/bin/activate
+        pip install --only-binary :all: numpy==${{ inputs.numpy-version }}
+
+    - name: Install dependencies (excluding numpy)
+      shell: bash
+      run: |
+        poetry export -f requirements.txt --with dev ${{ inputs.extras-param }} --without-hashes | \
+          grep -v "^numpy" | \
+          ./.venv/bin/pip install -r /dev/stdin
+        . .venv/bin/activate && pip install -e . --no-deps
+        pip freeze

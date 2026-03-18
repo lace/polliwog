@@ -1,0 +1,120 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  schedule:
+    - cron: '0 17 * * *'
+
+jobs:
+  check_code_format:
+    name: Check code format
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'schedule' && github.ref == 'refs/heads/main')
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - uses: ./.github/workflows/common
+
+    - name: Check code format
+      run: ./dev.py black-check
+
+  check_lint:
+    name: Check lint
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'schedule' && github.ref == 'refs/heads/main')
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - uses: ./.github/workflows/common
+
+    - name: Check lint
+      run: ./dev.py lint
+
+  check_schema:
+    name: Check schema
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'schedule' && github.ref == 'refs/heads/main')
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+
+    - name: Install Node dependencies
+      working-directory: types
+      run: npm ci
+
+    - name: Check that schema are up to date
+      working-directory: types
+      run: npm run schema:check
+
+  run_tests:
+    name: Run tests - Python ${{ matrix.python-version }}, NumPy ${{ matrix.numpy-version }}
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'schedule' && github.ref == 'refs/heads/main')
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python-version: '3.9'
+            numpy-version: '1.26.4'
+          - python-version: '3.10'
+            numpy-version: '1.26.4'
+          - python-version: '3.11'
+            numpy-version: '1.26.4'
+          - python-version: '3.12'
+            numpy-version: '1.26.4'
+          - python-version: '3.11'
+            numpy-version: '2.2.4'
+          - python-version: '3.12'
+            numpy-version: '2.2.4'
+          - python-version: '3.13'
+            numpy-version: '2.2.4'
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - uses: ./.github/workflows/common
+      with:
+        python-version: ${{ matrix.python-version }}
+        numpy-version: ${{ matrix.numpy-version }}
+        extras-param: '--extras serialization'
+
+    - name: Run tests
+      run: ./dev.py coverage
+
+  build_and_upload:
+    name: Build and upload
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'schedule' && github.ref == 'refs/heads/main')
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - uses: ./.github/workflows/common
+
+    - name: Build the package
+      run: poetry build
+
+    - name: Upload distributable
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist-artifacts
+        path: dist/
+
+    - name: Build the documentation
+      if: always()
+      run: ./dev.py doc
