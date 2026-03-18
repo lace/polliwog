@@ -61,11 +61,8 @@ def slice_open_polyline_by_plane(vertices, plane):
             plane_normals=plane.normal,
             ret_t_value=True,
         )
-        # When we have no intersection, assume t is 0 or 1. Assert it is 1 and
-        # add the entire segment.
         if np.isnan(append).any():
-            assert t > 0.5
-            append = adjacent_vertex
+            append = adjacent_vertex if round(t) == 1 else np.zeros((0, 3))
     else:
         append = np.zeros((0, 3))
 
