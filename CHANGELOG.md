@@ -4,6 +4,7 @@
 
 - `polliwog.polyline.slice_open_polyline_by_plane()`: Fix additional edge cases
   producing nan's
+- Shapes: Handle integer size and height.
 
 ## 3.0.0-alpha.10
 
