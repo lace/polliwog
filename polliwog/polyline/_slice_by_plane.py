@@ -39,11 +39,14 @@ def slice_open_polyline_by_plane(vertices, plane):
             plane_normals=plane.normal,
             ret_t_value=True,
         )
-        # When we have no intersection, assume t is 0 or 1. Assert it is 1 and
-        # do nothing.
+        # When we have no intersection, t is near 0 or 1, we are dealing with a
+        # vertex that is basically on the plane, and we have conflicting
+        # definitions of "in front" and "behind" due to floating point. If t is
+        # near 1, verts_in_front[0] is basically at the plane and no prepend is
+        # needed. If t is near 0, adjacent_vertex is basically at the plane and
+        # should be prepended.
         if np.isnan(prepend).any():
-            assert t > 0.5
-            prepend = np.zeros((0, 3))
+            prepend = adjacent_vertex if round(t) == 0 else np.zeros((0, 3))
     else:
         prepend = np.zeros((0, 3))
 

@@ -95,6 +95,18 @@ def test_open_starts_in_front_ends_in_back_with_vertex_barely_behind_plane():
     np.testing.assert_array_almost_equal(result, vertices[signs >= 0])
 
 
+def test_open_starts_in_back_ends_in_front_with_vertex_barely_behind_plane():
+    signs = np.array([-1, -1, -1, -1, 1, 1, 1, 1])
+    # Edge case found through experimentally-determined seed.
+    vertices = vertices_with_signs(signs, rng_seed=312)
+
+    vertices[3] = plane.project_point(vertices[3])
+
+    result = slice_open_polyline_by_plane(vertices, plane)
+
+    np.testing.assert_array_almost_equal(result, vertices[3:])
+
+
 def test_open_starts_in_back_ends_in_back_with_vertex_barely_in_front_of_plane():
     signs = np.array([1, 0, -1, -1, -1, 0, 1, 1, 1])
     vertices = vertices_with_signs(signs, rng_seed=1)
