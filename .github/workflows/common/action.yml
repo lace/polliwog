@@ -1,16 +1,16 @@
 name: Prepare environment
 
 inputs:
-  'python-version':
+  python-version:
     required: false
     default: '3.9'
-  'poetry-version':
+  poetry-version:
     required: false
     default: '1.8.5'
-  'numpy-version':
+  numpy-version:
     required: false
     default: '1.26.4'
-  'extras-param':
+  extras-param:
     required: false
     default: ''
 
