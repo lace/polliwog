@@ -12,16 +12,16 @@ def test_starting_with_canonical_reference_frame_gives_identity():
 
 
 def test_raises_value_error_with_zero_length_inputs():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Singular up"):
         rotation_from_up_and_look(up=origin, look=vg.basis.z)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Singular look"):
         rotation_from_up_and_look(up=vg.basis.y, look=origin)
 
 
 def test_raises_value_error_with_collinear_inputs():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="`up` and `look` are almost collinear"):
         rotation_from_up_and_look(up=vg.basis.z, look=vg.basis.z)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="`up` and `look` are almost collinear"):
         rotation_from_up_and_look(up=vg.basis.z, look=vg.basis.neg_z)
 
 
